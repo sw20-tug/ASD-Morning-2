@@ -1,5 +1,5 @@
 import Head from 'next/head'
-
+import Link from 'next/link'
 const Home = () => (
   <div className="container">
     <Head>
@@ -17,10 +17,13 @@ const Home = () => (
       </p>
 
       <div className="grid">
-        <a href="https://nextjs.org/docs" className="card">
-          <h3>Documentation &rarr;</h3>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+        <Link href="/create">
+        <div className="card">
+            <h3>Add Vocab</h3>
+            <p>Add some fancy vocab!</p>
+          </div>
+        </Link>
+        
 
         <a href="https://nextjs.org/learn" className="card">
           <h3>Learn &rarr;</h3>
