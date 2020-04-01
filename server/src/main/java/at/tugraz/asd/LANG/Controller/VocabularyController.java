@@ -6,6 +6,7 @@ import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
 import at.tugraz.asd.LANG.Service.VocabularyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -19,13 +20,14 @@ public class VocabularyController {
     VocabularyService service;
 
     @PostMapping
-    public void addVocabulary(@RequestBody CreateVocabularyMessageIn msg){
+    public ResponseEntity addVocabulary(@RequestBody CreateVocabularyMessageIn msg){
        service.saveVocabulary(msg);
+       return ResponseEntity.ok(null);
     }
 
     @GetMapping
     @ResponseBody
-    public ArrayList<VocabularyOut> getAllVocabulary(){
+    public ResponseEntity getAllVocabulary(){
         ArrayList<VocabularyOut> ret = new ArrayList<>();
         List<VocabularyModel> vocab = service.getAllVocabulary();
         vocab.forEach(el->{
@@ -36,7 +38,7 @@ public class VocabularyController {
                     //el.getTranslations().keySet()
             ));
         });
-        return ret;
+        return ResponseEntity.ok(ret);
     }
 
 
