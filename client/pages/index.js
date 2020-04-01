@@ -1,62 +1,54 @@
 import Head from 'next/head'
 import Link from 'next/link'
+
 const Home = () => (
   <div className="container">
     <Head>
-      <title>Create Next App</title>
+      <title>Voc-Trainer</title>
       <link rel="icon" href="/favicon.ico" />
     </Head>
-
     <main>
       <h1 className="title">
-        Welcome to <a href="https://nextjs.org">Next.js!</a>
+        <a>Voc-Trainer</a>
       </h1>
 
       <p className="description">
-        Get started by editing <code>pages/index.js</code>
+        Train your language skills
       </p>
 
       <div className="grid">
-        <Link href="/create">
-        <div className="card">
-            <h3>Add Vocab</h3>
-            <p>Add some fancy vocab!</p>
+        <Link href="/vocabulary">
+          <div className="card">
+            <h3>Vocabulary Overview</h3>
+            <p>View and Edit your Vocabulary</p>
           </div>
         </Link>
-        
 
-        <a href="https://nextjs.org/learn" className="card">
-          <h3>Learn &rarr;</h3>
-          <p>Learn about Next.js in an interactive course with quizzes!</p>
-        </a>
+        <Link href="/study_interface">
+          <a className="card">
+            <h3> Study Interface </h3>
+            <p> Start learning your Vocabulary</p>
+          </a>
+        </Link>
 
-        <a
-          href="https://github.com/zeit/next.js/tree/master/examples"
-          className="card"
-        >
-          <h3>Examples &rarr;</h3>
-          <p>Discover and deploy boilerplate example Next.js projects.</p>
-        </a>
+        <Link href="/testing_mode">
+          <a className="card">
+            <h3>Testing Mod &rarr;</h3>
+            <p>Test your current skills! </p>
+          </a>
+        </Link>
 
-        <a
-          href="https://zeit.co/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          className="card"
-        >
-          <h3>Deploy &rarr;</h3>
+        <a className="card">
+          <h3> Next Feature &rarr;</h3>
           <p>
-            Instantly deploy your Next.js site to a public URL with ZEIT Now.
           </p>
         </a>
       </div>
     </main>
 
     <footer>
-      <a
-        href="https://zeit.co?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Powered by <img src="/zeit.svg" alt="ZEIT Logo" />
+      <a>
+        Powered by ASD-Morning-2
       </a>
     </footer>
 
@@ -86,10 +78,6 @@ const Home = () => (
         display: flex;
         justify-content: center;
         align-items: center;
-      }
-
-      footer img {
-        margin-left: 0.5rem;
       }
 
       footer a {
