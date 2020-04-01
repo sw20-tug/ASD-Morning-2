@@ -3,6 +3,8 @@ package at.tugraz.asd.LANG.Controller;
 
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.out.TranslationOut;
+import at.tugraz.asd.LANG.Messages.out.VocabularyLanguageOut;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
 import at.tugraz.asd.LANG.Service.VocabularyService;
@@ -43,6 +45,20 @@ public class VocabularyController {
                     translation
             ));
         });
+        return ResponseEntity.ok(ret);
+    }
+
+    @GetMapping (path = "{Language}")
+    public ResponseEntity getAllVocabularyOfLanguage(@PathVariable("Language") Languages language)
+    {
+        VocabularyLanguageOut ret = new VocabularyLanguageOut(service.getAllVocabularyOfLanguage(language));
+        return ResponseEntity.ok(ret);
+    }
+
+    @GetMapping (path = "{Language}/{word}")
+    public ResponseEntity getTranslation(@PathVariable("Language") Languages language, @PathVariable("word") String word)
+    {
+        TranslationOut ret = new TranslationOut(service.getTranslation(language, word));
         return ResponseEntity.ok(ret);
     }
 }
