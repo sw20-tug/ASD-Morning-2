@@ -26,7 +26,7 @@ public class VocabularyService {
 
     public VocabularyModel saveVocabulary(CreateVocabularyMessageIn msg){
         Map<Languages, String> translations = msg.getTranslations();
-        String vocab = msg.getVocabulary();
+        String vocabulary = msg.getVocabulary();
 
         List<TranslationModel> translationModels = new ArrayList<>();
         translations.forEach((k,v)->{
@@ -35,7 +35,7 @@ public class VocabularyService {
             translationRepo.save(translationModel);
         });
 
-        VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, vocab, translationModels);
+        VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, vocabulary, translationModels);
         vocabularyRepo.save(vocabularyModel);
         return vocabularyModel;
     }

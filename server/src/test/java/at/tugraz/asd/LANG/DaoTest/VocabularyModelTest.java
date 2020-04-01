@@ -34,8 +34,10 @@ public class VocabularyModelTest {
 
         HashMap<Languages, String> translation = new HashMap<>();
         translation.put(Languages.DE, "haus");
+        translation.put(Languages.EN, "house");
+        translation.put(Languages.FR, "maison");
 
-        CreateVocabularyMessageIn msg = new CreateVocabularyMessageIn("house", translation);
+        CreateVocabularyMessageIn msg = new CreateVocabularyMessageIn("haus", translation);
         Map<Languages, String> translations = msg.getTranslations();
         String vocab = msg.getVocabulary();
 
@@ -48,7 +50,7 @@ public class VocabularyModelTest {
 
         VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, vocab, translationModels);
         VocabularyModel res = vocabularyRepo.save(vocabularyModel);
-        Assert.assertEquals(1, res.getTranslationVocabMapping().size());
+        Assert.assertEquals(3, res.getTranslationVocabMapping().size());
         Assert.assertArrayEquals(translationModels.toArray(), res.getTranslationVocabMapping().toArray());
     }
 }
