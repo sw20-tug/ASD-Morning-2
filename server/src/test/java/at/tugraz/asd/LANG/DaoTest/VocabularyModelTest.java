@@ -1,30 +1,41 @@
-package at.tugraz.asd.LANG.Service;
-
+package at.tugraz.asd.LANG.DaoTest;
 
 import at.tugraz.asd.LANG.Languages;
+import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Model.TranslationModel;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
-import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Repo.TranslationRepo;
 import at.tugraz.asd.LANG.Repo.VocabularyRepo;
 import at.tugraz.asd.LANG.Topic;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
-public class VocabularyService {
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class VocabularyModelTest {
 
-    @Autowired
-    VocabularyRepo vocabularyRepo;
     @Autowired
     TranslationRepo translationRepo;
 
-    public VocabularyModel saveVocabulary(CreateVocabularyMessageIn msg){
+    @Autowired
+    VocabularyRepo vocabularyRepo;
+
+    @Test
+    public void testSaveVocabulary(){
+
+        HashMap<Languages, String> translation = new HashMap<>();
+        translation.put(Languages.DE, "haus");
+
+        CreateVocabularyMessageIn msg = new CreateVocabularyMessageIn("house", translation);
         Map<Languages, String> translations = msg.getTranslations();
         String vocab = msg.getVocabulary();
 
@@ -36,10 +47,8 @@ public class VocabularyService {
         });
 
         VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, vocab, translationModels);
-        vocabularyRepo.save(vocabularyModel);
-        return vocabularyModel;
-    }
-    public List<VocabularyModel> getAllVocabulary() {
-        return vocabularyRepo.findAll();
+        VocabularyModel res = vocabularyRepo.save(vocabularyModel);
+        Assert.assertEquals(1, res.getTranslationVocabMapping().size());
+        Assert.assertArrayEquals(translationModels.toArray(), res.getTranslationVocabMapping().toArray());
     }
 }
