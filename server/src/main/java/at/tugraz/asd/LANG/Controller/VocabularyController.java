@@ -1,6 +1,7 @@
 package at.tugraz.asd.LANG.Controller;
 
 
+import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -31,15 +33,16 @@ public class VocabularyController {
         ArrayList<VocabularyOut> ret = new ArrayList<>();
         List<VocabularyModel> vocab = service.getAllVocabulary();
         vocab.forEach(el->{
+            HashMap<Languages, String> translation = new HashMap<>();
+            el.getTranslationVocabMapping().forEach(translationModel -> {
+                translation.put(translationModel.getLanguage(), translationModel.getVocabulary());
+            });
             ret.add(new VocabularyOut(
                     el.getTopic(),
                     el.getVocabulary(),
-                    null
-                    //el.getTranslations().keySet()
+                    translation
             ));
         });
         return ResponseEntity.ok(ret);
     }
-
-
 }
