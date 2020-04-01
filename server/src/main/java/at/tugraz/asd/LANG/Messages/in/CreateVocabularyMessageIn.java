@@ -11,4 +11,6 @@ import java.util.Map;
 public class CreateVocabularyMessageIn {
     String vocabulary;
     Map<Languages,String> translations;
+
 }
+
