@@ -27,6 +27,4 @@ public class TranslationModel {
         this.language = language_;
         this.vocabulary = vocabulary_;
     }
-
-
 }
