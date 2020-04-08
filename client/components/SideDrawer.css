@@ -1,0 +1,46 @@
+.sidedrawer {
+    height: 100%;
+    background: #222;
+    box-shadow: 5px 5px 5px 5px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 70%;
+    max-width: 400px;
+    z-index: 200;
+}
+
+.sidedrawer ul {
+    height: 100%;
+    margin: 0;
+    padding: 1.5rem;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: top;
+}
+
+.sidedrawer li {
+    margin: 0.5rem 0;
+}
+
+.sidedrawer a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.75rem;
+}
+
+.sidedrawer a:hover
+.sidedrawer a:active {
+    color: #8FE9A3;
+}
+
+.backdrop {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 100;
+}
