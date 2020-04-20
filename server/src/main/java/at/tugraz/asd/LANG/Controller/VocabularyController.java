@@ -34,6 +34,8 @@ public class VocabularyController {
     public ResponseEntity getAllVocabulary(){
         ArrayList<VocabularyOut> ret = new ArrayList<>();
         List<VocabularyModel> vocab = service.getAllVocabulary();
+        if(vocab.isEmpty())
+            return ResponseEntity.noContent().build();
         vocab.forEach(el->{
             HashMap<Languages, String> translation = new HashMap<>();
             el.getTranslationVocabMapping().forEach(translationModel -> {
