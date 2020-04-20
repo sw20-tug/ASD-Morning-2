@@ -1,0 +1,11 @@
+.nav_left_side {
+    align-items: center;
+}
+
+.nav_right_side {
+    align-items: center;
+}
+
+.nav_spacer {
+    flex-grow: 1;
+}
