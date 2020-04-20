@@ -1,4 +1,3 @@
-import { Container, Row, Col, Button } from 'react-bootstrap';
 import Navigationbar from '../components/Navigationbar';
 import fetch from 'isomorphic-unfetch';
 import Link from 'next/link'

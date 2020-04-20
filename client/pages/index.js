@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Navigationbar from '../components/Navigationbar';
 import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
+import Head from 'next/head';
 
 class Index extends React.Component {
 
@@ -14,6 +15,10 @@ class Index extends React.Component {
   render() {
     return (
       <div className="wrapper">
+        <Head>
+          <title>Vocabulary Trainer</title>
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
         <Navigationbar />
 
         <div className="home_buttons_wrap">
