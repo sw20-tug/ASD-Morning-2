@@ -9,4 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface TranslationRepo extends JpaRepository<TranslationModel, UUID> {
+    public TranslationModel  findByLanguage(Languages language);
 }

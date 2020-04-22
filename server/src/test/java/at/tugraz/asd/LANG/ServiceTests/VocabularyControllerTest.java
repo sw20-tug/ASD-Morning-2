@@ -24,6 +24,15 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -103,15 +112,15 @@ public class VocabularyControllerTest {
     }
 
     //TODO
-    @Test
-    public void testGetAllVocabulary(){}
+   @Test
+   public void testGetAllVocabulary(){}
 
-    //TODO
-    @Test
-    public void testGetInvalidVocabulary()
-    {
+   //TODO
+   @Test
+   public void testGetInvalidVocabulary()
+   {
 
-    }
+   }
 
     @Test
     public void testEditValidVocabulary() throws Exception
@@ -156,15 +165,14 @@ public class VocabularyControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-
-    //HELPER
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+   //HELPER
+   public static String asJsonString(final Object obj) {
+       try {
+           return new ObjectMapper().writeValueAsString(obj);
+       } catch (Exception e) {
+           throw new RuntimeException(e);
+       }
+   }
 
 
 }
