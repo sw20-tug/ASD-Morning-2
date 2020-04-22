@@ -1,59 +1,46 @@
-import React, { Component } from 'react';
-import Navigationbar from '../components/Navigationbar';
-import Button from 'react-bootstrap/Button';
-import Link from 'next/link';
-import Head from 'next/head';
+import Link from 'next/link'
 
-class Index extends React.Component {
+const Home = () => (
+      <div className="container">
+        <main>
+          <h1 className="title">
+            Voc-Trainer
+          </h1>
 
-  constructor(props) {
-    super(props);
+          <p className="description">
+            Train your language skills
+          </p>
 
-    //this.state = {}
-  }
+          <div className="grid">
+            <Link href="/vocabulary">
+              <a className="card">
+                <h3>Vocabulary Overview</h3>
+                <p>View and Edit your Vocabulary</p>
+              </a>
+            </Link>
 
-  render() {
-    return (
-      <div className="wrapper">
-        <Head>
-          <title>Vocabulary Trainer</title>
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-        <Navigationbar />
+            <Link href="/study_interface">
+              <a className="card">
+                <h3> Study Interface </h3>
+                <p> Start learning your Vocabulary</p>
+              </a>
+            </Link>
 
-        <div className="home_buttons_wrap">
-          <Link href="/vocabulary">
-            <Button variant="secondary" size="md" block>
-              <h3>Vocabulary Overview</h3>
-              View and Edit your Vocabulary
-            </Button>
-          </Link>
-          <Link href="/study_interface">
-            <Button variant="secondary" size="md" block>
-              <h3>Study Interface</h3>
-              Start learning your Vocabulary
-            </Button>
-          </Link>
-          <Link href="/testing_mode">
-            <Button variant="secondary" size="md" block>
-              <h3>Testing Mode</h3>
-              Test your current skills!
-            </Button>
-          </Link>
-          <Link href="/">
-          <Button variant="secondary" size="md" block>
-              <h3>WIP</h3>
-              Work in Progress
-            </Button>
-          </Link>
-        </div>
-        
-        <h1>blah</h1>
-        <p>wut</p>
+            <Link href="/testing_mode">
+              <a className="card">
+                <h3>Testing Mod &rarr;</h3>
+                <p>Test your current skills! </p>
+              </a>
+            </Link>
 
+            <a className="card">
+              <h3> Next Feature &rarr;</h3>
+              <p>
+              </p>
+            </a>
+          </div>
+        </main>
       </div>
-    );
-  };
-}
+);
 
-export default Index;
+export default Home;
