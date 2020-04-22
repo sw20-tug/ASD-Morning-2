@@ -50,5 +50,7 @@ public class VocabularyModelTest {
         VocabularyModel res = vocabularyRepo.save(vocabularyModel);
         Assert.assertEquals(1, res.getTranslationVocabMapping().size());
         Assert.assertArrayEquals(translationModels.toArray(), res.getTranslationVocabMapping().toArray());
+
+
     }
 }

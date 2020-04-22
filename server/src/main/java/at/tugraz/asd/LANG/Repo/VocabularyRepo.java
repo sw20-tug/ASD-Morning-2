@@ -8,4 +8,6 @@ import java.util.UUID;
 
 @Repository
 public interface VocabularyRepo extends JpaRepository<VocabularyModel, UUID> {
+
+    public VocabularyModel findByVocabulary(String vocab);
 }

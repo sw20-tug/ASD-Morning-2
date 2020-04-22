@@ -5,11 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Map;
-
 @Data
 @AllArgsConstructor
-public class CreateVocabularyMessageIn {
-    String vocabulary;
-    Map<Languages,String> translations;
+public class EditVocabularyMessageIn
+{
+    Map<Languages,String> current_translations;
+    Map<Languages,String> new_translations;
 }
 
