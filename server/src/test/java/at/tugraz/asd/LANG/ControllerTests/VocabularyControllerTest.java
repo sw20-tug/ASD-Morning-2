@@ -142,7 +142,6 @@ public class VocabularyControllerTest {
     }
 
 
-    //TODO
    @Test
    public void testGetAllVocabulary() throws Exception {
 
@@ -170,20 +169,12 @@ public class VocabularyControllerTest {
        Assert.assertEquals(getVocab.get(0).getTopic(),Topic.USER_GENERATED);
        Assert.assertEquals(getVocab.get(0).getVocabulary(),"haus");
        Assert.assertEquals(getVocab.get(0).getTranslations().get(Languages.FR), expected_vocabulary.getTranslations().get(Languages.FR));
-       Assert.assertEquals(getVocab.get(0).getTranslations().get(Languages.EN), expected_vocabulary.getTranslations().get(Languages.EN));
 
    }
 
-   //TODO
-   @Test
-   public void testGetInvalidVocabulary()
-   {
-
-   }
 
     @Test
-    public void testEditValidVocabulary() throws Exception
-    {
+    public void testEditValidVocabulary() throws Exception {
     testAddVocabulary();
 
     //Create Data To Manipulate
@@ -227,26 +218,6 @@ public class VocabularyControllerTest {
     //Get Data
     }
 
-    @Test
-    public void testEditNotExistingVocabulary() throws Exception
-    {
-        HashMap<Languages, String> current_translations = new HashMap<>();
-        current_translations.put(Languages.FR, "this");
-        current_translations.put(Languages.EN, "not");
-        current_translations.put(Languages.DE, "valid");
-
-        HashMap<Languages, String> new_translations = new HashMap<>();
-        new_translations.put(Languages.FR, "villa");
-        new_translations.put(Languages.EN, "mansion");
-        new_translations.put(Languages.DE, "villa");
-
-        EditVocabularyMessageIn msg = new EditVocabularyMessageIn(current_translations, new_translations);
-
-        mvc.perform(put("/api/vocabulary")
-                .content(asJsonString(msg))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
 
    //HELPER
    public static String asJsonString(final Object obj) {
