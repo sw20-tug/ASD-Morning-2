@@ -90,7 +90,7 @@ class AddVocabulary extends React.Component {
                         </Form.Group>
                     </Col>
                 </Row>
-                <Row class="formatRow">
+                <Row className="formatRow">
                     <Col>  <Form.Group style={{ height: 60, width: 220 }} onChange={this.handleChange_Vocabulary} controlId="formVocabulary">
                         <Form.Control type="text" placeholder="Vocabulary" />
                     </Form.Group></Col>
