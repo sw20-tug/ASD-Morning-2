@@ -85,6 +85,7 @@ public class VocabularyService {
         //TODO change so we can edit many times
         //vocabularyRepo.equals(msg.getCurrent_translations());
           AtomicInteger success = new AtomicInteger();
+          success.set(0);
          msg.getCurrent_translations().values().forEach(v->{
             if(!(v.isEmpty())){
                 VocabularyModel toUpdate = vocabularyRepo.findByVocabulary(v);
@@ -99,10 +100,14 @@ public class VocabularyService {
                     toUpdate.getTranslationVocabMapping().clear();
                     toUpdate.setTranslationVocabMapping(translationModels_new);
                     vocabularyRepo.save(toUpdate);
-                    return;
+                    success.set(1);
                 }
             }
         });
+        if(success.get() == 1)
+        {
+            return;
+        }
         throw new EditFail();
     }
 }
