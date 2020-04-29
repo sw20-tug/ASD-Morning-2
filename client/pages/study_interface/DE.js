@@ -4,10 +4,6 @@ import { Container, Button, useRouter, Link, List } from "next/app";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 
 class StudyInterface extends React.Component {
-    /* constructor(props) {
-         super(props);
-     }
- */
     constructor() {
         super();
         this.state = {
@@ -51,11 +47,11 @@ class StudyInterface extends React.Component {
                                         <td>{element.translations.DE}</td>
                                         <td>
                                             <Container>
-                                                EN:<div class="overlay" id={id}>
+                                                EN:<div className="overlay" id={id}>
                                                 {element.translations.EN}
                                                     </div> 
                                                     <br/>
-                                                FR:<div class="overlay" id={id}>
+                                                FR:<div className="overlay" id={id}>
                                                     {element.translations.FR}
                                                     </div>
                                             </Container>
@@ -74,14 +70,6 @@ class StudyInterface extends React.Component {
         );
     }
 }
-/*
-StudyInterface.getInitialProps = async function () {
-    const res = await fetch('http://localhost:8080/api/vocabulary')
-    const data = await res.json()
-    return {
-        vocabs: data.vocabulary
-    }
-}*/
 
 export default StudyInterface;
 

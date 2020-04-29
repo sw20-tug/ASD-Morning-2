@@ -51,11 +51,11 @@ class StudyInterface extends React.Component {
                                         <td>{element.translations.EN}</td>
                                         <td>
                                             <Container>
-                                                DE:<div class="overlay" id={id}>
+                                                DE:<div className="overlay" id={id}>
                                                 {element.translations.DE}
                                                     </div> 
                                                     <br/>
-                                                FR:<div class="overlay" id={id}>
+                                                FR:<div className="overlay" id={id}>
                                                     {element.translations.FR}
                                                     </div>
                                             </Container>
