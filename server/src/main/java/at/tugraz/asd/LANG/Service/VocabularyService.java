@@ -1,6 +1,7 @@
 package at.tugraz.asd.LANG.Service;
 
 
+import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
 import at.tugraz.asd.LANG.Model.TranslationModel;
@@ -79,12 +80,12 @@ public class VocabularyService {
         return ret[0];
     }
 
-    public int editVocabulary(EditVocabularyMessageIn msg)
+    public void editVocabulary(EditVocabularyMessageIn msg) throws EditFail
     {
+        //TODO change so we can edit many times
         //vocabularyRepo.equals(msg.getCurrent_translations());
-        AtomicInteger success = new AtomicInteger();
-
-        msg.getCurrent_translations().values().forEach(v->{
+          AtomicInteger success = new AtomicInteger();
+         msg.getCurrent_translations().values().forEach(v->{
             if(!(v.isEmpty())){
                 VocabularyModel toUpdate = vocabularyRepo.findByVocabulary(v);
                 if(toUpdate != null)
@@ -95,14 +96,13 @@ public class VocabularyService {
                         translationModels_new.add(translationModel);
                         translationRepo.save(translationModel);
                     });
-
                     toUpdate.getTranslationVocabMapping().clear();
                     toUpdate.setTranslationVocabMapping(translationModels_new);
                     vocabularyRepo.save(toUpdate);
-                    success.set(1);
+                    return;
                 }
             }
         });
-        return success.get();
+        throw new EditFail();
     }
 }

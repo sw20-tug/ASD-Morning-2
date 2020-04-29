@@ -1,6 +1,7 @@
 package at.tugraz.asd.LANG.Controller;
 
 
+import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/vocabulary")
 public class VocabularyController {
@@ -26,8 +28,8 @@ public class VocabularyController {
 
     @PostMapping
     public ResponseEntity addVocabulary(@RequestBody CreateVocabularyMessageIn msg){
-       service.saveVocabulary(msg);
-       return ResponseEntity.ok(null);
+        service.saveVocabulary(msg);
+        return ResponseEntity.ok(null);
     }
 
     @GetMapping
@@ -64,19 +66,16 @@ public class VocabularyController {
         TranslationOut ret = new TranslationOut(service.getTranslation(language, word));
         return ResponseEntity.ok(ret);
     }
-
     @PutMapping
     @ResponseBody
-    public ResponseEntity editVocabulary(@RequestBody EditVocabularyMessageIn msg)
-    {
-        int ret = service.editVocabulary(msg);
-        if(ret == 1)
-        {
+    public ResponseEntity editVocabulary(@RequestBody EditVocabularyMessageIn msg){
+        try{
+            service.editVocabulary(msg);
             return ResponseEntity.ok(null);
         }
-        else
-        {
+        catch (EditFail e){
             return ResponseEntity.badRequest().body(null);
         }
     }
+
 }
