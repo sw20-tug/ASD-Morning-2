@@ -153,8 +153,21 @@ function Layout(props) {
                 * {
                 box-sizing: border-box;
                 }
-                
-                
+
+                .overlay
+                {
+                 width: 90%;
+                 height: 100%;
+                 background: black; 
+                 color: black;
+                 transition: 0.3s; 
+                 float: right;
+                } 
+                .overlay:hover
+                {
+                    background: white;
+
+                }
             `}</style>
 
         </div>
