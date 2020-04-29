@@ -175,49 +175,50 @@ public class VocabularyControllerTest {
 
     @Test
     public void testEditValidVocabulary() throws Exception {
-    testAddVocabulary();
+      testAddVocabulary();
 
-    //Create Data To Manipulate
-    // testAddVocabulary();
-    /* Expected data
-    {
-        "current_translations":
-        {
-        "DE" : "haus",
-        "EN" : "maison",
-        "FR" : "house"
-        },
+      HashMap<Languages, String> current_translations = new HashMap<>();
+      current_translations.put(Languages.FR, "maison");
+      current_translations.put(Languages.EN, "house");
+      current_translations.put(Languages.DE, "haus");
 
-        "new_translations":
-        {
-        "DE" : "villa",
-        "EN" : "villa",
-        "FR" : "mansion"
-        }
-    }
-    */
+      HashMap<Languages, String> new_translations = new HashMap<>();
+      new_translations.put(Languages.FR, "villa");
+      new_translations.put(Languages.EN, "mansion");
+      new_translations.put(Languages.DE, "villa");
 
-    HashMap<Languages, String> current_translations = new HashMap<>();
-    current_translations.put(Languages.FR, "maison");
-    current_translations.put(Languages.EN, "house");
-    current_translations.put(Languages.DE, "haus");
+      EditVocabularyMessageIn msg = new EditVocabularyMessageIn(current_translations, new_translations);
 
-    HashMap<Languages, String> new_translations = new HashMap<>();
-    new_translations.put(Languages.FR, "villa");
-    new_translations.put(Languages.EN, "mansion");
-    new_translations.put(Languages.DE, "villa");
-
-    EditVocabularyMessageIn msg = new EditVocabularyMessageIn(current_translations, new_translations);
-
-    mvc.perform(put("/api/vocabulary")
-        .content(asJsonString(msg))
-        .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk());
+      mvc.perform(put("/api/vocabulary")
+          .content(asJsonString(msg))
+          .contentType(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk());
 
 
     //Get Data
     }
+/*
+    @Test
+    public void testEditNotExistingVocabulary() throws Exception
+    {
+        HashMap<Languages, String> current_translations = new HashMap<>();
+        current_translations.put(Languages.FR, "this");
+        current_translations.put(Languages.EN, "not");
+        current_translations.put(Languages.DE, "valid");
 
+        HashMap<Languages, String> new_translations = new HashMap<>();
+        new_translations.put(Languages.FR, "villa");
+        new_translations.put(Languages.EN, "mansion");
+        new_translations.put(Languages.DE, "villa");
+
+        EditVocabularyMessageIn msg = new EditVocabularyMessageIn(current_translations, new_translations);
+
+        mvc.perform(put("/api/vocabulary")
+                .content(asJsonString(msg))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+*/
 
    //HELPER
    public static String asJsonString(final Object obj) {
