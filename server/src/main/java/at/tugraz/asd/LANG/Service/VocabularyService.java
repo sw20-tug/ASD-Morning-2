@@ -98,6 +98,7 @@ public class VocabularyService {
                         translationRepo.save(translationModel);
                     });
                     toUpdate.getTranslationVocabMapping().clear();
+                    toUpdate.setVocabulary(msg.getNew_translations().get(Languages.DE));
                     toUpdate.setTranslationVocabMapping(translationModels_new);
                     vocabularyRepo.save(toUpdate);
                     success.set(1);
