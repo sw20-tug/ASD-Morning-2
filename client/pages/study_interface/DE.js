@@ -31,7 +31,7 @@ class StudyInterface extends React.Component {
                     Study Interface
                 </h1>
                 <p className="description">
-                    Test your knowlegde about the german language!
+                    Test your knowlegde about the German language!
                 </p>
                 <p className="description">
                     Current Language: German
