@@ -1,0 +1,30 @@
+.test_col {
+    color: #ccc;
+}
+
+h2 {
+    color: #6666FF;
+    text-align: center;
+}
+
+.edit_button_wrap {
+    width: 100%;
+    text-align: right;
+}
+
+.edit_input_wrapper {
+    text-align: center;
+    margin-top: 1.5rem;
+    max-width: 500px;
+    width: 100%;
+}
+
+.edit_container {
+    max-width: 500px;
+    width: 80%;
+}
+
+.edit_main {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
