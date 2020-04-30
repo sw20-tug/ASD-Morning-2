@@ -2,6 +2,7 @@ import fetch from 'isomorphic-unfetch';
 import {Container} from "next/app";
 import Link from 'next/link'
 import Button from 'react-bootstrap/Button';
+import { Form, FormControl } from 'react-bootstrap';
 
 
 class VocabularyOverview extends React.Component {
@@ -27,6 +28,13 @@ class VocabularyOverview extends React.Component {
                     <p className="description">
                         View and Edit your Vocabulary
                     </p>
+
+                    <div style={{ width: "100%", padding: "0.75rem", marginLeft: "2rem" }}>
+                        <Link href="/add_vocabulary">
+                            <Button variant="outline-primary">+</Button>
+                        </Link>
+                    </div>
+
                     <Container>
                         <table className="table">
                             <thead>
