@@ -28,7 +28,7 @@ const Home = () => (
 
             <Link href="/testing_mode">
               <a className="card">
-                <h3>Testing Mod &rarr;</h3>
+                <h3>Testing Mode &rarr;</h3>
                 <p>Test your current skills! </p>
               </a>
             </Link>
