@@ -2,6 +2,7 @@ package at.tugraz.asd.LANG.Service;
 
 
 import at.tugraz.asd.LANG.Exeptions.EditFail;
+import at.tugraz.asd.LANG.Exeptions.RatingFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
 import at.tugraz.asd.LANG.Model.TranslationModel;
@@ -38,7 +39,7 @@ public class VocabularyService {
             translationRepo.save(translationModel);
         });
 
-        VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, vocabulary, translationModels);
+        VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, vocabulary, translationModels, Integer.valueOf(0));
         vocabularyRepo.save(vocabularyModel);
         return vocabularyModel;
     }
@@ -110,5 +111,14 @@ public class VocabularyService {
             return;
         }
         throw new EditFail();
+    }
+
+    public void rate(int rating, String vocabulary) throws RatingFail {
+        VocabularyModel v=vocabularyRepo.findByVocabulary(vocabulary);
+        if(v == null) {
+            throw new RatingFail();
+        }
+        v.setRating(Integer.valueOf (rating));
+        vocabularyRepo.save(v);
     }
 }

@@ -5,6 +5,7 @@ import at.tugraz.asd.LANG.Controller.VocabularyController;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.in.RatingVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.TranslationModel;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
@@ -18,9 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -58,7 +61,7 @@ public class VocabularyControllerTest {
         translations.add(new TranslationModel(Languages.DE,"haus"));
         translations.add(new TranslationModel(Languages.FR,"maison"));
         translations.add(new TranslationModel(Languages.DE,"house"));
-        VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED,"haus",translations);
+        VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED,"haus",translations, 0);
 
         //define return value for service
         //given(service.saveVocabulary(msg)).willReturn(vocabularyModel);
@@ -100,7 +103,7 @@ public class VocabularyControllerTest {
         translations_1.add(new TranslationModel(Languages.DE,"haus"));
         translations_1.add(new TranslationModel(Languages.FR,"maison"));
         translations_1.add(new TranslationModel(Languages.DE,"house"));
-        VocabularyModel vocabularyModel_1 = new VocabularyModel(Topic.USER_GENERATED,"haus",translations_1);
+        VocabularyModel vocabularyModel_1 = new VocabularyModel(Topic.USER_GENERATED,"haus",translations_1, 0);
 
 
         //perform save-call to endpoint
@@ -126,7 +129,7 @@ public class VocabularyControllerTest {
         translations_2.add(new TranslationModel(Languages.DE,"kind"));
         translations_2.add(new TranslationModel(Languages.FR,"lekind"));
         translations_2.add(new TranslationModel(Languages.DE,"child"));
-        VocabularyModel vocabularyModel_2 = new VocabularyModel(Topic.USER_GENERATED,"kind",translations_2);
+        VocabularyModel vocabularyModel_2 = new VocabularyModel(Topic.USER_GENERATED,"kind",translations_2, 0);
 
 
         //perform save-call to endpoint
@@ -161,7 +164,7 @@ public class VocabularyControllerTest {
        expexted_translation.put(Languages.FR, "maison");
        expexted_translation.put(Languages.EN, "house");
 
-       VocabularyOut expected_vocabulary = new VocabularyOut(Topic.USER_GENERATED, "haus", expexted_translation);
+       VocabularyOut expected_vocabulary = new VocabularyOut(Topic.USER_GENERATED, "haus", expexted_translation, 0);
 
 
        //assert values
@@ -219,6 +222,42 @@ public class VocabularyControllerTest {
                 .andExpect(status().isBadRequest());
     }
 */
+    @Test
+    public void testRatingVocabulary() throws Exception {
+
+        RatingVocabularyMessageIn msg = new RatingVocabularyMessageIn("haus", 2 );
+
+        try {
+            given(service.rate(2, "haus"));
+
+        }
+        catch (Exception e){
+            throw new RuntimeException(e);
+        }
+
+
+
+        mvc.perform(post("/api/vocabulary/rating")
+                .content(asJsonString(msg))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        String getResult = mvc.perform(get("/api/vocabulary/")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn()
+                .getResponse().getContentAsString();
+        ObjectMapper mapper = new ObjectMapper();
+
+        List<VocabularyOut> response = mapper.readValue(getResult,mapper.getTypeFactory().constructCollectionType(List.class, VocabularyOut.class));
+        for(int i = 0; i < response.size(); i++){
+
+            if(response.get(i).getVocabulary().equals("haus"))
+            {
+                Assert.assertEquals(Integer.valueOf(2), response.get(i).getRating());
+            }
+        }
+        assertFalse(true);
+    }
 
    //HELPER
    public static String asJsonString(final Object obj) {
@@ -228,4 +267,5 @@ public class VocabularyControllerTest {
            throw new RuntimeException(e);
        }
    }
+
 }
