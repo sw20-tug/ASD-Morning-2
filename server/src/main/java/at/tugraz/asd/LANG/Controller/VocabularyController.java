@@ -10,13 +10,13 @@ import at.tugraz.asd.LANG.Messages.out.VocabularyLanguageOut;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
 import at.tugraz.asd.LANG.Service.VocabularyService;
+import org.apache.logging.log4j.util.PropertySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+
 
 @CrossOrigin("*")
 @RestController
@@ -78,4 +78,43 @@ public class VocabularyController {
         }
     }
 
+    @GetMapping (path = "alphabetically/{aORz}")
+    @ResponseBody
+    public ResponseEntity getAllVocabularyAlphabetically1(@PathVariable("aORz")String aOrz){
+        ArrayList<VocabularyOut> ret = new ArrayList<>();
+        List<VocabularyModel> vocab = service.getAllVocabulary();
+
+        if(vocab.isEmpty())
+            return ResponseEntity.noContent().build();
+        if(aOrz.equals("a"))
+        {
+            vocab.sort(new Comparator<VocabularyModel>() {
+                @Override
+                public int compare(VocabularyModel vocabularyModel, VocabularyModel t1) {
+                    return vocabularyModel.getVocabulary().compareTo(t1.getVocabulary());
+                }
+            });
+        }
+        if(aOrz.equals("z"))
+        {
+            vocab.sort(new Comparator<VocabularyModel>() {
+                @Override
+                public int compare(VocabularyModel vocabularyModel, VocabularyModel t1) {
+                    return t1.getVocabulary().compareTo(vocabularyModel.getVocabulary());
+                }
+            });
+        }
+        vocab.forEach(el->{
+            HashMap<Languages, String> translation = new HashMap<>();
+            el.getTranslationVocabMapping().forEach(translationModel -> {
+                translation.put(translationModel.getLanguage(), translationModel.getVocabulary());
+            });
+            ret.add(new VocabularyOut(
+                    el.getTopic(),
+                    el.getVocabulary(),
+                    translation
+            ));
+        });
+        return ResponseEntity.ok(ret);
+    }
 }
