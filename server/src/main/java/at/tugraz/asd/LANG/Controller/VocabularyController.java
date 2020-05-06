@@ -10,7 +10,6 @@ import at.tugraz.asd.LANG.Messages.out.VocabularyLanguageOut;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
 import at.tugraz.asd.LANG.Service.VocabularyService;
-import org.apache.logging.log4j.util.PropertySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -115,6 +114,44 @@ public class VocabularyController {
                     translation
             ));
         });
+        return ResponseEntity.ok(ret);
+    }
+
+    @GetMapping (path = "random")
+    @ResponseBody
+    public ResponseEntity getRandomVocabulary() {
+        int testSize = 10;      // change if test size varies in future issues
+        ArrayList<VocabularyOut> ret = new ArrayList<>();
+        List<VocabularyModel> randomVocab = new ArrayList<>();
+        Random rand = new Random();
+
+        List<VocabularyModel> vocab = service.getAllVocabulary();
+
+        // Check if vocab list exists and has enough vocabs
+        if(vocab.isEmpty() || vocab.size() < testSize)
+            return ResponseEntity.noContent().build();
+
+        // Select x amount of random vocabs from vocab list, and remove element from vocab list to avoid duplicates
+        for (int i = 0; i < testSize; i++) {
+            VocabularyModel randomVocabItem = vocab.get(rand.nextInt(vocab.size()));
+            randomVocab.add(randomVocabItem);
+            vocab.remove(randomVocabItem);
+        }
+        System.out.println("Random Vocabs are: " + randomVocab.toString());
+
+        // Build response
+        randomVocab.forEach(el->{
+            HashMap<Languages, String> translation = new HashMap<>();
+            el.getTranslationVocabMapping().forEach(
+                    translationModel -> translation.put(translationModel.getLanguage(), translationModel.getVocabulary())
+            );
+            ret.add(new VocabularyOut(
+                    el.getTopic(),
+                    el.getVocabulary(),
+                    translation
+            ));
+        });
+
         return ResponseEntity.ok(ret);
     }
 }
