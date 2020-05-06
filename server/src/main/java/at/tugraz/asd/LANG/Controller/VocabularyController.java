@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 @CrossOrigin("*")
 @RestController
@@ -61,44 +60,6 @@ public class VocabularyController {
         return ResponseEntity.ok(ret);
     }
 
-    @GetMapping (path = "random")
-    @ResponseBody
-    public ResponseEntity getRandomVocabulary() {
-        int testSize = 10;      // change if test size varies in future issues
-        ArrayList<VocabularyOut> ret = new ArrayList<>();
-        List<VocabularyModel> randomVocab = new ArrayList<>();
-        Random rand = new Random();
-
-        List<VocabularyModel> vocab = service.getAllVocabulary();
-
-        // Check if vocab list exists and has enough vocabs
-        if(vocab.isEmpty() || vocab.size() < testSize)
-            return ResponseEntity.noContent().build();
-
-        // Select x amount of random vocabs from vocab list, and remove element from vocab list to avoid duplicates
-        for (int i = 0; i < testSize; i++) {
-            VocabularyModel randomVocabItem = vocab.get(rand.nextInt(vocab.size()));
-            randomVocab.add(randomVocabItem);
-            vocab.remove(randomVocabItem);
-        }
-        System.out.println("Random Vocabs are: " + randomVocab.toString());
-
-        // Build response
-        randomVocab.forEach(el->{
-            HashMap<Languages, String> translation = new HashMap<>();
-            el.getTranslationVocabMapping().forEach(
-                    translationModel -> translation.put(translationModel.getLanguage(), translationModel.getVocabulary())
-            );
-            ret.add(new VocabularyOut(
-                    el.getTopic(),
-                    el.getVocabulary(),
-                    translation
-            ));
-        });
-
-        return ResponseEntity.ok(ret);
-    }
-
     @GetMapping (path = "{Language}/{word}")
     public ResponseEntity getTranslation(@PathVariable("Language") Languages language, @PathVariable("word") String word)
     {
@@ -116,4 +77,5 @@ public class VocabularyController {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
 }
