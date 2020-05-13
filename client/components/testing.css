@@ -1,8 +1,3 @@
-.testing_vocab_display_wrapper {
-    padding: 1rem;
-    width: 100%;
-}
-
 .testing_headline {
     font-size: 2rem;
     margin: 1rem auto 1rem auto;
@@ -25,4 +20,29 @@
     margin: 0 auto;
     padding: 0 1rem;
     text-align: center;
+}
+
+.test_active_headline {
+    font-size: 1.5rem;
+    margin: 0.1rem auto 0.1rem auto;
+    text-align: center;
+}
+
+.test_active_wrapper {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.test_active_vocabulary_display {
+    max-width: 40rem;
+    margin: 2rem auto 2rem auto;
+    padding: 0;
+    text-align: center;
+    text-overflow: inherit;
+    font-size: 2.2rem;
+}
+
+.test_active_input {
+    margin: 0 auto;
+    max-width: 20rem;
 }
