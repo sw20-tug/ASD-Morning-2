@@ -19,7 +19,7 @@ class EditVocabulary extends React.Component {
             DE: this.props.query.de,
             EN: this.props.query.en,
             FR: this.props.query.fr,
-            initialRating: 2.5
+            initialRating: this.props.query.rating
     };
 
     this.handleChange = this.handleChange.bind(this);
