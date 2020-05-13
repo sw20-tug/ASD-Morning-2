@@ -24,7 +24,7 @@ class StudyInterface extends React.Component {
         }
         else if(args == "a" || args == "z")
         {
-            const data = await fetch('http://localhost:8080/api/vocabulary/alphabetically/' + args)
+            const data = await fetch('http://localhost:8080/api/vocabulary/alphabetically/EN/' + args)
             const json = await data.json()
             this.setState({vocabulary: json})
         }

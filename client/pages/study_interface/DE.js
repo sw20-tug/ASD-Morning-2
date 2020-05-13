@@ -24,7 +24,7 @@ class StudyInterface extends React.Component {
             const json = await data.json()
             this.setState({vocabulary: json})
         }
-    }
+    } 
 
     render() {
         console.log(this.props.vocabs);
