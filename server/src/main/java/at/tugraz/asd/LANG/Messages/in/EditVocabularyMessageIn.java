@@ -11,5 +11,6 @@ public class EditVocabularyMessageIn
 {
     Map<Languages,String> current_translations;
     Map<Languages,String> new_translations;
+    Integer rating;
 }
 

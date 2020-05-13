@@ -31,6 +31,7 @@ public class VocabularyModel {
     private Topic topic;
 
     private String vocabulary;
+    private Integer rating;
 
     @OneToMany(cascade = CascadeType.REMOVE)
     private List<TranslationModel> TranslationVocabMapping = new ArrayList<>();
@@ -38,10 +39,12 @@ public class VocabularyModel {
 
 
 
-    public VocabularyModel(Topic topic, String vocabulary, List<TranslationModel> translations)
+    public VocabularyModel(Topic topic, String vocabulary, List<TranslationModel> translations, Integer rating)
     {
         this.topic = topic;
         this.vocabulary = vocabulary;
         this.TranslationVocabMapping = translations;
+        this.rating = rating;
+
     }
 }

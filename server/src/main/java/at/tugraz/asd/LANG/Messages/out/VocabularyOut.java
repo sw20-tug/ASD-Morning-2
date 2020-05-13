@@ -15,4 +15,5 @@ public class VocabularyOut {
     private Topic topic;
     private String vocabulary;
     private Map<Languages, String> translations;
+    private Integer rating;
 }
