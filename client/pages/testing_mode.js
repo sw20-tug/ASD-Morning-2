@@ -19,18 +19,18 @@ class TestingMode extends React.Component {
         };
     }
 
-    /*async componentDidMount() {
-        const data = await fetch('http://localhost:8080/api/vocabulary')
-        //const data = await fetch('http://localhost:8080/api/vocabulary/random')
-        const json = await data.json()
-        this.setState({ vocabulary: json })
-    }*/
+    
     handleChange_Given_Language({ target }) {
         this.setState({
             given_language: target.textContent
         });
         this.state.dis_given = false
-        if(this.state.dis_tested === false)
+        console.log("given_language: ", this.state.given_language);
+        if (target.textContent == this.state.tested_language)
+        {
+            this.state.disabled = true;
+        }
+        if((this.state.dis_tested === false) && (target.textContent !== this.state.tested_language))
         {
             this.state.disabled = false
         }
@@ -40,7 +40,12 @@ class TestingMode extends React.Component {
             tested_language: target.textContent
         });
         this.state.dis_tested = false
-        if (this.state.dis_given === false)
+        console.log("tested_language: ", this.state.tested_language);
+        if (target.textContent == this.state.given_language)
+        {
+            this.state.disabled = true;
+        }
+        if ((this.state.dis_given === false)  && (this.state.given_language !== target.textContent))
         {
             this.state.disabled = false
         }
