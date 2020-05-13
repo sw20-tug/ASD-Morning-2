@@ -168,6 +168,11 @@ function Layout(props) {
                     background: white;
 
                 }
+
+                .filter_buttons
+                {
+                 margin-left: 3%;   
+                }
             `}</style>
 
         </div>
