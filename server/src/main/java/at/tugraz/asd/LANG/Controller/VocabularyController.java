@@ -2,9 +2,11 @@ package at.tugraz.asd.LANG.Controller;
 
 
 import at.tugraz.asd.LANG.Exeptions.EditFail;
+import at.tugraz.asd.LANG.Exeptions.RatingFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.in.RatingVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.out.TranslationOut;
 import at.tugraz.asd.LANG.Messages.out.VocabularyLanguageOut;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
@@ -45,7 +47,8 @@ public class VocabularyController {
             ret.add(new VocabularyOut(
                     el.getTopic(),
                     el.getVocabulary(),
-                    translation
+                    translation,
+                    el.getRating()
             ));
         });
         return ResponseEntity.ok(ret);
@@ -110,7 +113,8 @@ public class VocabularyController {
             ret.add(new VocabularyOut(
                     el.getTopic(),
                     el.getVocabulary(),
-                    translation
+                    translation,
+                    el.getRating()
             ));
         });
         return ResponseEntity.ok(ret);
@@ -147,7 +151,9 @@ public class VocabularyController {
             ret.add(new VocabularyOut(
                     el.getTopic(),
                     el.getVocabulary(),
-                    translation
+                    translation,
+                    el.getRating()
+
             ));
         });
 
