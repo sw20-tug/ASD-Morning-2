@@ -48,7 +48,7 @@ public class VocabularyModelTest {
             translationRepo.save(translationModel);
         });
 
-        VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, vocab, translationModels);
+        VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, vocab, translationModels, 0);
         VocabularyModel res = vocabularyRepo.save(vocabularyModel);
         Assert.assertEquals(3, res.getTranslationVocabMapping().size());
         Assert.assertArrayEquals(translationModels.toArray(), res.getTranslationVocabMapping().toArray());
