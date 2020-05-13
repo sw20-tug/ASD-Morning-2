@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Nav, Navbar } from 'react-bootstrap';
+import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 
 
 function Navigationbar(props) {
@@ -7,16 +7,16 @@ function Navigationbar(props) {
     <Navbar bg="primary" variant="dark">
       <Nav className="mr-auto" style={{ margin: "0 auto", color: "#eaeaea" }}>
         <div className="navbar_link">
-          <Link href="/">Home</Link>
+          <Link href="/"><a>Home</a></Link>
         </div>
         <div className="navbar_link">
-          <Link href="/vocabulary">Overview</Link>
+          <Link href="/vocabulary"><a>Overview</a></Link>
         </div>
         <div className="navbar_link">
-          <Link href="/study_interface">Study</Link>
+          <Link href="/study_interface"><a>Study</a></Link>
         </div>
         <div className="navbar_link">
-          <Link href="/testing_mode">Test Mode</Link>
+          <Link href="/testing_mode"><a>Test Mode</a></Link>
         </div>
       </Nav>
     </Navbar>

@@ -2,3 +2,27 @@
     padding: 1rem;
     width: 100%;
 }
+
+.testing_headline {
+    font-size: 2rem;
+    margin: 1rem auto 1rem auto;
+    padding: 0 1rem;
+    text-overflow: inherit;
+    text-align: center;
+    line-height: 2rem;
+}
+
+.testing_lang_choice_container {
+    margin: 1rem auto;
+    display: inline-flex;
+}
+
+.testing_lang_choice_dropdown_item {
+    padding: 0 0.5rem;
+}
+
+.testing_repetitions_choice_container {
+    margin: 0 auto;
+    padding: 0 1rem;
+    text-align: center;
+}
