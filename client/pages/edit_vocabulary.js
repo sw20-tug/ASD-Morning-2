@@ -1,5 +1,6 @@
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
+import Rating from 'react-rating'
 import { Form } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
@@ -7,6 +8,7 @@ import Link from 'next/link';
 class EditVocabulary extends React.Component {
     constructor(props) {
         super(props);
+
         this.saveVocabulary = this.saveVocabulary.bind(this);
         console.log("URL Query: ", this.props.query);
 
@@ -16,10 +18,13 @@ class EditVocabulary extends React.Component {
             FR_OLD: this.props.query.fr,
             DE: this.props.query.de,
             EN: this.props.query.en,
-            FR: this.props.query.fr
+            FR: this.props.query.fr,
+            initialRating: 2.5
     };
 
     this.handleChange = this.handleChange.bind(this);
+    this.rate = this.rate.bind(this);
+
     }
 
     static getInitialProps({query}) {
@@ -40,7 +45,8 @@ class EditVocabulary extends React.Component {
                 'DE': this.state.DE,
                 'EN': this.state.EN,
                 'FR': this.state.FR
-            }
+            },
+            rating:this.state.initialRating
         })
 
     }
@@ -63,7 +69,11 @@ class EditVocabulary extends React.Component {
         else{
             alert("An error occured!")
         }
-        
+    }
+    rate(value){
+        this.setState({
+            initialRating: value
+        })
     }
 
     handleChange({ target }) {
@@ -99,6 +109,11 @@ class EditVocabulary extends React.Component {
                             </InputGroup.Prepend>
                             <FormControl type="text" name="FR" onChange={ this.handleChange } defaultValue={this.props.query.fr} aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                         </InputGroup>
+
+                        <InputGroup  size="sm" className="mb-3">
+                           <Rating onChange={this.rate} initialRating={this.state.initialRating} fractions="1"/>
+                        </InputGroup>
+                    
                     </Form.Group>
                     <hr/>
                     <div className="edit_button_wrap">
