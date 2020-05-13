@@ -28,3 +28,8 @@ h2 {
     padding-top: 2rem;
     padding-bottom: 2rem;
 }
+
+.testing_vocab_display_wrapper {
+    padding: 1rem;
+    width: 100%;
+}
