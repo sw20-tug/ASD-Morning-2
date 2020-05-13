@@ -4,6 +4,7 @@ package at.tugraz.asd.LANG.Service;
 import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.TranslationModel;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
@@ -11,12 +12,10 @@ import at.tugraz.asd.LANG.Repo.TranslationRepo;
 import at.tugraz.asd.LANG.Repo.VocabularyRepo;
 import at.tugraz.asd.LANG.Topic;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -110,5 +109,86 @@ public class VocabularyService {
             return;
         }
         throw new EditFail();
+    }
+
+    public List<VocabularyModel> sortVocabStudyInterface(Languages language, String aOrz) {
+        ArrayList<VocabularyOut> ret = new ArrayList<>();
+        List<VocabularyModel> vocab = getAllVocabulary();
+        if(vocab.isEmpty())
+            return vocab;
+
+        if(aOrz.equals("a"))
+        {
+            vocab.sort(new Comparator<VocabularyModel>() {
+                @Override
+                public int compare(VocabularyModel vocabularyModel, VocabularyModel t1) {
+                    String compare1 = vocabularyModel.getTranslationVocabMapping().get(0).getVocabulary();
+                    String compare2 = vocabularyModel.getTranslationVocabMapping().get(0).getVocabulary();
+
+                    for(int i = 0; i < vocabularyModel.getTranslationVocabMapping().size(); i++)
+                    {
+                        if(vocabularyModel.getTranslationVocabMapping().get(i).getLanguage() == language)
+                        {
+                            compare1 = vocabularyModel.getTranslationVocabMapping().get(i).getVocabulary();
+                        }
+                        if(t1.getTranslationVocabMapping().get(i).getLanguage() == language)
+                        {
+                            compare2 = t1.getTranslationVocabMapping().get(i).getVocabulary();
+                        }
+                    }
+                    return compare1.compareTo(compare2);
+                }
+            });
+        }
+        if(aOrz.equals("z"))
+        {
+            vocab.sort(new Comparator<VocabularyModel>() {
+                @Override
+                public int compare(VocabularyModel vocabularyModel, VocabularyModel t1) {
+                    String compare1 = vocabularyModel.getTranslationVocabMapping().get(0).getVocabulary();
+                    String compare2 = vocabularyModel.getTranslationVocabMapping().get(0).getVocabulary();
+
+                    for(int i = 0; i < vocabularyModel.getTranslationVocabMapping().size(); i++)
+                    {
+                        if(vocabularyModel.getTranslationVocabMapping().get(i).getLanguage() == language)
+                        {
+                            compare1 = vocabularyModel.getTranslationVocabMapping().get(i).getVocabulary();
+                        }
+                        if(t1.getTranslationVocabMapping().get(i).getLanguage() == language)
+                        {
+                            compare2 = t1.getTranslationVocabMapping().get(i).getVocabulary();
+                        }
+                    }
+                    return compare2.compareTo(compare1);
+                }
+            });
+        }
+        return vocab;
+    }
+
+    public List<VocabularyModel> sortVocabOverview(String aOrz) {
+        ArrayList<VocabularyOut> ret = new ArrayList<>();
+        List<VocabularyModel> vocab = getAllVocabulary();
+        if(vocab.isEmpty())
+            return vocab;
+        if(aOrz.equals("a"))
+        {
+            vocab.sort(new Comparator<VocabularyModel>() {
+                @Override
+                public int compare(VocabularyModel vocabularyModel, VocabularyModel t1) {
+                    return vocabularyModel.getVocabulary().compareTo(t1.getVocabulary());
+                }
+            });
+        }
+        if(aOrz.equals("z"))
+        {
+            vocab.sort(new Comparator<VocabularyModel>() {
+                @Override
+                public int compare(VocabularyModel vocabularyModel, VocabularyModel t1) {
+                    return t1.getVocabulary().compareTo(vocabularyModel.getVocabulary());
+                }
+            });
+        }
+        return vocab;
     }
 }
