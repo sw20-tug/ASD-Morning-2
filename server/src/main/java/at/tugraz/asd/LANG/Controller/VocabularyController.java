@@ -80,14 +80,4 @@ public class VocabularyController {
             return ResponseEntity.badRequest().body(null);
         }
     }
-    @PostMapping(path = "/rating")
-    public ResponseEntity ratingVocabulary(@RequestBody RatingVocabularyMessageIn msg){
-        try{
-            service.rate(msg.getRating(), msg.getVocabulary());
-            return ResponseEntity.ok(null);
-        }
-        catch (RatingFail e) {
-            return ResponseEntity.badRequest().body(null);
-        }
-    }
 }

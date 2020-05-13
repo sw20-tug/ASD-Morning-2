@@ -81,19 +81,17 @@ public class VocabularyService {
         return ret[0];
     }
 
-    public void editVocabulary(EditVocabularyMessageIn msg) throws EditFail
-    {
+    public void editVocabulary(EditVocabularyMessageIn msg) throws EditFail {
         //TODO change so we can edit many times
         //vocabularyRepo.equals(msg.getCurrent_translations());
-          AtomicInteger success = new AtomicInteger();
-          success.set(0);
-         msg.getCurrent_translations().values().forEach(v->{
-            if(!(v.isEmpty())){
+        AtomicInteger success = new AtomicInteger();
+        success.set(0);
+        msg.getCurrent_translations().values().forEach(v -> {
+            if (!(v.isEmpty())) {
                 VocabularyModel toUpdate = vocabularyRepo.findByVocabulary(v);
-                if(toUpdate != null)
-                {
+                if (toUpdate != null) {
                     List<TranslationModel> translationModels_new = new ArrayList<>();
-                    msg.getNew_translations().forEach((k,val)->{
+                    msg.getNew_translations().forEach((k, val) -> {
                         TranslationModel translationModel = new TranslationModel(k, val);
                         translationModels_new.add(translationModel);
                         translationRepo.save(translationModel);
@@ -101,24 +99,15 @@ public class VocabularyService {
                     toUpdate.getTranslationVocabMapping().clear();
                     toUpdate.setVocabulary(msg.getNew_translations().get(Languages.DE));
                     toUpdate.setTranslationVocabMapping(translationModels_new);
+                    toUpdate.setRating(msg.getRating());
                     vocabularyRepo.save(toUpdate);
                     success.set(1);
                 }
             }
         });
-        if(success.get() == 1)
-        {
+        if (success.get() == 1) {
             return;
         }
         throw new EditFail();
-    }
-
-    public void rate(int rating, String vocabulary) throws RatingFail {
-        VocabularyModel v=vocabularyRepo.findByVocabulary(vocabulary);
-        if(v == null) {
-            throw new RatingFail();
-        }
-        v.setRating(Integer.valueOf (rating));
-        vocabularyRepo.save(v);
     }
 }

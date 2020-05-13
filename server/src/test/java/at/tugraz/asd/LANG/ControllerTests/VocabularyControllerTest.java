@@ -190,7 +190,7 @@ public class VocabularyControllerTest {
       new_translations.put(Languages.EN, "mansion");
       new_translations.put(Languages.DE, "villa");
 
-      EditVocabularyMessageIn msg = new EditVocabularyMessageIn(current_translations, new_translations);
+      EditVocabularyMessageIn msg = new EditVocabularyMessageIn(current_translations, new_translations, 2);
 
       mvc.perform(put("/api/vocabulary")
           .content(asJsonString(msg))
@@ -223,40 +223,26 @@ public class VocabularyControllerTest {
     }
 */
     @Test
-    public void testRatingVocabulary() throws Exception {
+    public void testRating() throws Exception {
+        testAddVocabulary();
 
-        RatingVocabularyMessageIn msg = new RatingVocabularyMessageIn("haus", 2 );
+        HashMap<Languages, String> current_translations = new HashMap<>();
+        current_translations.put(Languages.FR, "maison");
+        current_translations.put(Languages.EN, "house");
+        current_translations.put(Languages.DE, "haus");
 
-        try {
-            given(service.rate(2, "haus"));
+        HashMap<Languages, String> new_translations = new HashMap<>();
+        new_translations.put(Languages.FR, "villa");
+        new_translations.put(Languages.EN, "mansion");
+        new_translations.put(Languages.DE, "villa");
 
-        }
-        catch (Exception e){
-            throw new RuntimeException(e);
-        }
+        EditVocabularyMessageIn msg = new EditVocabularyMessageIn(current_translations, new_translations, 5);
 
-
-
-        mvc.perform(post("/api/vocabulary/rating")
+        mvc.perform(put("/api/vocabulary")
                 .content(asJsonString(msg))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        String getResult = mvc.perform(get("/api/vocabulary/")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andReturn()
-                .getResponse().getContentAsString();
-        ObjectMapper mapper = new ObjectMapper();
-
-        List<VocabularyOut> response = mapper.readValue(getResult,mapper.getTypeFactory().constructCollectionType(List.class, VocabularyOut.class));
-        for(int i = 0; i < response.size(); i++){
-
-            if(response.get(i).getVocabulary().equals("haus"))
-            {
-                Assert.assertEquals(Integer.valueOf(2), response.get(i).getRating());
-            }
-        }
-        assertFalse(true);
     }
 
    //HELPER
