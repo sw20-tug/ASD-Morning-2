@@ -29,13 +29,13 @@
 }
 
 .test_active_wrapper {
-    width: 90%;
+    width: 92%;
     margin: 0 auto;
 }
 
 .test_active_vocabulary_display {
     max-width: 40rem;
-    margin: 2rem auto 2rem auto;
+    margin: 2rem auto 0.5rem auto;
     padding: 0;
     text-align: center;
     text-overflow: inherit;
@@ -43,9 +43,9 @@
 }
 
 .test_active_result_message {
-    font-size: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
     text-align: center;
-    margin: 0 auto;
 }
 
 .test_active_input {
@@ -54,6 +54,11 @@
 }
 
 .test_active_submit_wrapper {
-    margin: 0 auto;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.test_active_accuracy {
+    visibility: visible;
     text-align: center;
 }

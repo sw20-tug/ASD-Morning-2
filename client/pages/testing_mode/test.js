@@ -4,9 +4,12 @@ import { Form, Card } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import fetch from 'isomorphic-unfetch';
 
+// render() always renders anew after setState
+
 class RandomTest extends React.Component {
   constructor(props) {
     super(props);
+    console.log("URL Query: ", this.props.query);
 
     this.state = {
       vocabulary: [],
@@ -17,8 +20,9 @@ class RandomTest extends React.Component {
       repetitions: this.props.query.repetitions,
       test_index: 0,
       current_vocab: "",
-      translation_vocab: "",
-      result_message: " "
+      current_translation_vocab: "",
+      result_message: " ",
+      accuracy: 0
     };
 
     this.buildTest();
@@ -35,11 +39,33 @@ class RandomTest extends React.Component {
       .then((response) => response.json())
       .then((data) => { this.state.vocabulary = data; })
       .then(() => { 
-        this.setState({ current_vocab: this.state.vocabulary[this.state.test_index].vocabulary.toString() })
+        this.setState({ 
+          current_vocab: this.getCurrentVocab(), 
+          current_tested_vocab: this.getCurrentTestedVocab() })
       })
       .catch((error) => {
         alert("Oops, I messed up something. ", error);
       });
+  }
+
+  getCurrentVocab() {
+    if (this.state.given_language == "German") {
+      return this.state.vocabulary[this.state.test_index].translations.DE
+    } else if (this.state.given_language == "English") {
+      return this.state.vocabulary[this.state.test_index].translations.EN
+    } else {
+      return this.state.vocabulary[this.state.test_index].translations.FR
+    }
+  }
+
+  getCurrentTestedVocab() {
+    if (this.state.tested_language == "German") {
+      return this.state.vocabulary[this.state.test_index].translations.DE
+    } else if (this.state.tested_language == "English") {
+      return this.state.vocabulary[this.state.test_index].translations.EN
+    } else {
+      return this.state.vocabulary[this.state.test_index].translations.FR
+    }
   }
 
   setLanguages() {
@@ -64,7 +90,7 @@ class RandomTest extends React.Component {
   }
 
   renderLog() {
-    console.log("Render method fired again!");
+    console.log("Render method fired!");
   }
 
   render() {
@@ -82,7 +108,7 @@ class RandomTest extends React.Component {
           </div>
 
           <div className="test_active_result_message">
-            { this.state.result_message }
+            { this.state.result_message } Correct! / Wrong! Translation: { this.state.current_tested_vocab }
           </div>
           
           <Form.Group className="test_active_input">
@@ -98,6 +124,10 @@ class RandomTest extends React.Component {
           <div className="test_active_submit_wrapper">
             <Button variant="outline-primary" style={{ marginLeft: "10px", paddingLeft: "0.4rem", paddingRight: "0.4rem", paddingTop: "0.1rem", paddingBottom: "0.1rem" }}> Check </Button>
             <Button variant="outline-primary" style={{ marginLeft: "10px", paddingLeft: "0.4rem", paddingRight: "0.4rem", paddingTop: "0.1rem", paddingBottom: "0.1rem" }}> Continue </Button>
+          </div>
+
+          <div className="test_active_accuracy">
+            Accuracy: { this.state.accuracy }%
           </div>
         </div>
       </main>
