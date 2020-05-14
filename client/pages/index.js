@@ -15,29 +15,30 @@ const Home = () => (
             <Link href="/vocabulary">
               <a className="card">
                 <h3>Vocabulary Overview</h3>
-                <p>View and Edit your Vocabulary</p>
+                <p>View, edit, and add to your vocabulary!</p>
               </a>
             </Link>
 
             <Link href="/study_interface">
               <a className="card">
                 <h3> Study Interface </h3>
-                <p> Start learning your Vocabulary</p>
+                <p>Start learning all the vocabulary!</p>
               </a>
             </Link>
 
             <Link href="/testing_mode">
               <a className="card">
-                <h3>Testing Mod &rarr;</h3>
+      	        <h3>Testing Mode</h3>
                 <p>Test your current skills! </p>
               </a>
             </Link>
 
-            <a className="card">
-              <h3> Next Feature &rarr;</h3>
-              <p>
-              </p>
-            </a>
+            <Link href="/">
+              <a className="card">
+                <h3>Next Feature</h3>
+                <p>Work in Progress</p>
+              </a>
+            </Link>
           </div>
         </main>
       </div>
