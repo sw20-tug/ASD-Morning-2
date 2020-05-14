@@ -42,7 +42,18 @@
     font-size: 2.2rem;
 }
 
+.test_active_result_message {
+    font-size: 0.5rem;
+    text-align: center;
+    margin: 0 auto;
+}
+
 .test_active_input {
     margin: 0 auto;
     max-width: 20rem;
+}
+
+.test_active_submit_wrapper {
+    margin: 0 auto;
+    text-align: center;
 }
