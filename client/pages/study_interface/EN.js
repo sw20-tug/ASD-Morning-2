@@ -15,10 +15,19 @@ class StudyInterface extends React.Component {
         };
     }
 
-    async componentDidMount() {
-        const data = await fetch('http://localhost:8080/api/vocabulary')
-        const json = await data.json()
-        this.setState({ vocabulary: json })
+    async componentDidMount(args = "b") {
+        if(args == "b")
+        {
+            const data = await fetch('http://localhost:8080/api/vocabulary')
+            const json = await data.json()
+            this.setState({vocabulary: json})            
+        }
+        else if(args == "a" || args == "z")
+        {
+            const data = await fetch('http://localhost:8080/api/vocabulary/alphabetically/EN/' + args)
+            const json = await data.json()
+            this.setState({vocabulary: json})
+        }
     }
 
     render() {
@@ -40,7 +49,10 @@ class StudyInterface extends React.Component {
                     <table className="table">
                         <thead>
                             <tr>
-                                <th scope="col">Vocabulary</th>
+                                <th scope="col">Vocabulary
+                                    <button type="submit" onClick={() => {this.componentDidMount("a")}} class="btn btn-outline-dark filter_buttons"  >Up</button>
+                                    <button type="submit" onClick={() => {this.componentDidMount("z")}} class="btn btn-outline-dark filter_buttons" >Down</button>
+                                </th>
                                 <th scope="col">Translations</th>
                             </tr>
                         </thead>

@@ -2,21 +2,22 @@ package at.tugraz.asd.LANG.Controller;
 
 
 import at.tugraz.asd.LANG.Exeptions.EditFail;
-import at.tugraz.asd.LANG.Exeptions.RatingFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
-import at.tugraz.asd.LANG.Messages.in.RatingVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.out.TranslationOut;
 import at.tugraz.asd.LANG.Messages.out.VocabularyLanguageOut;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
 import at.tugraz.asd.LANG.Service.VocabularyService;
+import org.apache.logging.log4j.util.PropertySource;
+import org.hibernate.usertype.UserVersionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @CrossOrigin("*")
 @RestController
@@ -30,6 +31,13 @@ public class VocabularyController {
     public ResponseEntity addVocabulary(@RequestBody CreateVocabularyMessageIn msg){
         service.saveVocabulary(msg);
         return ResponseEntity.ok(null);
+    }
+
+    @GetMapping (path = "/topics")
+    @ResponseBody
+    public ResponseEntity getAllTopics()
+    {
+        return ResponseEntity.ok(service.getAllTopics());
     }
 
     @GetMapping
@@ -83,28 +91,33 @@ public class VocabularyController {
     @ResponseBody
     public ResponseEntity getAllVocabularyAlphabetically1(@PathVariable("aORz")String aOrz){
         ArrayList<VocabularyOut> ret = new ArrayList<>();
-        List<VocabularyModel> vocab = service.getAllVocabulary();
-
+        List<VocabularyModel> vocab = service.sortVocabOverview(aOrz);
         if(vocab.isEmpty())
             return ResponseEntity.noContent().build();
-        if(aOrz.equals("a"))
-        {
-            vocab.sort(new Comparator<VocabularyModel>() {
-                @Override
-                public int compare(VocabularyModel vocabularyModel, VocabularyModel t1) {
-                    return vocabularyModel.getVocabulary().compareTo(t1.getVocabulary());
-                }
+
+        vocab.forEach(el->{
+            HashMap<Languages, String> translation = new HashMap<>();
+            el.getTranslationVocabMapping().forEach(translationModel -> {
+                translation.put(translationModel.getLanguage(), translationModel.getVocabulary());
             });
-        }
-        if(aOrz.equals("z"))
-        {
-            vocab.sort(new Comparator<VocabularyModel>() {
-                @Override
-                public int compare(VocabularyModel vocabularyModel, VocabularyModel t1) {
-                    return t1.getVocabulary().compareTo(vocabularyModel.getVocabulary());
-                }
-            });
-        }
+            ret.add(new VocabularyOut(
+                    el.getTopic(),
+                    el.getVocabulary(),
+                    translation,
+                    el.getRating()
+            ));
+        });
+        return ResponseEntity.ok(ret);
+    }
+
+    @GetMapping (path = "alphabetically/{Language}/{aORz}")
+    @ResponseBody
+    public ResponseEntity getAllVocabularyAlphabetically2(@PathVariable("Language")Languages language, @PathVariable("aORz")String aOrz){
+        ArrayList<VocabularyOut> ret = new ArrayList<>();
+        List<VocabularyModel> vocab = service.sortVocabStudyInterface(language,aOrz);
+        if(vocab.isEmpty())
+            return ResponseEntity.noContent().build();
+
         vocab.forEach(el->{
             HashMap<Languages, String> translation = new HashMap<>();
             el.getTranslationVocabMapping().forEach(translationModel -> {
