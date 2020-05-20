@@ -39,6 +39,7 @@ class StudyInterface extends React.Component {
                 <h1 className="title">
                     Study Interface
                 </h1>
+                
                 <p className="description">
                     Test your knowlegde about the French language!
                 </p>
