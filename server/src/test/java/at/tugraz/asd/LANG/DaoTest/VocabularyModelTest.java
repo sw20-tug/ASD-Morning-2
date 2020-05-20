@@ -57,4 +57,5 @@ public class VocabularyModelTest {
         List<VocabularyModel> new_list = vocabularyRepo.findAll();
         Assert.assertEquals(1, new_list.size());
     }
+
 }
