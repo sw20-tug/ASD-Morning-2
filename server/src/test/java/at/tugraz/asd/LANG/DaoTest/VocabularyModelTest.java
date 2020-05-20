@@ -37,7 +37,7 @@ public class VocabularyModelTest {
         translation.put(Languages.FR, "maison");
         translation.put(Languages.EN, "house");
 
-        CreateVocabularyMessageIn msg = new CreateVocabularyMessageIn("haus", translation);
+        CreateVocabularyMessageIn msg = new CreateVocabularyMessageIn("haus", Topic.Home ,translation);
         Map<Languages, String> translations = msg.getTranslations();
         String vocab = msg.getVocabulary();
 

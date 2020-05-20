@@ -5,6 +5,7 @@ import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Exeptions.RatingFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.out.GetAllTopicsOut;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.TranslationModel;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
@@ -30,6 +31,7 @@ public class VocabularyService {
     public VocabularyModel saveVocabulary(CreateVocabularyMessageIn msg){
         Map<Languages, String> translations = msg.getTranslations();
         String vocabulary = msg.getVocabulary();
+        Topic topic = msg.getTopic();
 
         List<TranslationModel> translationModels = new ArrayList<>();
         translations.forEach((k,v)->{
@@ -38,7 +40,7 @@ public class VocabularyService {
             translationRepo.save(translationModel);
         });
 
-        VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, vocabulary, translationModels, Integer.valueOf(0));
+        VocabularyModel vocabularyModel = new VocabularyModel(topic, vocabulary, translationModels, Integer.valueOf(0));
         vocabularyRepo.save(vocabularyModel);
         return vocabularyModel;
     }
@@ -184,5 +186,13 @@ public class VocabularyService {
             });
         }
         return vocab;
+    }
+
+    public GetAllTopicsOut getAllTopics()
+    {
+        Topic[] topics = Topic.class.getEnumConstants();
+        List<Topic> list = Arrays.asList(topics);
+        GetAllTopicsOut ret = new GetAllTopicsOut(list);
+        return ret;
     }
 }
