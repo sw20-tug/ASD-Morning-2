@@ -80,12 +80,11 @@ public class VocabularyService {
         return ret[0];
     }
 
-    public void editVocabulary(EditVocabularyMessageIn msg) throws EditFail {
+    public VocabularyModel editVocabulary(EditVocabularyMessageIn msg) throws EditFail {
         //TODO change so we can edit many times
         //vocabularyRepo.equals(msg.getCurrent_translations());
-        AtomicInteger success = new AtomicInteger();
-        success.set(0);
-        msg.getCurrent_translations().values().forEach(v -> {
+
+        for(var v : msg.getNew_translations().values()) {
             if (!(v.isEmpty())) {
                 VocabularyModel toUpdate = vocabularyRepo.findByVocabulary(v);
                 if (toUpdate != null) {
@@ -99,13 +98,9 @@ public class VocabularyService {
                     toUpdate.setVocabulary(msg.getNew_translations().get(Languages.DE));
                     toUpdate.setTranslationVocabMapping(translationModels_new);
                     toUpdate.setRating(msg.getRating());
-                    vocabularyRepo.save(toUpdate);
-                    success.set(1);
+                    return vocabularyRepo.save(toUpdate);
                 }
             }
-        });
-        if (success.get() == 1) {
-            return;
         }
         throw new EditFail();
     }
