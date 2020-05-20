@@ -128,6 +128,7 @@ class AddVocabulary extends React.Component {
             translationsDE: '',
             translationsEN: '',
             translationsFR: '',
+            tmpLanguage: ''
         };
     };
 
@@ -155,6 +156,19 @@ class AddVocabulary extends React.Component {
             return -1;
         }
         else{
+            console.log(this.state.tmpLanguage);
+            if(this.state.tmpLanguage == 'DE')
+            {
+                this.state.vocabulary = this.state.translationsDE;
+            }
+            if(this.state.tmpLanguage == 'FR')
+            {
+                this.state.vocabulary = this.state.translationsFR;
+            }
+            if(this.state.tmpLanguage == 'EN')
+            {
+                this.state.vocabulary = this.state.translationsEN;
+            } 
             return JSON.stringify({
                 vocabulary: this.state.vocabulary,
                 translations: {
@@ -166,20 +180,6 @@ class AddVocabulary extends React.Component {
         }
         
     }
-    handleChange_Vocabulary = (e) => {
-        if(e.target.value == 'DE')
-        {
-            this.setState({ vocabulary: this.state.translationsDE });
-        }
-        if(e.target.value == 'FR')
-        {
-            this.setState({ vocabulary: this.state.translationsFR });
-        }
-        if(e.target.value == 'EN')
-        {
-            this.setState({ vocabulary: this.state.translationsEN });
-        } 
-    }
     handleChange_DE = (e) => {
         this.setState({translationsDE: e.target.value});
     }
@@ -188,6 +188,9 @@ class AddVocabulary extends React.Component {
     }
     handleChange_FR = (e) => {
         this.setState({translationsFR: e.target.value});
+    }
+    handleChange_Language= (e) => {
+        this.setState({tmpLanguage: e.target.value});
     }
 
  
@@ -198,7 +201,7 @@ class AddVocabulary extends React.Component {
                     <h2>
                         Add Vocabulary
                     </h2>
-                    <Form.Group style={{ width: 220 }} controlId="select_language" onChange={this.handleChange_Vocabulary}>
+                    <Form.Group style={{ width: 220 }} controlId="select_language" onChange={this.handleChange_Language}>
                         <select variant="primary"  name="translation_language">
                             <option value="sel_lang">Select language of key vocabulary</option>
                             <option value="DE">German</option>
@@ -226,10 +229,6 @@ class AddVocabulary extends React.Component {
                             </InputGroup.Prepend>
                             <FormControl type="text" name="FR" onChange={ this.handleChange_FR } aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                         </InputGroup>
-
-                        <InputGroup  size="sm" className="mb-3">
-                           <Rating onChange={this.rate} initialRating={this.state.initialRating} fractions="1"/>
-                        </InputGroup>
                     
                     </Form.Group>
                     <hr/>
@@ -238,7 +237,7 @@ class AddVocabulary extends React.Component {
                             <Button variant="primary">Return</Button>
                         </Link>
                         <Button type="button" onClick={ this.sendData } variant="primary" disabled = {!this.state.translationsDE || 
-                            !this.state.translationsEN ||!this.state.translationsFR || !this.state.vocabulary}>Add new Vocabulary</Button>
+                            !this.state.translationsEN ||!this.state.translationsFR || !this.state.tmpLanguage}>Add new Vocabulary</Button>
                     </div>
                 </Form.Group>
             </main>
