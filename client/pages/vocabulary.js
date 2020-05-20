@@ -55,7 +55,7 @@ class VocabularyOverview extends React.Component {
                                 
                                 <th scope="col">Topic</th>
                                 <th scope="col">Translations</th>
-                                <th className="test_col" scope="col">test</th>
+                                <th className="test_col" scope="col"></th>
                             </tr>
                             </thead>
                             <tbody>

@@ -109,6 +109,11 @@ class EditVocabulary extends React.Component {
                             </InputGroup.Prepend>
                             <FormControl type="text" name="FR" onChange={ this.handleChange } defaultValue={this.props.query.fr} aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
                         </InputGroup>
+
+                        <InputGroup  size="sm" className="mb-3">
+                           <Rating onChange={this.rate} initialRating={this.state.initialRating} fractions="1"/>
+                        </InputGroup>
+                    
                     </Form.Group>
                     <hr/>
                     <div className="edit_button_wrap">
