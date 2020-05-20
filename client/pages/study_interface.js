@@ -1,40 +1,41 @@
-import { Container, Row, Col, Button } from 'react-bootstrap';
 import fetch from 'isomorphic-unfetch';
-import Link from 'next/link'
 
-function Vocabulary(props) {
+import { Container, Button, useRouter, Link} from "next/app";
+import { DropdownButton, Dropdown } from "react-bootstrap";
+
+
+class StudyInterface extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            vocabulary: []
+        };
+    }
+
+async componentDidMount() {
+    const data = await fetch('http://localhost:8080/api/vocabulary')
+    const json = await data.json()
+    this.setState({ vocabulary: json })
+}
+
+render() {
     return (
+        <main>
+            <h1 className="title">
+                Study Interface
+                </h1>
+            <p>
+            </p>
             <Container>
-                <main>
-                    <h1 className="title">
-                        Study Interface
-                    </h1>
-
-                    <p className="description">
-                        Train your Vocabulary
-                    </p>
-                </main>
-                <ul>
-                    {props.shows.map(show => (
-                        <li key={show.id}>
-                            <Link href="/p/[id]" as={`/p/${show.id}`}>
-                                <a>{show.name}</a>
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
+                <DropdownButton id="dropdown-basic-button" title="Select your Language">
+                    <Dropdown.Item href="/study_interface/DE" >German</Dropdown.Item>
+                    <Dropdown.Item href="/study_interface/EN">English</Dropdown.Item>
+                    <Dropdown.Item href="/study_interface/FR" >French</Dropdown.Item>
+                </DropdownButton>
             </Container>
+        </main>
     );
 }
-Vocabulary.getInitialProps = async function () {
-    const res = await fetch('https://api.tvmaze.com/search/shows?q=batman');
-    const data = await res.json();
-
-    console.log(data);
-
-    return {
-        shows: data.map(entry => entry.show)
-    };
 }
 
-export default Vocabulary
+export default StudyInterface;
