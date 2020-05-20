@@ -1,0 +1,64 @@
+.testing_headline {
+    font-size: 2rem;
+    margin: 1rem auto 1rem auto;
+    padding: 0 1rem;
+    text-overflow: inherit;
+    text-align: center;
+    line-height: 2rem;
+}
+
+.testing_lang_choice_container {
+    margin: 1rem auto;
+    display: inline-flex;
+}
+
+.testing_lang_choice_dropdown_item {
+    padding: 0 0.5rem;
+}
+
+.testing_repetitions_choice_container {
+    margin: 0 auto;
+    padding: 0 1rem;
+    text-align: center;
+}
+
+.test_active_headline {
+    font-size: 1.5rem;
+    margin: 0.1rem auto 0.1rem auto;
+    text-align: center;
+}
+
+.test_active_wrapper {
+    width: 92%;
+    margin: 0 auto;
+}
+
+.test_active_vocabulary_display {
+    max-width: 40rem;
+    margin: 2rem auto 0.5rem auto;
+    padding: 0;
+    text-align: center;
+    text-overflow: inherit;
+    font-size: 2.2rem;
+}
+
+.test_active_result_message {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.test_active_input {
+    margin: 0 auto;
+    max-width: 20rem;
+}
+
+.test_active_submit_wrapper {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.test_active_accuracy {
+    visibility: visible;
+    text-align: center;
+}

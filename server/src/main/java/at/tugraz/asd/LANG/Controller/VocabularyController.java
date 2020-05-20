@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/api/vocabulary")
@@ -46,7 +45,8 @@ public class VocabularyController {
             ret.add(new VocabularyOut(
                     el.getTopic(),
                     el.getVocabulary(),
-                    translation
+                    translation,
+                    el.getRating()
             ));
         });
         return ResponseEntity.ok(ret);
@@ -111,7 +111,8 @@ public class VocabularyController {
             ret.add(new VocabularyOut(
                     el.getTopic(),
                     el.getVocabulary(),
-                    translation
+                    translation,
+                    el.getRating()
             ));
         });
         return ResponseEntity.ok(ret);
@@ -148,7 +149,9 @@ public class VocabularyController {
             ret.add(new VocabularyOut(
                     el.getTopic(),
                     el.getVocabulary(),
-                    translation
+                    translation,
+                    el.getRating()
+
             ));
         });
 
