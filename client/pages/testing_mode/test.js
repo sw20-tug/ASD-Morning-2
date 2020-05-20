@@ -4,6 +4,7 @@ import { Form, Card } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import React, { Component } from 'react';
 import fetch from 'isomorphic-unfetch';
+import Link from 'next/link'
 
 // render() always renders anew after setState
 
@@ -21,6 +22,7 @@ class RandomTest extends React.Component {
     this.calculateAccuracy = this.calculateAccuracy.bind(this);
 
     this.state = {
+      items:[],
       vocabulary: [],
       given_language: this.props.query.given_language,
       tested_language: this.props.query.tested_language,
@@ -40,7 +42,8 @@ class RandomTest extends React.Component {
       list_size: 10, 
       correct_words : 0, 
       num_tested_words : 0, 
-      incorrect_words_visibility: "test_active_incorrect_words_list_active"
+      incorrect_words_visibility: "test_active_incorrect_words_list_active", 
+      interface_visibility: "test_active_wrapper"
     };
 
     this.buildTest();
@@ -208,6 +211,7 @@ class RandomTest extends React.Component {
   finishTest() {
       console.log("finish Test!!!");
       this.setState({
+          interface_visibility: "test_active_wrapper_finish",
           incorrect_words_visibility : "test_active_incorrect_words_list_finish"
       })
   }
@@ -226,6 +230,22 @@ class RandomTest extends React.Component {
       this.state.answer = target.value;
       console.log("answer: ", this.state.answer);
   }
+
+  createTable(){
+    let table = []
+
+    // Outer loop to create parent
+    this.state.vocabulary_list.forEach((value, key,map) => {
+      let children = []
+      children.push(<td>{`${key}`}</td>)
+      children.push(<td>{`${value.value}`}</td>)
+    
+      //Create the parent and add the children
+      table.push(<tr>{children}</tr>)
+    })
+    return table
+    
+  }
   
   render() {
     this.renderLog();
@@ -234,7 +254,7 @@ class RandomTest extends React.Component {
         <div className="test_active_headline">
             Test your knowledge!
         </div>
-        <div className="test_active_wrapper">
+        <div className={this.state.interface_visibility}>
             <div>
                 <Card className={ this.state.vocabulary_display_card }>
                 <Card.Body>{ this.state.current_vocab }</Card.Body>
@@ -267,18 +287,27 @@ class RandomTest extends React.Component {
             <div className="test_active_accuracy">
                 Accuracy: { this.state.accuracy }%
             </div>
-
+            </div>
             <div className={this.state.incorrect_words_visibility}>
-                <table className="">
+                <table className="table">
                 <thead>
                     <tr>
-
+                        <th scope="col">Vocabulary</th>
+                        <th scope="col">Wrong</th>
                     </tr>
                 </thead>
+                <tbody>
+                     {this.createTable()}
+                    
+                </tbody>
                 </table>
-
+                <div className="test_active_submit_wrapper">
+                <Link href="/testing_mode">
+                <Button variant="outline-primary"> Finish </Button>
+                </Link>
+                </div>
             </div>
-        </div>
+            
       </main>
     );
   }
@@ -309,5 +338,6 @@ Check ob 1:
 
 Tier
 .
-
+                          //</table>this.state.items.push(<td key={key}>{key}</td>)
+                          //</div>this.state.items.push(<td key={value}>{map.get(key).value}</td>
 */

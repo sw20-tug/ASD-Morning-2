@@ -32,6 +32,11 @@
     width: 92%;
     margin: 0 auto;
 }
+.test_active_wrapper_finish {
+    width: 92%;
+    margin: 0 auto;
+    display: none;
+}
 
 .test_active_vocabulary_display {
     max-width: 40rem;
@@ -107,12 +112,4 @@
 
 .test_active_incorrect_words_list_finish {
     visibility: visible;
-}
-
-.test_active_main_test_active {
-    visibility: visible;
-}
-
-.test_active_main_test_finish {
-    visibility: hidden;
 }
