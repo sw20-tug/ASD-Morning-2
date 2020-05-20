@@ -110,4 +110,5 @@ public class VocabularyService {
         }
         throw new EditFail();
     }
+
 }
