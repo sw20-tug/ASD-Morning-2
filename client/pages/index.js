@@ -32,7 +32,12 @@ const Home = () => (
                 <p>Test your current skills! </p>
               </a>
             </Link>
-
+            <Link href="/export">
+              <a className="card">
+                <h3>Export</h3>
+                <p>Export/Import your vocabularies</p>
+              </a>
+            </Link>
             <Link href="/">
               <a className="card">
                 <h3>Next Feature</h3>
