@@ -1,6 +1,6 @@
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
-import Rating from 'react-rating'
+import Rating from 'react-rating';
 import { Form } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Link from 'next/link';

@@ -42,10 +42,46 @@
     font-size: 2.2rem;
 }
 
+.test_active_vocabulary_display_correct {
+    max-width: 40rem;
+    margin: 2rem auto 0.5rem auto;
+    padding: 0;
+    text-align: center;
+    text-overflow: inherit;
+    font-size: 2.2rem;
+    border-color: green;
+    color: green;
+}
+
+.test_active_vocabulary_display_incorrect {
+    max-width: 40rem;
+    margin: 2rem auto 0.5rem auto;
+    padding: 0;
+    text-align: center;
+    text-overflow: inherit;
+    font-size: 2.2rem;
+    border-color: red;
+    color: red;
+}
+
 .test_active_result_message {
     margin-bottom: 1.5rem;
     font-size: 1rem;
     text-align: center;
+}
+
+.test_active_result_message_correct {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    text-align: center;
+    color: green;
+}
+
+.test_active_result_message_incorrect {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    text-align: center;
+    color: red;
 }
 
 .test_active_input {
@@ -56,9 +92,27 @@
 .test_active_submit_wrapper {
     margin-bottom: 1rem;
     text-align: center;
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
 }
 
 .test_active_accuracy {
     visibility: visible;
     text-align: center;
+}
+
+.test_active_incorrect_words_list_active {
+    visibility: hidden;
+}
+
+.test_active_incorrect_words_list_finish {
+    visibility: visible;
+}
+
+.test_active_main_test_active {
+    visibility: visible;
+}
+
+.test_active_main_test_finish {
+    visibility: hidden;
 }
