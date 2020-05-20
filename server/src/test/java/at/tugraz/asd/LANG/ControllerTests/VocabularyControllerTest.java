@@ -54,14 +54,14 @@ public class VocabularyControllerTest {
         translation.put(Languages.DE, "haus");
         translation.put(Languages.FR, "maison");
         translation.put(Languages.EN, "house");
-        CreateVocabularyMessageIn msg = new CreateVocabularyMessageIn("haus", translation);
+        CreateVocabularyMessageIn msg = new CreateVocabularyMessageIn("haus", Topic.Home ,translation);
 
         //create expected return value
         List<TranslationModel> translations = new ArrayList<>();
         translations.add(new TranslationModel(Languages.DE,"haus"));
         translations.add(new TranslationModel(Languages.FR,"maison"));
         translations.add(new TranslationModel(Languages.DE,"house"));
-        VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED,"haus",translations, 0);
+        VocabularyModel vocabularyModel = new VocabularyModel(Topic.Home,"haus",translations, 0);
 
         //define return value for service
         //given(service.saveVocabulary(msg)).willReturn(vocabularyModel);
@@ -96,14 +96,14 @@ public class VocabularyControllerTest {
         translation_1.put(Languages.DE, "haus");
         translation_1.put(Languages.FR, "maison");
         translation_1.put(Languages.EN, "house");
-        CreateVocabularyMessageIn msg_1 = new CreateVocabularyMessageIn("haus", translation_1);
+        CreateVocabularyMessageIn msg_1 = new CreateVocabularyMessageIn("haus", Topic.Home,translation_1);
 
         //create expected return value
         List<TranslationModel> translations_1 = new ArrayList<>();
         translations_1.add(new TranslationModel(Languages.DE,"haus"));
         translations_1.add(new TranslationModel(Languages.FR,"maison"));
         translations_1.add(new TranslationModel(Languages.DE,"house"));
-        VocabularyModel vocabularyModel_1 = new VocabularyModel(Topic.USER_GENERATED,"haus",translations_1, 0);
+        VocabularyModel vocabularyModel_1 = new VocabularyModel(Topic.Home,"haus",translations_1, 0);
 
 
         //perform save-call to endpoint
@@ -122,14 +122,14 @@ public class VocabularyControllerTest {
         translation_2.put(Languages.DE, "kind");
         translation_2.put(Languages.FR, "lekind");
         translation_2.put(Languages.EN, "child");
-        CreateVocabularyMessageIn msg_2 = new CreateVocabularyMessageIn("kind", translation_2);
+        CreateVocabularyMessageIn msg_2 = new CreateVocabularyMessageIn("kind", Topic.Human ,translation_2);
 
         //create expected return value
         List<TranslationModel> translations_2 = new ArrayList<>();
         translations_2.add(new TranslationModel(Languages.DE,"kind"));
         translations_2.add(new TranslationModel(Languages.FR,"lekind"));
         translations_2.add(new TranslationModel(Languages.DE,"child"));
-        VocabularyModel vocabularyModel_2 = new VocabularyModel(Topic.USER_GENERATED,"kind",translations_2, 0);
+        VocabularyModel vocabularyModel_2 = new VocabularyModel(Topic.Human,"kind",translations_2, 0);
 
 
         //perform save-call to endpoint
