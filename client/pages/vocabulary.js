@@ -18,7 +18,8 @@ class VocabularyOverview extends React.Component {
         {
             const data = await fetch('http://localhost:8080/api/vocabulary')
             const json = await data.json()
-            this.setState({vocabulary: json})            
+            this.setState({vocabulary: json}) 
+            console.log(this.state.vocabulary)           
         }
         else if(args == "a" || args == "z")
         {
