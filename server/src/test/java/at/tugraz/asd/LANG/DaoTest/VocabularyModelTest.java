@@ -58,7 +58,4 @@ public class VocabularyModelTest {
         Assert.assertEquals(1, new_list.size());
     }
 
-    public void rateVocabulary(){
-
-    }
 }

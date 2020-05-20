@@ -13,6 +13,7 @@ import at.tugraz.asd.LANG.Service.VocabularyService;
 import at.tugraz.asd.LANG.Topic;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,6 +56,7 @@ public class VocabularyControllerTest {
 
     @MockBean
     private VocabularyService service;
+
 
 
     @Test
@@ -156,7 +158,7 @@ public class VocabularyControllerTest {
 
 
    @Test
-   public void testGetAllVocabulary() throws Exception {
+   public void testGetAllVocabularyFail() throws Exception {
        List<TranslationModel> translations_1 = new ArrayList<>();
        translations_1.add(new TranslationModel(Languages.DE,"haus"));
        translations_1.add(new TranslationModel(Languages.FR,"maison"));
@@ -194,9 +196,8 @@ public class VocabularyControllerTest {
    }
 
 
-
     @Test
-    public void testControllerEdit() throws Exception {
+    public void testEdit() throws Exception {
 
         doAnswer(new Answer<Void>() {
             @Override
@@ -214,7 +215,7 @@ public class VocabularyControllerTest {
     }
 
     @Test
-   public void testEdit_fails() throws Exception {
+   public void testEditFail() throws Exception {
         doThrow(EditFail.class).when(service).editVocabulary(any());
 
         mvc.perform(put("/api/vocabulary")
