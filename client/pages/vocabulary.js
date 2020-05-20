@@ -71,10 +71,11 @@ class VocabularyOverview extends React.Component {
                                             </td>
                                             <td>
                                                 {console.log(element.translations)}
-                                                <Link href={{ pathname: 'edit_vocabulary', query: { 
+                                                <Link href={{ pathname: 'edit_vocabulary', query: {
                                                     de: element.translations.DE, 
                                                     en: element.translations.EN, 
-                                                    fr: element.translations.FR }}}>
+                                                    fr: element.translations.FR,
+                                                    rating: element.rating}}}>
                                                     <Button variant="outline-primary">Edit</Button>
                                                 </Link>
                                             </td>

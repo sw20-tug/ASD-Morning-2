@@ -2,9 +2,11 @@ package at.tugraz.asd.LANG.Controller;
 
 
 import at.tugraz.asd.LANG.Exeptions.EditFail;
+import at.tugraz.asd.LANG.Exeptions.RatingFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.in.RatingVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.out.TranslationOut;
 import at.tugraz.asd.LANG.Messages.out.VocabularyLanguageOut;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-
 
 @CrossOrigin("*")
 @RestController
@@ -49,7 +50,8 @@ public class VocabularyController {
             ret.add(new VocabularyOut(
                     el.getTopic(),
                     el.getVocabulary(),
-                    translation
+                    translation,
+                    el.getRating()
             ));
         });
         return ResponseEntity.ok(ret);
@@ -96,7 +98,8 @@ public class VocabularyController {
             ret.add(new VocabularyOut(
                     el.getTopic(),
                     el.getVocabulary(),
-                    translation
+                    translation,
+                    el.getRating()
             ));
         });
         return ResponseEntity.ok(ret);
@@ -118,9 +121,50 @@ public class VocabularyController {
             ret.add(new VocabularyOut(
                     el.getTopic(),
                     el.getVocabulary(),
-                    translation
+                    translation,
+                    el.getRating()
             ));
         });
+        return ResponseEntity.ok(ret);
+    }
+
+    @GetMapping (path = "random")
+    @ResponseBody
+    public ResponseEntity getRandomVocabulary() {
+        int testSize = 10;      // change if test size varies in future issues
+        ArrayList<VocabularyOut> ret = new ArrayList<>();
+        List<VocabularyModel> randomVocab = new ArrayList<>();
+        Random rand = new Random();
+
+        List<VocabularyModel> vocab = service.getAllVocabulary();
+
+        // Check if vocab list exists and has enough vocabs
+        if(vocab.isEmpty() || vocab.size() < testSize)
+            return ResponseEntity.noContent().build();
+
+        // Select x amount of random vocabs from vocab list, and remove element from vocab list to avoid duplicates
+        for (int i = 0; i < testSize; i++) {
+            VocabularyModel randomVocabItem = vocab.get(rand.nextInt(vocab.size()));
+            randomVocab.add(randomVocabItem);
+            vocab.remove(randomVocabItem);
+        }
+        System.out.println("Random Vocabs are: " + randomVocab.toString());
+
+        // Build response
+        randomVocab.forEach(el->{
+            HashMap<Languages, String> translation = new HashMap<>();
+            el.getTranslationVocabMapping().forEach(
+                    translationModel -> translation.put(translationModel.getLanguage(), translationModel.getVocabulary())
+            );
+            ret.add(new VocabularyOut(
+                    el.getTopic(),
+                    el.getVocabulary(),
+                    translation,
+                    el.getRating()
+
+            ));
+        });
+
         return ResponseEntity.ok(ret);
     }
 }
