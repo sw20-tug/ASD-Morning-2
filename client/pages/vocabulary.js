@@ -13,12 +13,21 @@ class VocabularyOverview extends React.Component {
         };
     }
 
-    async componentDidMount() {
-        const data = await fetch('http://localhost:8080/api/vocabulary')
-        const json = await data.json()
-        this.setState({vocabulary: json})
+    async componentDidMount(args = "b") {
+        if(args == "b")
+        {
+            const data = await fetch('http://localhost:8080/api/vocabulary')
+            const json = await data.json()
+            this.setState({vocabulary: json}) 
+            console.log(this.state.vocabulary)           
+        }
+        else if(args == "a" || args == "z")
+        {
+            const data = await fetch('http://localhost:8080/api/vocabulary/alphabetically/' + args)
+            const json = await data.json()
+            this.setState({vocabulary: json})
+        }
     }
-
     render() {
         return (
                 <main>
@@ -39,10 +48,14 @@ class VocabularyOverview extends React.Component {
                         <table className="table">
                             <thead>
                             <tr>
-                                <th scope="col">Vocabulary</th>
+                            <th scope="col">Vocabulary
+                                <button type="submit" onClick={() => {this.componentDidMount("a")}} class="btn btn-outline-dark filter_buttons"  >Up</button>
+                                <button type="submit" onClick={() => {this.componentDidMount("z")}} class="btn btn-outline-dark filter_buttons" >Down</button>
+                                </th>
+                                
                                 <th scope="col">Topic</th>
                                 <th scope="col">Translations</th>
-                                <th className="test_col" scope="col">test</th>
+                                <th className="test_col" scope="col"></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -59,10 +72,11 @@ class VocabularyOverview extends React.Component {
                                             </td>
                                             <td>
                                                 {console.log(element.translations)}
-                                                <Link href={{ pathname: 'edit_vocabulary', query: { 
+                                                <Link href={{ pathname: 'edit_vocabulary', query: {
                                                     de: element.translations.DE, 
                                                     en: element.translations.EN, 
-                                                    fr: element.translations.FR }}}>
+                                                    fr: element.translations.FR,
+                                                    rating: element.rating}}}>
                                                     <Button variant="outline-primary">Edit</Button>
                                                 </Link>
                                             </td>
