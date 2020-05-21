@@ -2,10 +2,10 @@ package at.tugraz.asd.LANG.ControllerTests;
 
 
 import at.tugraz.asd.LANG.Controller.VocabularyController;
+import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
-import at.tugraz.asd.LANG.Messages.in.RatingVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.TranslationModel;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
@@ -13,27 +13,48 @@ import at.tugraz.asd.LANG.Service.VocabularyService;
 import at.tugraz.asd.LANG.Topic;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
+
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -43,8 +64,13 @@ public class VocabularyControllerTest {
     @Autowired
     private MockMvc mvc;
 
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
     @MockBean
     private VocabularyService service;
+
+
 
     @Test
     public void testAddVocabulary() throws Exception {
@@ -54,17 +80,19 @@ public class VocabularyControllerTest {
         translation.put(Languages.DE, "haus");
         translation.put(Languages.FR, "maison");
         translation.put(Languages.EN, "house");
-        CreateVocabularyMessageIn msg = new CreateVocabularyMessageIn("haus", translation);
+        CreateVocabularyMessageIn msg = new CreateVocabularyMessageIn("haus", Topic.Home ,translation);
 
         //create expected return value
         List<TranslationModel> translations = new ArrayList<>();
         translations.add(new TranslationModel(Languages.DE,"haus"));
         translations.add(new TranslationModel(Languages.FR,"maison"));
         translations.add(new TranslationModel(Languages.DE,"house"));
-        VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED,"haus",translations, 0);
+        VocabularyModel vocabularyModel = new VocabularyModel(Topic.Home,"haus",translations, 0);
 
-        //define return value for service
-        //given(service.saveVocabulary(msg)).willReturn(vocabularyModel);
+
+        when(service.saveVocabulary(msg)).thenReturn(
+                vocabularyModel
+        );
 
         //perform save-call to endpoint
         mvc.perform(post("/api/vocabulary")
@@ -72,22 +100,19 @@ public class VocabularyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-
-        //retrive added vocabulary
-        //define expected service action on get
-        List<VocabularyModel> ret = new ArrayList<>();
-        ret.add(vocabularyModel);
-        given(service.getAllVocabulary()).willReturn(ret);
+        //TODO @Lorenz assertions
     }
 
 
     @Test
     public void testGetAllVocabularyNoContentFound() throws Exception {
+        when(service.getAllVocabulary()).thenReturn(Collections.EMPTY_LIST);
         mvc.perform(get("/api/vocabulary")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
 
+    @Ignore
     @Test
     public void testAddManyVocabulary() throws Exception {
 
@@ -96,14 +121,14 @@ public class VocabularyControllerTest {
         translation_1.put(Languages.DE, "haus");
         translation_1.put(Languages.FR, "maison");
         translation_1.put(Languages.EN, "house");
-        CreateVocabularyMessageIn msg_1 = new CreateVocabularyMessageIn("haus", translation_1);
+        CreateVocabularyMessageIn msg_1 = new CreateVocabularyMessageIn("haus", Topic.Home,translation_1);
 
         //create expected return value
         List<TranslationModel> translations_1 = new ArrayList<>();
         translations_1.add(new TranslationModel(Languages.DE,"haus"));
         translations_1.add(new TranslationModel(Languages.FR,"maison"));
         translations_1.add(new TranslationModel(Languages.DE,"house"));
-        VocabularyModel vocabularyModel_1 = new VocabularyModel(Topic.USER_GENERATED,"haus",translations_1, 0);
+        VocabularyModel vocabularyModel_1 = new VocabularyModel(Topic.Home,"haus",translations_1, 0);
 
 
         //perform save-call to endpoint
@@ -122,14 +147,14 @@ public class VocabularyControllerTest {
         translation_2.put(Languages.DE, "kind");
         translation_2.put(Languages.FR, "lekind");
         translation_2.put(Languages.EN, "child");
-        CreateVocabularyMessageIn msg_2 = new CreateVocabularyMessageIn("kind", translation_2);
+        CreateVocabularyMessageIn msg_2 = new CreateVocabularyMessageIn("kind", Topic.Human ,translation_2);
 
         //create expected return value
         List<TranslationModel> translations_2 = new ArrayList<>();
         translations_2.add(new TranslationModel(Languages.DE,"kind"));
         translations_2.add(new TranslationModel(Languages.FR,"lekind"));
         translations_2.add(new TranslationModel(Languages.DE,"child"));
-        VocabularyModel vocabularyModel_2 = new VocabularyModel(Topic.USER_GENERATED,"kind",translations_2, 0);
+        VocabularyModel vocabularyModel_2 = new VocabularyModel(Topic.Human,"kind",translations_2, 0);
 
 
         //perform save-call to endpoint
@@ -146,9 +171,17 @@ public class VocabularyControllerTest {
 
 
    @Test
-   public void testGetAllVocabulary() throws Exception {
+   public void testGetAllVocabularyFail() throws Exception {
+       List<TranslationModel> translations_1 = new ArrayList<>();
+       translations_1.add(new TranslationModel(Languages.DE,"haus"));
+       translations_1.add(new TranslationModel(Languages.FR,"maison"));
+       translations_1.add(new TranslationModel(Languages.DE,"house"));
 
-       testAddVocabulary();
+       when(service.getAllVocabulary()).thenReturn(
+               Stream.of(
+                       new VocabularyModel(Topic.USER_GENERATED,"haus",translations_1, 0)
+              ).collect(Collectors.toList())
+      );
 
        String getResult = mvc.perform(get("/api/vocabulary/")
                .contentType(MediaType.APPLICATION_JSON))
@@ -177,73 +210,34 @@ public class VocabularyControllerTest {
 
 
     @Test
-    public void testEditValidVocabulary() throws Exception {
-      testAddVocabulary();
+    public void testEdit() throws Exception {
 
-      HashMap<Languages, String> current_translations = new HashMap<>();
-      current_translations.put(Languages.FR, "maison");
-      current_translations.put(Languages.EN, "house");
-      current_translations.put(Languages.DE, "haus");
-
-      HashMap<Languages, String> new_translations = new HashMap<>();
-      new_translations.put(Languages.FR, "villa");
-      new_translations.put(Languages.EN, "mansion");
-      new_translations.put(Languages.DE, "villa");
-
-      EditVocabularyMessageIn msg = new EditVocabularyMessageIn(current_translations, new_translations, 2);
-
-      mvc.perform(put("/api/vocabulary")
-          .content(asJsonString(msg))
-          .contentType(MediaType.APPLICATION_JSON))
-          .andExpect(status().isOk());
-
-
-    //Get Data
-    }
-/*
-    @Test
-    public void testEditNotExistingVocabulary() throws Exception
-    {
-        HashMap<Languages, String> current_translations = new HashMap<>();
-        current_translations.put(Languages.FR, "this");
-        current_translations.put(Languages.EN, "not");
-        current_translations.put(Languages.DE, "valid");
-
-        HashMap<Languages, String> new_translations = new HashMap<>();
-        new_translations.put(Languages.FR, "villa");
-        new_translations.put(Languages.EN, "mansion");
-        new_translations.put(Languages.DE, "villa");
-
-        EditVocabularyMessageIn msg = new EditVocabularyMessageIn(current_translations, new_translations);
+        doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return null;
+            }
+        }).when(service).editVocabulary(any());
 
         mvc.perform(put("/api/vocabulary")
-                .content(asJsonString(msg))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-*/
-    @Test
-    public void testRating() throws Exception {
-        testAddVocabulary();
-
-        HashMap<Languages, String> current_translations = new HashMap<>();
-        current_translations.put(Languages.FR, "maison");
-        current_translations.put(Languages.EN, "house");
-        current_translations.put(Languages.DE, "haus");
-
-        HashMap<Languages, String> new_translations = new HashMap<>();
-        new_translations.put(Languages.FR, "villa");
-        new_translations.put(Languages.EN, "mansion");
-        new_translations.put(Languages.DE, "villa");
-
-        EditVocabularyMessageIn msg = new EditVocabularyMessageIn(current_translations, new_translations, 5);
-
-        mvc.perform(put("/api/vocabulary")
-                .content(asJsonString(msg))
+                .content(asJsonString(new EditVocabularyMessageIn()))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        //assertion is done by andExpect
 
     }
+
+    @Test
+   public void testEditFail() throws Exception {
+        doThrow(EditFail.class).when(service).editVocabulary(any());
+
+        mvc.perform(put("/api/vocabulary")
+                .content(asJsonString(new EditVocabularyMessageIn()))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+        //assertion is done by andExpect
+
+   }
 
    //HELPER
    public static String asJsonString(final Object obj) {
@@ -253,5 +247,30 @@ public class VocabularyControllerTest {
            throw new RuntimeException(e);
        }
    }
+
+    @Test
+    public void exportBackup() throws Exception {
+
+        File backup = service.exportVocabulary();
+        Path path = Paths.get(backup.getAbsolutePath());
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+
+        mvc.perform(put("/api/vocabulary/Export")
+                .content(asJsonString(resource))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void ImportBackup() throws Exception {
+        MockMultipartFile csvFile = new MockMultipartFile("file", "backup.csv", MediaType.TEXT_PLAIN_VALUE, "backup.csv".getBytes());
+
+        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/import")
+                .file(csvFile)
+                .param("file"))
+                .andExpect(status().is(200))
+                .andExpect(content().string("success"));
+    }
 
 }
