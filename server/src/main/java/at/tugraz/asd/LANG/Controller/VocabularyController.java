@@ -12,6 +12,7 @@ import at.tugraz.asd.LANG.Model.VocabularyModel;
 import at.tugraz.asd.LANG.Service.VocabularyService;
 import org.apache.logging.log4j.util.PropertySource;
 import org.hibernate.usertype.UserVersionType;
+import at.tugraz.asd.LANG.Topic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
@@ -174,6 +175,32 @@ public class VocabularyController {
                     translation,
                     el.getRating()
 
+            ));
+        });
+
+        return ResponseEntity.ok(ret);
+    }
+
+    @GetMapping (path = "sort_topics/{Topic}")
+    @ResponseBody
+    public ResponseEntity sortByTopic(@PathVariable("Topic") Topic msg)
+    {
+        ArrayList<VocabularyOut> ret = new ArrayList<>();
+        List<VocabularyModel> vocab = service.sortTopics(msg);
+
+        if(vocab.isEmpty())
+            return ResponseEntity.noContent().build();
+
+        vocab.forEach(el->{
+            HashMap<Languages, String> translation = new HashMap<>();
+            el.getTranslationVocabMapping().forEach(translationModel -> {
+                translation.put(translationModel.getLanguage(), translationModel.getVocabulary());
+            });
+            ret.add(new VocabularyOut(
+                    el.getTopic(),
+                    el.getVocabulary(),
+                    translation,
+                    el.getRating()
             ));
         });
 
