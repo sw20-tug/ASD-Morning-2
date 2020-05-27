@@ -33,6 +33,13 @@ public class VocabularyController {
         return ResponseEntity.ok(null);
     }
 
+    @GetMapping (path = "/topics")
+    @ResponseBody
+    public ResponseEntity getAllTopics()
+    {
+        return ResponseEntity.ok(service.getAllTopics());
+    }
+
     @GetMapping
     @ResponseBody
     public ResponseEntity getAllVocabulary(){
