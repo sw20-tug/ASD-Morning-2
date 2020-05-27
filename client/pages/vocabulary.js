@@ -1,8 +1,6 @@
 import fetch from 'isomorphic-unfetch';
-import {Container} from "next/app";
 import Link from 'next/link'
 import Button from 'react-bootstrap/Button';
-import { Form, FormControl } from 'react-bootstrap';
 
 
 class VocabularyOverview extends React.Component {
@@ -38,19 +36,20 @@ class VocabularyOverview extends React.Component {
                         View and Edit your Vocabulary
                     </p>
 
-                    <div style={{ width: "100%", padding: "0.75rem", marginLeft: "2rem" }}>
+
+                    <div>
+                    <div style={{ width: "100%", padding: "0.75rem"}}>
                         <Link href="/add_vocabulary">
                             <Button variant="outline-primary">+</Button>
                         </Link>
                     </div>
 
-                    <Container>
                         <table className="table">
                             <thead>
                             <tr>
                             <th scope="col">Vocabulary
-                                <button type="submit" onClick={() => {this.componentDidMount("a")}} class="btn btn-outline-dark filter_buttons"  >Up</button>
-                                <button type="submit" onClick={() => {this.componentDidMount("z")}} class="btn btn-outline-dark filter_buttons" >Down</button>
+                                <button type="submit" onClick={() => {this.componentDidMount("a")}} className="btn btn-outline-dark filter_buttons" style={{marginLeft: "0.5rem"}} >Up</button>
+                                <button type="submit" onClick={() => {this.componentDidMount("z")}} className="btn btn-outline-dark filter_buttons" >Down</button>
                                 </th>
                                 
                                 <th scope="col">Topic</th>
@@ -86,7 +85,7 @@ class VocabularyOverview extends React.Component {
                             }
                             </tbody>
                         </table>
-                    </Container>
+                    </div>
 
                 </main>
         );

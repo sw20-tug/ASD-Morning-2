@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-unfetch';
-import { Container, Button, useRouter, Link} from "next/app";
+import { Button, useRouter, Link} from "next/app";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 
 
@@ -25,13 +25,13 @@ render() {
                 </h1>
             <p>
             </p>
-            <Container>
+            <div>
                 <DropdownButton id="dropdown-basic-button" title="Select your Language">
                     <Dropdown.Item href="/study_interface/DE" >German</Dropdown.Item>
                     <Dropdown.Item href="/study_interface/EN">English</Dropdown.Item>
                     <Dropdown.Item href="/study_interface/FR" >French</Dropdown.Item>
                 </DropdownButton>
-            </Container>
+            </div>
         </main>
     );
 }
