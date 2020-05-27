@@ -29,10 +29,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -54,8 +56,8 @@ import java.util.stream.Stream;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(VocabularyController.class)
@@ -238,6 +240,35 @@ public class VocabularyControllerTest {
         //assertion is done by andExpect
 
    }
+
+    @Test
+    public void testGetRandomVocabularyNoContentFound() throws Exception {
+        when(service.getAllVocabulary()).thenReturn(Collections.EMPTY_LIST);
+        mvc.perform(get("/api/random")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testGetRandomVocabulary() throws Exception {
+        List<TranslationModel> translations = new ArrayList<>();
+        List<VocabularyModel> randomVocabList = new ArrayList<>();
+        translations.add(new TranslationModel(Languages.DE, "Brot"));
+        translations.add(new TranslationModel(Languages.FR, "baguette"));
+        translations.add(new TranslationModel(Languages.EN, "bread"));
+
+        VocabularyModel randomVocab = new VocabularyModel(Topic.Food, "Brot", translations, Integer.valueOf(0));
+        for (int i = 0; i < 10; i++) {
+            randomVocabList.add(randomVocab);
+        }
+
+        given(service.getAllVocabulary()).willReturn(randomVocabList);
+        mvc.perform(get("/api/random")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(10)))
+                .andExpect((ResultMatcher) jsonPath("$[0].vocabulary", is(randomVocab.getVocabulary())));
+    }
 
    //HELPER
    public static String asJsonString(final Object obj) {
