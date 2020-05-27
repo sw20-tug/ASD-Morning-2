@@ -11,21 +11,13 @@ import at.tugraz.asd.LANG.Repo.VocabularyRepo;
 import at.tugraz.asd.LANG.Service.VocabularyService;
 import at.tugraz.asd.LANG.Topic;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.lang.reflect.Executable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +75,12 @@ public class VocabularyServiceTest {
 
     }
 
+    @Test
+    public void getAllVocabulary(){
+        when(vocabularyRepo.findAll()).thenReturn(getAllVocabularyMockData());
+        Assert.assertEquals(getAllVocabularyMockData(),service.getAllVocabulary());
+    }
+
     @Test(expected = EditFail.class)
     public void editTransationFails() throws EditFail {
        when(vocabularyRepo.findByVocabulary(any())).thenReturn(null);
@@ -96,6 +94,24 @@ public class VocabularyServiceTest {
 
 
     //Helper
+
+    private List<VocabularyModel> getAllVocabularyMockData() {
+        List<TranslationModel> translations = Stream.of(
+                new TranslationModel(Languages.DE,"bread"),
+                new TranslationModel(Languages.FR,"pain"),
+                new TranslationModel(Languages.DE,"brot")
+        ).collect(Collectors.toList());
+        VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, "brot", translations, Integer.valueOf(0));
+
+        List<TranslationModel> translations1 = Stream.of(
+                new TranslationModel(Languages.DE,"haus"),
+                new TranslationModel(Languages.FR,"maison"),
+                new TranslationModel(Languages.DE,"house")
+        ).collect(Collectors.toList());
+        VocabularyModel vocabularyModel1 = new VocabularyModel(Topic.USER_GENERATED, "haus", translations1, Integer.valueOf(0));
+        return Stream.of(vocabularyModel,vocabularyModel1).collect(Collectors.toList());
+    }
+
     private List<TranslationModel> getEditedTranslationModel()
     {
         return Stream.of(
