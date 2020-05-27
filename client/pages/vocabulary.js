@@ -28,6 +28,22 @@ class VocabularyOverview extends React.Component {
             this.setState({vocabulary: json})
         }
     }
+
+    async handleChange_Topic(e) {
+        if(e == "Default")
+        {
+            const data = await fetch('http://localhost:8080/api/vocabulary')
+            const json = await data.json()
+            this.setState({vocabulary: json})
+        }
+        else
+        {
+            const data = await fetch('http://localhost:8080/api/vocabulary/sort_topics/' + e)
+            const json = await data.json()
+            this.setState({vocabulary: json}) 
+        }
+    }
+
     render() {
         return (
                 <main>
@@ -48,12 +64,23 @@ class VocabularyOverview extends React.Component {
                         <table className="table">
                             <thead>
                             <tr>
-                            <th scope="col">Vocabulary
-                                <button type="submit" onClick={() => {this.componentDidMount("a")}} class="btn btn-outline-dark filter_buttons"  >Up</button>
-                                <button type="submit" onClick={() => {this.componentDidMount("z")}} class="btn btn-outline-dark filter_buttons" >Down</button>
+                                <th scope="col">Vocabulary
+                                    <button type="submit" onClick={() => {this.componentDidMount("a")}} class="btn btn-outline-dark filter_buttons"  >Up</button>
+                                    <button type="submit" onClick={() => {this.componentDidMount("z")}} class="btn btn-outline-dark filter_buttons" >Down</button>
                                 </th>
-                                
-                                <th scope="col">Topic</th>
+                                <th scope="col">
+                                    <Form.Group style={{ width: 220 }} controlId="select_language" onChange={this.handleChange_Topic}>
+                                        <select variant="primary"  name="translation_language">
+                                            <option value="Default">All Topics</option>
+                                            <option value="USER_GENERATED">USER_GENERATED</option>
+                                            <option value="Sport">Sport</option>
+                                            <option value="Home">Home</option>
+                                            <option value="Food">Food</option>
+                                            <option value="Human">Human</option>
+                                            <option value="Electronic">Electronic</option>
+                                        </select>
+                                    </Form.Group>
+                                </th>
                                 <th scope="col">Translations</th>
                                 <th className="test_col" scope="col"></th>
                             </tr>
