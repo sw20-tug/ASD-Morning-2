@@ -2,7 +2,6 @@ package at.tugraz.asd.LANG.Service;
 
 
 import at.tugraz.asd.LANG.Exeptions.EditFail;
-import at.tugraz.asd.LANG.Exeptions.RatingFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.out.GetAllTopicsOut;
@@ -14,11 +13,9 @@ import at.tugraz.asd.LANG.Repo.TranslationRepo;
 import at.tugraz.asd.LANG.Repo.VocabularyRepo;
 import at.tugraz.asd.LANG.Topic;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class VocabularyService {
@@ -86,7 +83,7 @@ public class VocabularyService {
         //TODO change so we can edit many times
         //vocabularyRepo.equals(msg.getCurrent_translations());
 
-        for(var v : msg.getNew_translations().values()) {
+        for(var v : msg.getCurrent_translations().values()) {
             if (!(v.isEmpty())) {
                 VocabularyModel toUpdate = vocabularyRepo.findByVocabulary(v);
                 if (toUpdate != null) {
@@ -194,5 +191,10 @@ public class VocabularyService {
         List<Topic> list = Arrays.asList(topics);
         GetAllTopicsOut ret = new GetAllTopicsOut(list);
         return ret;
+    }
+
+    public List<VocabularyModel> sortTopics(Topic msg)
+    {
+        return vocabularyRepo.findByTopic(msg);
     }
 }

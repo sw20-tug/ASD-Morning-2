@@ -77,7 +77,7 @@ public class VocabularyServiceTest {
         new_translations.put(Languages.EN,"brot");
 
         VocabularyModel editedModel = service.editVocabulary(new EditVocabularyMessageIn(
-           new_translations, current_translations,2
+                current_translations, new_translations, 2
         ));
         Assert.assertEquals(editedModel,getEditedVocabularyModel());
 
