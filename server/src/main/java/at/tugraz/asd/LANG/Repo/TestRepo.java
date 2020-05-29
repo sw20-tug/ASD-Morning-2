@@ -8,5 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface TestRepo extends JpaRepository<TestModel, UUID> {
-    TestModel findByUser(long userId);
+    TestModel findByUserName(String userName);
 }

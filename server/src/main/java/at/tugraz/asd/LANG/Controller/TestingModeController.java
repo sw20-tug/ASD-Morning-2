@@ -1,6 +1,5 @@
 package at.tugraz.asd.LANG.Controller;
 
-import at.tugraz.asd.LANG.Messages.in.SaveTestRequest;
 import at.tugraz.asd.LANG.Service.TestingModeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,14 +12,18 @@ public class TestingModeController {
     private TestingModeService service;
 
     @Autowired
-    public TestingModeController(TestingModeService service) {
-        this.service = service;
-    }
+    public TestingModeController(TestingModeService service) { this.service = service; }
 
-    @PostMapping
-    public ResponseEntity saveTest(@RequestBody SaveTestRequest saveRequest) {
-        service.saveTest(saveRequest);
+    @PostMapping (path = "/save")
+    public ResponseEntity saveTest(@RequestBody String testStates) {
+        service.saveTest(testStates);
         return ResponseEntity.ok(null);
     }
+
+    @GetMapping (path = "/continue")
+    public ResponseEntity getTest() { return ResponseEntity.ok(service.getTest()); }
+
+    @GetMapping (path = "/check")
+    public ResponseEntity checkForSavedTest() { return ResponseEntity.ok(service.checkForSavedTest()); }
 
 }
