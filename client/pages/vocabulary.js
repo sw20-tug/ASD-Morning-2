@@ -96,25 +96,25 @@ class VocabularyOverview extends React.Component {
                         <table className="table">
                             <thead>
                             <tr>
-                                <th scope="col"> <Translate content="vocabulary"></Translate>
-                                    <button type="submit" onClick={() => {this.componentDidMount("a")}} class="btn btn-outline-dark filter_buttons"  >▲</button>
-                                    <button type="submit" onClick={() => {this.componentDidMount("z")}} class="btn btn-outline-dark filter_buttons" >▼</button>
+                                <th scope="col"> <Translate content="vocabulary" ></Translate>
+                                    <button type="submit" onClick={() => {this.componentDidMount("a")}} className="btn btn-outline-dark filter_buttons" style={{marginLeft: "0.5rem"}} >▲</button>
+                                    <button type="submit" onClick={() => {this.componentDidMount("z")}} className="btn btn-outline-dark filter_buttons" >▼</button>
                                 </th>
                                 <th scope="col">
                                     <Form.Group style={{ width: 220 }} controlId="select_language" onChange={this.handleChange_Topic}>
                                         <select id="selectbox" variant="primary"  name="translation_language">
-                                            <option value="Default">All Topics</option>
-                                            <option value="USER_GENERATED">USER_GENERATED</option>
-                                            <option value="Sport">Sport</option>
-                                            <option value="Home">Home</option>
-                                            <option value="Food">Food</option>
-                                            <option value="Human">Human</option>
-                                            <option value="Electronic">Electronic</option>
+                                            <option value="Default" > <Translate content="all_topics" ></Translate> </option>
+                                            <option value="USER_GENERATED"> <Translate content="topic_user_generated" ></Translate></option>
+                                            <option value="Sport"> <Translate content="topic_sport" ></Translate> </option>
+                                            <option value="Home"> <Translate content="topic_home" ></Translate> </option>
+                                            <option value="Food"> <Translate content="topic_food" ></Translate> </option>
+                                            <option value="Human"> <Translate content="topic_human" ></Translate> </option>
+                                            <option value="Electronic"> <Translate content="topic_electronic" ></Translate> </option>
                                         </select>
                                     </Form.Group>
                                 </th>
-                                <th scope="col">Translations</th>
-                                <th scope="col">Rating</th>
+                                <th scope="col"><Translate content="translation" ></Translate></th>
+                                <th scope="col"><Translate content="rating" ></Translate></th>
                                 <th className="test_col" scope="col"></th>
                             </tr>
                             </thead>

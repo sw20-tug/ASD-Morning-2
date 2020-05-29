@@ -64,12 +64,6 @@ class Home extends React.Component {
                   <Translate content="title5_discription" component="p"></Translate>
                 </a>
               </Link>
-              <Link href="/">
-                <a className="card">
-                  <h3>Next Feature</h3>
-                  <p>Work in Progress</p>
-                </a>
-              </Link>
             </div>
           </main>
         </div>
