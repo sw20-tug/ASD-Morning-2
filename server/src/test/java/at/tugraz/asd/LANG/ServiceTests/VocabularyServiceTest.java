@@ -4,6 +4,7 @@ import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.TranslationModel;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
 import at.tugraz.asd.LANG.Repo.TranslationRepo;
@@ -16,8 +17,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,23 +95,62 @@ public class VocabularyServiceTest {
        service.editVocabulary(msg);
     }
 
+    @Test
+    public void sortTopics()
+    {
+        when(vocabularyRepo.findByTopic(Topic.Home)).thenReturn(getAllVocabularyMockData());
+
+        List<VocabularyModel> retval = service.sortTopics(Topic.Home);
+
+        List<VocabularyOut> ret = getSpecificTopic(Topic.Home, retval);
+
+        Integer rating = new Integer(0);
+        for(int i = 0; i < ret.size(); i++)
+        {
+            Assert.assertEquals(ret.get(i).getTopic(), Topic.Home);
+        }
+    }
+
 
     //Helper
+
+    private List<VocabularyOut> getSpecificTopic(Topic topic, List<VocabularyModel> model)
+    {
+        ArrayList<VocabularyOut> ret = new ArrayList<>();
+
+        model.forEach(el->{
+            HashMap<Languages, String> translation = new HashMap<>();
+            el.getTranslationVocabMapping().forEach(translationModel -> {
+                translation.put(translationModel.getLanguage(), translationModel.getVocabulary());
+            });
+            if(el.getTopic() == topic)
+            {
+                ret.add(new VocabularyOut(
+                        el.getTopic(),
+                        el.getVocabulary(),
+                        translation,
+                        el.getRating()
+                ));
+            }
+        });
+
+        return ret;
+    }
 
     private List<VocabularyModel> getAllVocabularyMockData() {
         List<TranslationModel> translations = Stream.of(
                 new TranslationModel(Languages.DE,"bread"),
                 new TranslationModel(Languages.FR,"pain"),
-                new TranslationModel(Languages.DE,"brot")
+                new TranslationModel(Languages.EN,"brot")
         ).collect(Collectors.toList());
         VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, "brot", translations, Integer.valueOf(0));
 
         List<TranslationModel> translations1 = Stream.of(
                 new TranslationModel(Languages.DE,"haus"),
                 new TranslationModel(Languages.FR,"maison"),
-                new TranslationModel(Languages.DE,"house")
+                new TranslationModel(Languages.EN,"house")
         ).collect(Collectors.toList());
-        VocabularyModel vocabularyModel1 = new VocabularyModel(Topic.USER_GENERATED, "haus", translations1, Integer.valueOf(0));
+        VocabularyModel vocabularyModel1 = new VocabularyModel(Topic.Home, "haus", translations1, Integer.valueOf(0));
         return Stream.of(vocabularyModel,vocabularyModel1).collect(Collectors.toList());
     }
 
@@ -117,7 +159,7 @@ public class VocabularyServiceTest {
         return Stream.of(
                 new TranslationModel(Languages.DE,"bread"),
                 new TranslationModel(Languages.FR,"pain"),
-                new TranslationModel(Languages.DE,"brot")
+                new TranslationModel(Languages.EN,"brot")
         ).collect(Collectors.toList());
     }
 
@@ -126,7 +168,7 @@ public class VocabularyServiceTest {
         List<TranslationModel> translations = Stream.of(
                 new TranslationModel(Languages.DE,"bread"),
                 new TranslationModel(Languages.FR,"pain"),
-                new TranslationModel(Languages.DE,"brot")
+                new TranslationModel(Languages.EN,"brot")
         ).collect(Collectors.toList());
         VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, "brot", translations, Integer.valueOf(0));
         return vocabularyModel;
@@ -137,7 +179,7 @@ public class VocabularyServiceTest {
         List<TranslationModel> translations = Stream.of(
                 new TranslationModel(Languages.DE,"haus"),
                 new TranslationModel(Languages.FR,"maison"),
-                new TranslationModel(Languages.DE,"house")
+                new TranslationModel(Languages.EN,"house")
         ).collect(Collectors.toList());
         VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, "haus", translations, Integer.valueOf(0));
         return vocabularyModel;
