@@ -13,6 +13,7 @@ class TestingMode extends React.Component {
       given_language: 'Tested Language...',
       tested_language: 'Translate to...',
       repetitions: '1',
+      random: false,
       dis_given: true,
       dis_tested: true,
       disabled: true
@@ -89,8 +90,18 @@ class TestingMode extends React.Component {
               query: {
                 given_language: this.state.given_language,
                 tested_language: this.state.tested_language,
-                repetitions: this.state.repetitions }}}>
-            <Button variant="outline-primary" disabled={this.state.disabled}>Let's start!</Button>
+                repetitions: this.state.repetitions, 
+                random: true }}}>
+            <Button variant="outline-primary" disabled={this.state.disabled}>Random</Button>
+          </Link>
+          <Row></Row>
+          <Link href={{ pathname: '/testing_mode/select_test_vocab',
+              query: {
+                given_language: this.state.given_language,
+                tested_language: this.state.tested_language,
+                repetitions: this.state.repetitions, 
+                random: false }}}>
+            <Button variant="outline-primary" disabled={this.state.disabled}>Select vocabulary</Button>
           </Link>
         </div>
         

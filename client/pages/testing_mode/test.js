@@ -26,6 +26,7 @@ class RandomTest extends React.Component {
       vocabulary: [],
       given_language: this.props.query.given_language,
       tested_language: this.props.query.tested_language,
+      test_random: this.props.query.random,
       given_lang_short: "",
       tested_lang_short: "",
       repetitions: this.props.query.repetitions,
@@ -39,17 +40,25 @@ class RandomTest extends React.Component {
       vocabulary_display_card: "test_active_vocabulary_display",
       vocabulary_list: new Map(), 
       repetitions_counter: 0,
-      list_size: 10, 
+      list_size: 0, 
       correct_words : 0, 
       num_tested_words : 0, 
       incorrect_words_visibility: "test_active_incorrect_words_list_active", 
       interface_visibility: "test_active_wrapper"
     };
 
-    this.buildTest();
+    if (this.state.test_random == "true")
+    {
+    this.buildRandomTest();
+    }
+    else
+    {
+      this.buildSelectedTest();
+    }
   }
 
   static async getInitialProps({query}) {
+    console.log(query)
     return {query}
   }
 
@@ -69,14 +78,32 @@ class RandomTest extends React.Component {
       console.log("after prepareList: ", this.state.vocabulary_list);
   }
 
-  buildTest() {
+  buildSelectedTest() {
+    this.setLanguages();
+    let a = JSON.parse(this.props.query.vocabs)
+    console.log("json", a.vocabs);
+    this.state.vocabulary = a.vocabs;
+    this.state.list_size = a.vocabs.length;
+    this.state.current_vocab = this.getCurrentVocab();
+    this.state.current_tested_vocab = this.getCurrentTestedVocab();
+    /*this.setState({ 
+      
+    })*/
+    console.log("value in selected test", a.vocabs, this.state.current_vocab, this.state.vocabulary);
+    
+      this.prepareVocabList();
+  }
+
+  buildRandomTest() {
     this.setLanguages();
 
     fetch('http://localhost:8080/api/vocabulary/random')
       .then((response) => response.json())
-      .then((data) => { this.state.vocabulary = data; })
+      .then((data) => { this.state.vocabulary = data;
+        this.state.list_size = data.length;
+      console.log("data", data); })
       .then(() => { 
-        this.setState({ 
+        this.setState({
           current_vocab: this.getCurrentVocab(), 
           current_tested_vocab: this.getCurrentTestedVocab() })
       })
@@ -90,6 +117,7 @@ class RandomTest extends React.Component {
 
   getCurrentVocab() {
     if (this.state.given_language == "German") {
+      console.log("currvocab:", this.state.vocabulary[this.state.test_index].translations.DE);
       return this.state.vocabulary[this.state.test_index].translations.DE
     } else if (this.state.given_language == "English") {
       return this.state.vocabulary[this.state.test_index].translations.EN
@@ -154,17 +182,7 @@ class RandomTest extends React.Component {
         setTimeout(this.prepareNextVocab, 2000);
     }
 
-    //this.refs.input.reset();
-    // Vergleichen -> House = Haus
-    // Wenn Nein -> House in rot + richtige Übersetzung
-    // this.state.abcwhatever....  test_index ++; current_vocab <- Neues Wort; current_translations_vocab <- neues Wort translation
-    // 5 Sekunden sleep
-    // this.setState({ correctness: 0 });
-    // Wenn Ja -> House in Grün + Correct
-    // 2 Sekunden sleep
-
-    // this.state.abc = whatever; <-- Passiert nix auf der Seite
-    // this.setState = ({ key: value }) <-- Render Seite neu
+    document.getElementById("vocab-input").value="";
 
   }
 
@@ -184,7 +202,8 @@ class RandomTest extends React.Component {
       }
       this.state.current_vocab = this.getCurrentVocab();
       this.state.current_tested_vocab = this.getCurrentTestedVocab();
-      while(this.state.vocabulary_list.get(this.state.current_vocab).value < this.state.repetitions_counter)
+      let cnt = 0;
+      while(this.state.vocabulary_list.get(this.state.current_vocab).value < this.state.repetitions_counter && cnt < this.state.list_size + 1)
       {
         this.state.test_index++;
         if (this.state.test_index == this.state.list_size)
@@ -198,6 +217,11 @@ class RandomTest extends React.Component {
         }
         this.state.current_vocab = this.getCurrentVocab();
         this.state.current_tested_vocab = this.getCurrentTestedVocab();
+        cnt++;
+      }
+      if(cnt == this.state.list_size + 1)
+      {
+        this.finishTest();
       }
       this.state.vocabulary_display_card = "test_active_vocabulary_display";
         
@@ -234,6 +258,10 @@ class RandomTest extends React.Component {
   createTable(){
     let table = []
 
+    this.state.vocabulary_list[Symbol.iterator] = function* () {
+      yield* [...this.entries()].sort((a, b) => a[1] - b[1]);
+  }
+
     // Outer loop to create parent
     this.state.vocabulary_list.forEach((value, key,map) => {
       let children = []
@@ -266,13 +294,14 @@ class RandomTest extends React.Component {
             </div>
             
             <Form.Group className="test_active_input">
-                <InputGroup size="sm" className="mb-3">
-                <InputGroup.Prepend>
-                    <InputGroup.Text id="inputGroup-sizing-sm">
+                <InputGroup size="sm" className="mb-3" >
+                <InputGroup.Prepend >
+                    <InputGroup.Text class="inputGroup-sizing-sm" >
                         { this.state.test_lang_short }
                     </InputGroup.Text>
                 </InputGroup.Prepend>
                 <FormControl 
+                    id="vocab-input"
                     type="text" 
                     name={ this.state.tested_lang_short } 
                     onChange={this.handleChange_Translation} 
