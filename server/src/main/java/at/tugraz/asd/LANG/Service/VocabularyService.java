@@ -13,6 +13,7 @@ import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Repo.TranslationRepo;
 import at.tugraz.asd.LANG.Repo.VocabularyRepo;
 import at.tugraz.asd.LANG.Topic;
+import com.google.gson.*;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,85 +169,68 @@ public class VocabularyService {
         return ret;
     }
 
-    public File exportVocabulary() {
+    public File exportVocabulary() throws IOException {
         //Get all vocabulary and save in List
-        List<VocabularyModel> vocabularies = getAllVocabulary();
-        //Create new file to store the content of the List
-        File exportFile = new File("backup.csv");
-        //Write to the file via BufferedWriter and seperate vie semicolon (catch possible occuring errors)
-        try {
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(exportFile), "UTF-8"));
-            for (VocabularyModel vocab : vocabularies) {
-                StringBuffer singleVocab = new StringBuffer();
-                singleVocab.append(vocab.getId());
-                singleVocab.append(",");
-                singleVocab.append(vocab.getTopic());
-                singleVocab.append(",");
-                singleVocab.append(vocab.getVocabulary());
-                singleVocab.append(",");
-                singleVocab.append(vocab.getRating());
-                singleVocab.append(",");
-                singleVocab.append(vocab.getTranslationVocabMapping());
-                bw.write(singleVocab.toString());
-                bw.newLine();
-            }
-            bw.flush();
-            bw.close();
-        } catch (UnsupportedEncodingException e) {
-            System.out.println("UnsupportedEncodingException: " + e);
-        } catch (FileNotFoundException e) {
-            System.out.println("FileNotFoundException: " + e);
-        } catch (IOException e) {
-            System.out.println("IOException: " + e);
+        List<VocabularyModel> vocabularies = vocabularyRepo.findAll();
+        //Create File
+        Files.deleteIfExists(Paths.get("backup.txt"));
+        File backup_file = new File("backup.txt");
+        FileWriter file_w = new FileWriter(backup_file);
+
+        //Convert Vocabulary Models to GSON (via GSON Library)
+        Gson gson = new Gson();
+        JsonArray json_arr = new JsonArray();
+        String jsonString = null;
+
+        for (VocabularyModel vocabM : vocabularies
+        ) {
+            jsonString = gson.toJson(vocabM);
+            json_arr.add(jsonString);
         }
-        //Return the file to the calling methode
-        return exportFile;
+        file_w.write(json_arr.toString());
+        file_w.flush();
+        file_w.close();
+
+        return backup_file;
     }
 
-    public void importVocabulary(MultipartFile backupFile) throws IOException {
-        //Create new file to get the absolute path of the MultipartFile of the paramterer
-        File importFile = new File(backupFile.getOriginalFilename());
-        importFile.createNewFile();
-        FileOutputStream fos = new FileOutputStream(importFile);
-        fos.write(backupFile.getBytes());
-        fos.close();
-        String backup_Path = importFile.getAbsolutePath();
-        //Read the CSV file and put the content into the repo via foreach (catch possible occuring errors)
-        try (
-                Reader reader = Files.newBufferedReader(Paths.get(backup_Path));
-                CSVReader backupReader = new CSVReader(reader);
+    public Boolean importVocabulary(String content) {
+
+        //GSON Obejct
+        Gson gson = new Gson();
+
+        JsonArray JsonArray = JsonParser.parseString(content).getAsJsonArray();
+
+        for (JsonElement json_Ele : JsonArray
         ) {
-            List<String[]> vocabularies = backupReader.readAll();
-            for (String[] singleVocabulary : vocabularies) {
-                Topic topic = Topic.valueOf(singleVocabulary[1]);
-                String vocabulary = singleVocabulary[2];
-                int rating = Integer.parseInt(singleVocabulary[3]);
+            //Delete all \ from the JSONArray
+            String substring = json_Ele.getAsString().replaceAll("\\\\", "");
 
-                String TranslationModelSplit = singleVocabulary[4] + "," + singleVocabulary[5] + "," + singleVocabulary[6];
+            JsonObject jsonObject = new Gson().fromJson(substring, JsonObject.class);
+            VocabularyModel vocabM_des = gson.fromJson(jsonObject, VocabularyModel.class);
 
-                List<TranslationModel> translationModels = new ArrayList<>();
+            Topic topic = vocabM_des.getTopic();
+            String vocabulary = vocabM_des.getVocabulary();
+            int rating = vocabM_des.getRating();
 
-                String[] splits = TranslationModelSplit.split("\\bTranslationModel\\b ");
-
-                for (String splitStr : splits) {
-                    String[] element = splitStr.split(",");
-                    String lang = element[1].substring(element[1].indexOf('=') + 1);
-                    String vocab = element[2].substring(element[2].indexOf('=') + 1);
-                    Map<Languages, String> translations = new HashMap<>();
-                    translations.put(Languages.valueOf(lang), vocab);
-                    translations.forEach((k, v) -> {
-                        TranslationModel translationModel = new TranslationModel(k, v);
-                        translationModels.add(translationModel);
-                        translationRepo.save(translationModel);
-                    });
-                }
-
-                VocabularyModel vocabularyModel = new VocabularyModel(topic, vocabulary, translationModels, rating);
-                vocabularyRepo.save(vocabularyModel);
+            //List of TranslationModels to save each of them
+            List<TranslationModel> translationModels = new ArrayList<>();
+            for (TranslationModel transM : vocabM_des.getTranslationVocabMapping()
+            ) {
+                Languages lang = transM.getLanguage();
+                String vocabulary_trans = transM.getVocabulary();
+                Map<Languages, String> translations = new HashMap<>();
+                translations.put(lang, vocabulary_trans);
+                translations.forEach((k, v) -> {
+                    TranslationModel translationModel = new TranslationModel(k, v);
+                    translationModels.add(translationModel);
+                    translationRepo.save(translationModel);
+                });
             }
-        } catch (CsvException e) {
-            System.out.println("CsvException: " + e);
+            VocabularyModel vocabularyModel = new VocabularyModel(topic, vocabulary, translationModels, rating);
+            vocabularyRepo.save(vocabularyModel);
         }
+        return true;
     }
 
     public List<VocabularyModel> sortTopics(Topic msg)

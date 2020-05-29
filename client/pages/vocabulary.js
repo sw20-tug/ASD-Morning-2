@@ -2,6 +2,8 @@ import fetch from 'isomorphic-unfetch';
 import {Container} from "next/app";
 import Link from 'next/link'
 import Button from 'react-bootstrap/Button';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Rating from 'react-rating';
 import { Form, FormControl } from 'react-bootstrap';
 
 
@@ -19,6 +21,8 @@ class VocabularyOverview extends React.Component {
         if(args == "b")
         {
             const data = await fetch('http://localhost:8080/api/vocabulary')
+            if (data.status != 200) 
+            return
             const json = await data.json()
             this.setState({vocabulary: json}) 
             console.log(this.state.vocabulary)           
@@ -92,6 +96,7 @@ class VocabularyOverview extends React.Component {
                                     </Form.Group>
                                 </th>
                                 <th scope="col">Translations</th>
+                                <th scope="col">Rating</th>
                                 <th className="test_col" scope="col"></th>
                             </tr>
                             </thead>
@@ -107,6 +112,9 @@ class VocabularyOverview extends React.Component {
                                                 ))}
                                                 </ul>
                                             </td>
+                                            <td>                                                <InputGroup  size="sm" className="mb-3">
+                           <Rating readonly initialRating={element.rating} fractions="1"/>
+                        </InputGroup></td>
                                             <td>
                                                 {console.log(element.translations)}
                                                 <Link href={{ pathname: 'edit_vocabulary', query: {

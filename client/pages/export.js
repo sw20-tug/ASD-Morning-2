@@ -34,6 +34,7 @@ class Export extends React.Component {
             'content-type': 'multipart/form-data'
         }
     }
+    alert("Successfull")
     console.log("Successfully uploaded");
     return post(url, formData,config)
   }
@@ -43,22 +44,6 @@ class Export extends React.Component {
         var FileSaver = require('file-saver');
         FileSaver.saveAs("http://localhost:8080/api/vocabulary/Export", "Export.csv");
     }
-
-//Import File
-/*     importVocab(file) {
-        fetch('http://localhost:8080/api/vocabulary/Import', {
-          // content-type header should not be specified!
-          method: 'POST',
-          body: file,
-        })
-          .then(response => response.json())
-          .then(success => {
-            Console.log("Success")
-        })
-          .catch(error => console.log(error)
-        );
-      } */
-
 
     render() {
         return (
