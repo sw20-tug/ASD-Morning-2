@@ -29,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -71,6 +72,9 @@ public class VocabularyControllerTest {
 
     @MockBean
     private VocabularyService service;
+
+    @Autowired
+    private VocabularyController controller;
 
 
 
@@ -419,4 +423,39 @@ public class VocabularyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
+    @Test
+    public void FilterTopics() throws Exception
+    {
+        when(service.sortTopics(Topic.Home)).thenReturn(getAllVocabTopicHome());
+
+       MvcResult result =  mvc.perform(get("/api/vocabulary/sort_topics/Home")
+                .content(asJsonString(""))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        ObjectMapper mapper = new ObjectMapper();
+        Integer rating = new Integer(0);
+
+        List<VocabularyOut> sortedTopic_retval = mapper.readValue(result.getResponse().getContentAsString(), mapper.getTypeFactory().constructCollectionType(List.class, VocabularyOut.class));
+        Assert.assertEquals(sortedTopic_retval.get(0).getTopic(), Topic.Home);
+        Assert.assertEquals(sortedTopic_retval.get(0).getVocabulary(), "haus");
+        Assert.assertEquals(sortedTopic_retval.get(0).getRating(), rating);
+        Map<Languages, String> expected_translations = new HashMap<Languages, String>();
+        expected_translations.put(Languages.DE,"haus");
+        expected_translations.put(Languages.FR,"maison");
+        expected_translations.put(Languages.EN,"house");
+        Assert.assertEquals(sortedTopic_retval.get(0).getTranslations(),expected_translations);
+    }
+
+    private List<VocabularyModel> getAllVocabTopicHome() {
+
+        List<TranslationModel> translations1 = Stream.of(
+                new TranslationModel(Languages.DE,"haus"),
+                new TranslationModel(Languages.FR,"maison"),
+                new TranslationModel(Languages.EN,"house")
+        ).collect(Collectors.toList());
+        VocabularyModel vocabularyModel1 = new VocabularyModel(Topic.Home, "haus", translations1, Integer.valueOf(0));
+        return Stream.of(vocabularyModel1).collect(Collectors.toList());
+    }
+
 }

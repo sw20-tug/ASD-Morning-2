@@ -5,6 +5,7 @@ import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.TranslationModel;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
 import at.tugraz.asd.LANG.Repo.TranslationRepo;
@@ -17,8 +18,13 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -242,8 +248,47 @@ public class VocabularyServiceTest {
         Assert.assertEquals(newList,Collections.EMPTY_LIST);
     }
 
+    @Test
+    public void sortTopics()
+    {
+        when(vocabularyRepo.findByTopic(Topic.Home)).thenReturn(getAllVocabularyMockData());
+
+        List<VocabularyModel> retval = service.sortTopics(Topic.Home);
+
+        List<VocabularyOut> ret = getSpecificTopic(Topic.Home, retval);
+
+        Integer rating = new Integer(0);
+        for(int i = 0; i < ret.size(); i++)
+        {
+            Assert.assertEquals(ret.get(i).getTopic(), Topic.Home);
+        }
+    }
+
 
     //Helper
+
+    private List<VocabularyOut> getSpecificTopic(Topic topic, List<VocabularyModel> model)
+    {
+        ArrayList<VocabularyOut> ret = new ArrayList<>();
+
+        model.forEach(el->{
+            HashMap<Languages, String> translation = new HashMap<>();
+            el.getTranslationVocabMapping().forEach(translationModel -> {
+                translation.put(translationModel.getLanguage(), translationModel.getVocabulary());
+            });
+            if(el.getTopic() == topic)
+            {
+                ret.add(new VocabularyOut(
+                        el.getTopic(),
+                        el.getVocabulary(),
+                        translation,
+                        el.getRating()
+                ));
+            }
+        });
+
+        return ret;
+    }
 
     //Beware of changing the return value -> tests for sorting will fail
     private List<VocabularyModel> getAllVocabularyMockData() {
@@ -259,7 +304,7 @@ public class VocabularyServiceTest {
                 new TranslationModel(Languages.FR,"maison"),
                 new TranslationModel(Languages.EN,"house")
         ).collect(Collectors.toList());
-        VocabularyModel vocabularyModel1 = new VocabularyModel(Topic.DEFAULT, "haus", translations1, Integer.valueOf(0));
+        VocabularyModel vocabularyModel1 = new VocabularyModel(Topic.Home, "haus", translations1, Integer.valueOf(0));
         return Stream.of(vocabularyModel,vocabularyModel1).collect(Collectors.toList());
     }
 
