@@ -20,16 +20,17 @@ class RandomTest extends React.Component {
     this.prepareVocabList = this.prepareVocabList.bind(this);
     this.finishTest = this.finishTest.bind(this);
     this.calculateAccuracy = this.calculateAccuracy.bind(this);
+    this.saveTest = this.saveTest.bind(this);
 
     this.state = {
       items:[],
       vocabulary: [],
-      given_language: this.props.query.given_language,
-      tested_language: this.props.query.tested_language,
-      test_random: this.props.query.random,
+      given_language: "",
+      tested_language: "",
+      test_random: false,
       given_lang_short: "",
       tested_lang_short: "",
-      repetitions: this.props.query.repetitions,
+      repetitions: 0,
       test_index: 0,
       current_vocab: "",
       current_tested_vocab: "",
@@ -44,17 +45,11 @@ class RandomTest extends React.Component {
       correct_words : 0, 
       num_tested_words : 0, 
       incorrect_words_visibility: "test_active_incorrect_words_list_active", 
-      interface_visibility: "test_active_wrapper"
+      interface_visibility: "test_active_wrapper",
+      continue_string: ""
     };
 
-    if (this.state.test_random == "true")
-    {
-    this.buildRandomTest();
-    }
-    else
-    {
-      this.buildSelectedTest();
-    }
+    this.prepareStatesFromQuery();
   }
 
   static async getInitialProps({query}) {
@@ -62,20 +57,28 @@ class RandomTest extends React.Component {
     return {query}
   }
 
-  prepareVocabList() {
-      console.log("in prepareList: ", this.state.vocabulary);
-      if (this.state.given_language == "German")
-      {
-        this.state.vocabulary.forEach(element => this.state.vocabulary_list.set(element.translations.DE, {value: 0}))
-      }
-      else if (this.state.given_language == "English")
-      {
-        this.state.vocabulary.forEach(element => this.state.vocabulary_list.set(element.translations.EN, {value: 0}))
-      }
-      else{
-        this.state.vocabulary.forEach(element => this.state.vocabulary_list.set(element.translations.FR, {value: 0}))
-      }
-      console.log("after prepareList: ", this.state.vocabulary_list);
+  prepareStatesFromQuery() {
+    if (this.props.query.continue) { this.buildSavedTest(); } 
+    else {
+      this.state.given_language = this.props.query.given_language;
+      this.state.tested_language = this.props.query.tested_language;
+      this.state.test_random = this.props.query.random;
+      this.state.repetitions = this.props.query.repetitions;
+
+      if (this.state.test_random == "true") { this.buildRandomTest(); }
+      else { this.buildSelectedTest(); }
+    }
+  }
+
+  buildSavedTest() {
+    fetch("http://localhost:8080/api/testing_mode/continue")
+      .then((response) => response.json())
+      .then((response) => { 
+        this.state = response 
+        console.log("States are: ", this.state)
+      })
+      .then(() => this.setState({continue_string: "go!"}))
+      .then(() => alert("Loaded Test."))
   }
 
   buildSelectedTest() {
@@ -113,6 +116,22 @@ class RandomTest extends React.Component {
       .catch((error) => {
         alert("Oops, I messed up something. Database does not respond or gives me weird reponses oof. ", error);
       });
+  }
+
+  prepareVocabList() {
+    console.log("in prepareList: ", this.state.vocabulary);
+    if (this.state.given_language == "German")
+    {
+      this.state.vocabulary.forEach(element => this.state.vocabulary_list.set(element.translations.DE, {value: 0}))
+    }
+    else if (this.state.given_language == "English")
+    {
+      this.state.vocabulary.forEach(element => this.state.vocabulary_list.set(element.translations.EN, {value: 0}))
+    }
+    else{
+      this.state.vocabulary.forEach(element => this.state.vocabulary_list.set(element.translations.FR, {value: 0}))
+    }
+    console.log("after prepareList: ", this.state.vocabulary_list);
   }
 
   getCurrentVocab() {
@@ -274,6 +293,27 @@ class RandomTest extends React.Component {
     return table
     
   }
+
+  saveTest() {
+    console.log("vocabulary_list State: ", this.state.vocabulary_list)
+    let payload = JSON.stringify(this.state);
+    fetch("http://localhost:8080/api/testing_mode/save", {
+      method: "POST",
+      headers: new Headers({ 
+        'Accept': 'application/json, text/plain',
+        'Content-Type': 'application/json;charset=UTF-8' 
+        }),
+      body: payload
+    })
+    .then((response) => {
+      if (response.status == 200) {
+        alert("You've successfully saved the test. Please don't use it to cheat, ok?");
+      }
+      else {
+        alert("Something went horribly wrong...");
+      }
+    });
+  }
   
   render() {
     this.renderLog();
@@ -283,59 +323,61 @@ class RandomTest extends React.Component {
             Test your knowledge!
         </div>
         <div className={this.state.interface_visibility}>
-            <div>
-                <Card className={ this.state.vocabulary_display_card }>
-                <Card.Body>{ this.state.current_vocab }</Card.Body>
-                </Card>
-            </div>
+          <div>
+              <Card className={ this.state.vocabulary_display_card }>
+              <Card.Body>{ this.state.current_vocab }</Card.Body>
+              </Card>
+          </div>
 
-            <div className={this.state.vocabulary_display_card}>
-                { this.state.result_message }
-            </div>
-            
-            <Form.Group className="test_active_input">
-                <InputGroup size="sm" className="mb-3" >
-                <InputGroup.Prepend >
-                    <InputGroup.Text class="inputGroup-sizing-sm" >
-                        { this.state.test_lang_short }
-                    </InputGroup.Text>
-                </InputGroup.Prepend>
-                <FormControl 
-                    id="vocab-input"
-                    type="text" 
-                    name={ this.state.tested_lang_short } 
-                    onChange={this.handleChange_Translation} 
-                    aria-label="Small" 
-                    aria-describedby="inputGroup-sizing-sm" />
-                </InputGroup>
-            </Form.Group>
-            <div className="test_active_submit_wrapper">
-                <Button variant="outline-primary" onClick={this.updateTest}> Check </Button>
-            </div>
+          <div className={this.state.vocabulary_display_card}>
+              { this.state.result_message }
+          </div>
+          
+          <Form.Group className="test_active_input">
+              <InputGroup size="sm" className="mb-3" >
+              <InputGroup.Prepend >
+                  <InputGroup.Text class="inputGroup-sizing-sm" >
+                      { this.state.test_lang_short }
+                  </InputGroup.Text>
+              </InputGroup.Prepend>
+              <FormControl 
+                  id="vocab-input"
+                  type="text" 
+                  name={ this.state.tested_lang_short } 
+                  onChange={this.handleChange_Translation} 
+                  aria-label="Small" 
+                  aria-describedby="inputGroup-sizing-sm" />
+              </InputGroup>
+          </Form.Group>
+          <div className="test_active_submit_wrapper">
+              <Button variant="outline-primary" onClick={this.updateTest}> Check </Button>
+              <Button variant="outline-primary" className="test_active_save_button" onClick={ this.saveTest }>Save Test</Button>
+          </div>
 
-            <div className="test_active_accuracy">
-                Accuracy: { this.state.accuracy }%
-            </div>
-            </div>
-            <div className={this.state.incorrect_words_visibility}>
-                <table className="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Vocabulary</th>
-                        <th scope="col">Wrong</th>
-                    </tr>
-                </thead>
-                <tbody>
-                     {this.createTable()}
-                    
-                </tbody>
-                </table>
-                <div className="test_active_submit_wrapper">
-                <Link href="/testing_mode">
-                <Button variant="outline-primary"> Finish </Button>
-                </Link>
-                </div>
-            </div>
+          <div className="test_active_accuracy">
+              Accuracy: { this.state.accuracy }%
+          </div>
+
+        </div>
+        <div className={this.state.incorrect_words_visibility}>
+          <table className="table">
+            <thead>
+              <tr>
+                  <th scope="col">Vocabulary</th>
+                  <th scope="col">Wrong</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.createTable()}  
+            </tbody>
+          </table>
+
+          <div className="test_active_submit_wrapper">
+            <Link href="/testing_mode">
+              <Button variant="outline-primary"> Finish </Button>
+            </Link>
+          </div>
+        </div>
             
       </main>
     );
