@@ -5,6 +5,7 @@ import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.in.ShareMessageIn;
 import at.tugraz.asd.LANG.Messages.out.TranslationOut;
 import at.tugraz.asd.LANG.Messages.out.VocabularyLanguageOut;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -237,5 +239,12 @@ public class VocabularyController {
             System.out.println("Error Importing File " + e);
             return ResponseEntity.badRequest().body(null);
         }
+    }
+
+    @PostMapping (path = "share")
+    public ResponseEntity shareVocabs(@RequestBody ShareMessageIn msg) throws MessagingException
+    {
+        service.shareVocab(msg);
+        return ResponseEntity.of(null);
     }
 }

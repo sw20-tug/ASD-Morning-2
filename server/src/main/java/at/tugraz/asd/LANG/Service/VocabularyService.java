@@ -5,6 +5,7 @@ import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Exeptions.RatingFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.in.ShareMessageIn;
 import at.tugraz.asd.LANG.Messages.out.GetAllTopicsOut;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.TranslationModel;
@@ -16,10 +17,17 @@ import at.tugraz.asd.LANG.Topic;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -286,5 +294,38 @@ public class VocabularyService {
     public List<VocabularyModel> sortTopics(Topic msg)
     {
         return vocabularyRepo.findByTopic(msg);
+    }
+
+    @Bean
+    public JavaMailSender shareVocab(ShareMessageIn msg) throws MessagingException {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("smtp.gmail.com");
+        mailSender.setPort(587);
+
+        mailSender.setUsername("my.gmail@gmail.com");
+        mailSender.setPassword("password");
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.debug", "true");
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message,true);
+
+        helper.setTo(msg.getEmail());
+        helper.setSubject("Share Vocabulary");
+        helper.setText("Import the attachmend in our app!");
+
+        FileSystemResource file = new FileSystemResource(new File(createCSSforShare(msg.getData())));
+        helper.addAttachment("Shares Vodabs", file);
+        mailSender.send(message);
+        return mailSender;
+    }
+
+    private String createCSSforShare(String data)
+    {
+        return "/testAttachmend.txt";
     }
 }

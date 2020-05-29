@@ -6,6 +6,7 @@ import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.in.ShareMessageIn;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.TranslationModel;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
@@ -33,6 +34,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import javax.mail.MessagingException;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
@@ -299,6 +302,12 @@ public class VocabularyControllerTest {
         expected_translations.put(Languages.FR,"maison");
         expected_translations.put(Languages.EN,"house");
         Assert.assertEquals(sortedTopic_retval.get(0).getTranslations(),expected_translations);
+    }
+
+    @Test
+    public void share() throws MessagingException {
+        ShareMessageIn msg = new ShareMessageIn("aichnerl@yahoo.de", "");
+        service.shareVocab(msg);
     }
 
     private List<VocabularyModel> getAllVocabTopicHome() {
