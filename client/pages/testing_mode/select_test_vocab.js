@@ -128,7 +128,7 @@ class SelectVocabulary extends React.Component {
                                     
                                 </th>
                                 <th scope="col">
-                                    <Form.Group style={{ width: 90, margin: 0, position: "absolute",top: "53%" }} controlId="select_language" onChange={this.handleChange_Topic}>
+                                    <Form.Group style={{ width: "90" }} controlId="select_language" onChange={this.handleChange_Topic}>
                                         <select id="selectbox" variant="primary"  name="translation_language">
                                             <option value="Default">All Topics</option>
                                             <option value="USER_GENERATED">USER_GENERATED</option>

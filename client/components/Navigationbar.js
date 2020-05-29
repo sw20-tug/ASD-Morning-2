@@ -18,6 +18,9 @@ function Navigationbar(props) {
         <div className="navbar_link">
           <Link href="/testing_mode"><a>Test Mode</a></Link>
         </div>
+        <div className="navbar_link">
+          <Link href="/share"><a>Share</a></Link>
+        </div>
       </Nav>
     </Navbar>
   )
