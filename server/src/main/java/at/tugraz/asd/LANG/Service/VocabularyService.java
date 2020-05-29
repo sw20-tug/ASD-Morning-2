@@ -58,7 +58,7 @@ public class VocabularyService {
         //TODO change so we can edit many times
         //vocabularyRepo.equals(msg.getCurrent_translations());
 
-        for(var v : msg.getNew_translations().values()) {
+        for(var v : msg.getCurrent_translations().values()) {
             if (!(v.isEmpty())) {
                 VocabularyModel toUpdate = vocabularyRepo.findByVocabulary(v);
                 if (toUpdate != null) {
@@ -247,5 +247,10 @@ public class VocabularyService {
         } catch (CsvException e) {
             System.out.println("CsvException: " + e);
         }
+    }
+
+    public List<VocabularyModel> sortTopics(Topic msg)
+    {
+        return vocabularyRepo.findByTopic(msg);
     }
 }

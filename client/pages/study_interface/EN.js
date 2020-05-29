@@ -50,8 +50,8 @@ class StudyInterface extends React.Component {
                         <thead>
                             <tr>
                                 <th scope="col">Vocabulary
-                                    <button type="submit" onClick={() => {this.componentDidMount("a")}} class="btn btn-outline-dark filter_buttons"  >Up</button>
-                                    <button type="submit" onClick={() => {this.componentDidMount("z")}} class="btn btn-outline-dark filter_buttons" >Down</button>
+                                    <button type="submit" onClick={() => {this.componentDidMount("a")}} class="btn btn-outline-dark filter_buttons"  >▲</button>
+                                    <button type="submit" onClick={() => {this.componentDidMount("z")}} class="btn btn-outline-dark filter_buttons" >▼</button>
                                 </th>
                                 <th scope="col">Translations</th>
                             </tr>
