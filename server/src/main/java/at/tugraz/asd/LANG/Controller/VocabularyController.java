@@ -1,6 +1,7 @@
 package at.tugraz.asd.LANG.Controller;
 
 
+import at.tugraz.asd.LANG.Exeptions.CreateVocabularyFail;
 import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
@@ -37,8 +38,12 @@ public class VocabularyController {
 
     @PostMapping
     public ResponseEntity addVocabulary(@RequestBody CreateVocabularyMessageIn msg){
-        service.saveVocabulary(msg);
-        return ResponseEntity.ok(null);
+        try{
+            service.saveVocabulary(msg);
+            return ResponseEntity.ok(null);
+        }catch (CreateVocabularyFail e){
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping (path = "/topics")
