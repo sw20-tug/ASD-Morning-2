@@ -146,6 +146,42 @@ public class VocabularyServiceTest {
     }
 
     @Test
+    public void testSortOverviewRatingD() {
+        List<VocabularyModel> data = getAllVocabularyMockData();
+        VocabularyModel tmp = data.get(0);
+        data.set(0, data.get(1));
+        data.set(1, tmp);
+        when(vocabularyRepo.findAll()).thenReturn(data);
+        List<VocabularyModel> newList = service.sortRating("d");
+        Assert.assertEquals(getAllVocabularyMockData(),newList);
+    }
+
+    @Test
+    public void testSortOverviewRatingC() {
+        List<VocabularyModel> data = getAllVocabularyMockData();
+        VocabularyModel tmp = data.get(0);
+        data.set(0, data.get(1));
+        data.set(1, tmp);
+        when(vocabularyRepo.findAll()).thenReturn(getAllVocabularyMockData());
+        List<VocabularyModel> newList = service.sortRating("c");
+        Assert.assertEquals(data,newList);
+    }
+
+    @Test
+    public void testSortOverviewDFailRating() {
+        when(vocabularyRepo.findAll()).thenReturn(Collections.emptyList());
+        List<VocabularyModel> newList = service.sortRating("d");
+        Assert.assertEquals(newList,Collections.EMPTY_LIST);
+    }
+
+    @Test
+    public void testSortOverviewCFailRating() {
+        when(vocabularyRepo.findAll()).thenReturn(Collections.emptyList());
+        List<VocabularyModel> newList = service.sortRating("c");
+        Assert.assertEquals(newList,Collections.EMPTY_LIST);
+    }
+
+    @Test
     public void testSortOverviewA() {
         List<VocabularyModel> data = getAllVocabularyMockData();
         VocabularyModel tmp = data.get(0);
@@ -154,7 +190,6 @@ public class VocabularyServiceTest {
         when(vocabularyRepo.findAll()).thenReturn(data);
         List<VocabularyModel> newList = service.sortVocabOverview("a");
         Assert.assertEquals(getAllVocabularyMockData(),newList);
-
     }
 
     @Test
@@ -166,7 +201,6 @@ public class VocabularyServiceTest {
         when(vocabularyRepo.findAll()).thenReturn(getAllVocabularyMockData());
         List<VocabularyModel> newList = service.sortVocabOverview("z");
         Assert.assertEquals(data,newList);
-
     }
 
     @Test
@@ -346,7 +380,7 @@ public class VocabularyServiceTest {
                 new TranslationModel(Languages.FR,"pain"),
                 new TranslationModel(Languages.DE,"brot")
         ).collect(Collectors.toList());
-        VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, "brot", translations, Integer.valueOf(0));
+        VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, "brot", translations, Integer.valueOf(2));
 
         List<TranslationModel> translations1 = Stream.of(
                 new TranslationModel(Languages.DE,"haus"),

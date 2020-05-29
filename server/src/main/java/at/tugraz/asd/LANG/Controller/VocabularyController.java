@@ -87,6 +87,29 @@ public class VocabularyController {
         }
     }
 
+    @GetMapping (path = "rating/{aORz}")
+    @ResponseBody
+    public ResponseEntity getSortedRating(@PathVariable("aORz")String aOrz){
+        ArrayList<VocabularyOut> ret = new ArrayList<>();
+        List<VocabularyModel> vocab = service.sortRating(aOrz);
+        if(vocab.isEmpty())
+            return ResponseEntity.noContent().build();
+
+        vocab.forEach(el->{
+            HashMap<Languages, String> translation = new HashMap<>();
+            el.getTranslationVocabMapping().forEach(translationModel -> {
+                translation.put(translationModel.getLanguage(), translationModel.getVocabulary());
+            });
+            ret.add(new VocabularyOut(
+                    el.getTopic(),
+                    el.getVocabulary(),
+                    translation,
+                    el.getRating()
+            ));
+        });
+        return ResponseEntity.ok(ret);
+    }
+
     @GetMapping (path = "alphabetically/{aORz}")
     @ResponseBody
     public ResponseEntity getAllVocabularyAlphabetically1(@PathVariable("aORz")String aOrz){
