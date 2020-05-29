@@ -11,6 +11,7 @@ class SelectVocabulary extends React.Component {
 
         console.log("URL Query: ", this.props.query);
         this.addSelectedVocabulary = this.addSelectedVocabulary.bind(this)
+        this.handleChange_Topic = this.handleChange_Topic.bind(this);
         this.passValues = this.passValues.bind(this)
         this.state = {
             vocabulary: [],
@@ -78,6 +79,31 @@ class SelectVocabulary extends React.Component {
             }
         })
     }
+    async handleChange_Topic(e) {
+        this.state.selectedVocabulary.forEach(el => {
+            document.getElementById(el).checked = false
+        })
+        this.state.selectedVocabulary = [];
+        if(e.target.value == "Default")
+        {
+            const data = await fetch('http://localhost:8080/api/vocabulary')
+            console.log(data);
+            const json = await data.json()
+            this.setState({vocabulary: json})
+        }
+        else
+        {
+            
+            const response = await fetch('http://localhost:8080/api/vocabulary/sort_topics/' + e.target.value)
+            if(response.status != 200)
+            {
+                this.setState({vocabulary: []})
+            }
+            const json = await response.json()
+            this.setState({vocabulary: json})
+        }
+
+    }
 
 
     render() {
@@ -91,17 +117,30 @@ class SelectVocabulary extends React.Component {
                     </p>
                 <Container>
                     <div style={{width: "100%", marginBottom: "1em", marginLeft: "1em"}}>
-                    <button type="submit" onClick={() => { this.componentDidMount("a") }} class="btn btn-outline-dark filter_buttons"  >Up</button>
-                    <button type="submit" onClick={() => { this.componentDidMount("z") }} class="btn btn-outline-dark filter_buttons" style={{marginLeft: "5px"}} >Down</button>
+                    <button type="submit" onClick={() => { this.componentDidMount("a") }} class="btn btn-outline-dark filter_buttons"  >▲</button>
+                    <button type="submit" onClick={() => { this.componentDidMount("z") }} class="btn btn-outline-dark filter_buttons" style={{marginLeft: "5px"}} >▼</button>
                     </div>
                     <table className="table">
                         <thead>
                             <tr>
                                 <th scope="col">
-                                    <span  style={{width:"100%",float:"right"}}>{this.state.given_language}</span>
+                                    <span  style={{width:"100%",float:"right", fontSize: "25px"}}>{this.state.given_language}</span>
                                     
                                 </th>
-                                <th scope="col">Translations</th>
+                                <th scope="col">
+                                    <Form.Group style={{ width: 90, margin: 0, position: "absolute",top: "53%" }} controlId="select_language" onChange={this.handleChange_Topic}>
+                                        <select id="selectbox" variant="primary"  name="translation_language">
+                                            <option value="Default">All Topics</option>
+                                            <option value="USER_GENERATED">USER_GENERATED</option>
+                                            <option value="Sport">Sport</option>
+                                            <option value="Home">Home</option>
+                                            <option value="Food">Food</option>
+                                            <option value="Human">Human</option>
+                                            <option value="Electronic">Electronic</option>
+                                        </select>
+                                    </Form.Group>
+                                </th>
+                                <th scope="col" style={{fontSize:"25px"}} >{this.state.tested_language}</th>
                                 <th className="test_col" scope="col"></th>
                             </tr>
                         </thead>
@@ -122,7 +161,7 @@ class SelectVocabulary extends React.Component {
                                             <td>{element.translations.FR}</td>
                                         }
                                         
-                                    
+                                        <td>{element.topic}</td>
                                     
                                         {
                                             this.state.tested_language == "English" &&
