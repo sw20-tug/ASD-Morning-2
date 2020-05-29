@@ -138,6 +138,32 @@ public class VocabularyService {
         return vocab;
     }
 
+    public List<VocabularyModel> sortRating(String aOrz) {
+        ArrayList<VocabularyOut> ret = new ArrayList<>();
+        List<VocabularyModel> vocab = getAllVocabulary();
+        if(vocab.isEmpty())
+            return vocab;
+        if(aOrz.equals("c"))
+        {
+            vocab.sort(new Comparator<VocabularyModel>() {
+                @Override
+                public int compare(VocabularyModel vocabularyModel, VocabularyModel t1) {
+                    return vocabularyModel.getRating().compareTo(t1.getRating());
+                }
+            });
+        }
+        if(aOrz.equals("d"))
+        {
+            vocab.sort(new Comparator<VocabularyModel>() {
+                @Override
+                public int compare(VocabularyModel vocabularyModel, VocabularyModel t1) {
+                    return t1.getRating().compareTo(vocabularyModel.getRating());
+                }
+            });
+        }
+        return vocab;
+    }
+
     public List<VocabularyModel> sortVocabOverview(String aOrz) {
         ArrayList<VocabularyOut> ret = new ArrayList<>();
         List<VocabularyModel> vocab = getAllVocabulary();

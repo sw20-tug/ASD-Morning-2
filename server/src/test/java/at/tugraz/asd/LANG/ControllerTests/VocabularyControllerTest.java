@@ -394,7 +394,7 @@ public class VocabularyControllerTest {
         List<TranslationModel> translations_1 = new ArrayList<>();
         translations_1.add(new TranslationModel(Languages.DE,"haus"));
         translations_1.add(new TranslationModel(Languages.FR,"maison"));
-        translations_1.add(new TranslationModel(Languages.DE,"house"));
+        translations_1.add(new TranslationModel(Languages.EN,"house"));
 
         testFilterHelper1(translations_1);
         testFilterHelper2(translations_1);
@@ -426,6 +426,45 @@ public class VocabularyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    public void testFilterUpDownOverviewRating() throws Exception {
+        List<TranslationModel> translations_1 = new ArrayList<>();
+        translations_1.add(new TranslationModel(Languages.DE,"haus"));
+        translations_1.add(new TranslationModel(Languages.FR,"maison"));
+        translations_1.add(new TranslationModel(Languages.EN,"house"));
+
+        testFilterHelperRating1(translations_1);
+        testFilterHelperRating2(translations_1);
+    }
+    private void testFilterHelperRating1(List<TranslationModel> translations) throws Exception {
+        when(service.sortRating("c")).thenReturn(
+                Stream.of(
+                        new VocabularyModel(Topic.USER_GENERATED,"haus",translations, 1)
+                ).collect(Collectors.toList())
+        );
+        mvc.perform(get("/api/vocabulary/rating/d")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/vocabulary/rating/c")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+    private void testFilterHelperRating2(List<TranslationModel> translations) throws Exception {
+        when(service.sortRating("d")).thenReturn(
+                Stream.of(
+                        new VocabularyModel(Topic.USER_GENERATED,"haus",translations, 2)
+                ).collect(Collectors.toList())
+        );
+        when(service.sortRating("c")).thenReturn(Collections.EMPTY_LIST);
+        mvc.perform(get("/api/vocabulary/rating/d")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/vocabulary/rating/c")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
     @Test
     public void FilterTopics() throws Exception
     {
