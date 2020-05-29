@@ -54,40 +54,6 @@ public class VocabularyService {
         return vocabularyRepo.findAll();
     }
 
-    public List<String> getAllVocabularyOfLanguage(Languages language)
-    {
-        List<String> result = new ArrayList<>();
-        List<VocabularyModel> all_vocab = getAllVocabulary();
-        all_vocab.forEach(vm->{
-            List<TranslationModel> translation_list = vm.getTranslationVocabMapping();
-            translation_list.forEach(tl->{
-                if (tl.getLanguage() == language)
-                    result.add(tl.getVocabulary());
-            });
-        });
-        return result;
-    }
-
-    public String getTranslation(Languages language, String word)
-    {
-        final String[] ret = {null};
-        List<VocabularyModel> all_vocab = getAllVocabulary();
-        all_vocab.forEach(vm->{
-            List<TranslationModel> translation_list = vm.getTranslationVocabMapping();
-            translation_list.forEach(tl->{
-                if (tl.getVocabulary().equals(word)) {
-                    translation_list.forEach(new_tl -> {
-                        if (new_tl.getLanguage() == language)
-                        {
-                            ret[0] = new_tl.getVocabulary();
-                        }
-                    });
-                }
-            });
-        });
-        return ret[0];
-    }
-
     public VocabularyModel editVocabulary(EditVocabularyMessageIn msg) throws EditFail {
         //TODO change so we can edit many times
         //vocabularyRepo.equals(msg.getCurrent_translations());
