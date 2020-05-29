@@ -288,16 +288,17 @@ public class VocabularyControllerTest {
                 .andExpect(status().isOk()).andReturn();
 
         ObjectMapper mapper = new ObjectMapper();
+        Integer rating = new Integer(0);
 
         List<VocabularyOut> sortedTopic_retval = mapper.readValue(result.getResponse().getContentAsString(), mapper.getTypeFactory().constructCollectionType(List.class, VocabularyOut.class));
-        assert(sortedTopic_retval.get(0).getTopic().equals(Topic.Home));
-        assert(sortedTopic_retval.get(0).getVocabulary().equals("haus"));
-        assert(sortedTopic_retval.get(0).getRating().equals(0));
+        Assert.assertEquals(sortedTopic_retval.get(0).getTopic(), Topic.Home);
+        Assert.assertEquals(sortedTopic_retval.get(0).getVocabulary(), "haus");
+        Assert.assertEquals(sortedTopic_retval.get(0).getRating(), rating);
         Map<Languages, String> expected_translations = new HashMap<Languages, String>();
         expected_translations.put(Languages.DE,"haus");
         expected_translations.put(Languages.FR,"maison");
         expected_translations.put(Languages.EN,"house");
-        assert(sortedTopic_retval.get(0).getTranslations().equals(expected_translations));
+        Assert.assertEquals(sortedTopic_retval.get(0).getTranslations(),expected_translations);
     }
 
     private List<VocabularyModel> getAllVocabTopicHome() {
