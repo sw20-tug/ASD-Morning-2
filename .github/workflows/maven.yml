@@ -21,7 +21,7 @@ jobs:
       with:
         java-version: 1.11
     - name: Compile code
-      run: cd ./../../server && mvn compile
+      run:  cd ./serveserver && mvn compile
   test:
     runs-on: ubuntu-latest
     name: Running tests
@@ -33,7 +33,7 @@ jobs:
         with:
           java-version: 1.11
       - name: Run unit tests
-        run:  cd ./../../server && mvn test
+        run:  cd ./server && mvn test
   build:
     runs-on: ubuntu-latest
     name: Run mvn build and generate coverage report
@@ -45,4 +45,4 @@ jobs:
         with:
           java-version: 1.11
       - name: Build with Maven
-        run:  cd ./../../server && mvn -B package --file pom.xml -Dmaven.test.skip=true
+        run:   cd ./server && mvn -B package --file pom.xml -Dmaven.test.skip=true
