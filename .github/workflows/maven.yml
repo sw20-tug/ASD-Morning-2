@@ -21,7 +21,7 @@ jobs:
       with:
         java-version: 1.11
     - name: Compile code
-      run:  cd ./serveserver && mvn compile
+      run:  cd ./server && mvn compile
   test:
     runs-on: ubuntu-latest
     name: Running tests
