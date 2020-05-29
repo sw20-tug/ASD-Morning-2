@@ -4,6 +4,7 @@ import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.in.ShareMessageIn;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.TranslationModel;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
@@ -22,6 +23,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.mail.MessagingException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -159,6 +161,12 @@ public class VocabularyServiceTest {
         Boolean testSuccess = service.importVocabulary(contentBackupFile);
 
         Assert.assertEquals(expectSuccess, testSuccess);
+    }
+
+    @Test
+    public void share() throws MessagingException, IOException {
+        ShareMessageIn msg = new ShareMessageIn("aichnerl@yahoo.de", null);
+        service.shareVocab(msg);
     }
 
     //Helper

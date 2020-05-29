@@ -284,7 +284,7 @@ public class VocabularyControllerTest {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM))
                 .andExpect(status().isBadRequest());
     }
-
+/*
     @Test
     public void ImportBackup() throws Exception {
         String endpoint = "/api/vocabulary/Import";
@@ -305,7 +305,7 @@ public class VocabularyControllerTest {
         Assert.assertEquals(expectFalse.toString(), testFalse);
 
     }
-
+*/
    //HELPER
    public static String asJsonString(final Object obj) {
        try {
@@ -364,11 +364,7 @@ public class VocabularyControllerTest {
         Assert.assertEquals(sortedTopic_retval.get(0).getTranslations(),expected_translations);
     }
 
-    @Test
-    public void share() throws MessagingException {
-        ShareMessageIn msg = new ShareMessageIn("aichnerl@yahoo.de", "");
-        service.shareVocab(msg);
-    }
+
 
     private List<VocabularyModel> getAllVocabTopicHome() {
 

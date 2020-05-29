@@ -1,8 +1,7 @@
 package at.tugraz.asd.LANG.Service;
 
-
 import at.tugraz.asd.LANG.Exeptions.EditFail;
-import at.tugraz.asd.LANG.Exeptions.RatingFail;
+
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.in.ShareMessageIn;
@@ -15,26 +14,23 @@ import at.tugraz.asd.LANG.Repo.TranslationRepo;
 import at.tugraz.asd.LANG.Repo.VocabularyRepo;
 import at.tugraz.asd.LANG.Topic;
 import com.google.gson.*;
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.stereotype.Service;
+
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.*;
+import javax.mail.internet.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
+@SpringBootApplication
 @Service
 public class VocabularyService {
 
@@ -246,36 +242,81 @@ public class VocabularyService {
         return vocabularyRepo.findByTopic(msg);
     }
 
-    @Bean
-    public JavaMailSender shareVocab(ShareMessageIn msg) throws MessagingException {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587);
 
-        mailSender.setUsername("my.gmail@gmail.com");
-        mailSender.setPassword("password");
+    public void shareVocab(ShareMessageIn msg) throws MessagingException, IOException {
+        final String username = "xiopengyou420@gmail.com";
+        final String password = "Admin123!?!";
 
-        Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.socketFactory.port", "465");
+        properties.put("mail.smtp.socketFactory.class",
+                "javax.net.ssl.SSLSocketFactory");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.port", "465");
 
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message,true);
+        Session session = Session.getInstance(properties,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
 
-        helper.setTo(msg.getEmail());
-        helper.setSubject("Share Vocabulary");
-        helper.setText("Import the attachmend in our app!");
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom("xiopengyou420@gmail.com");
+        message.setRecipients(Message.RecipientType.TO,
+                InternetAddress.parse(msg.getEmail()));
+        message.setSubject("Testing Subject");
+        message.setText("PFA");
 
-        FileSystemResource file = new FileSystemResource(new File(createCSSforShare(msg.getData())));
-        helper.addAttachment("Shares Vodabs", file);
-        mailSender.send(message);
-        return mailSender;
+        MimeBodyPart messageBodyPart = new MimeBodyPart();
+/*
+        Multipart multipart = new MimeMultipart();
+
+        messageBodyPart = new MimeBodyPart();
+        messageBodyPart.attachFile(new File("/testing.txt"));
+        String fileName = "Test";
+        messageBodyPart.setFileName(fileName);
+        multipart.addBodyPart(messageBodyPart);
+
+        message.setContent(multipart);
+*/
+        System.out.println("Sending");
+
+        Transport.send(message);
+
+        System.out.println("Done");
     }
 
-    private String createCSSforShare(String data)
-    {
-        return "/testAttachmend.txt";
+    public File createCSSforShare(List<String> data) throws IOException {
+        List<VocabularyModel> vocabularies = new ArrayList<>();
+
+        for(int i = 0; i < data.size(); i++)
+        {
+            vocabularies.add(vocabularyRepo.findByVocabulary(data.get(i)));
+        }
+
+        //Get all vocabulary and save in List
+
+        //Create File
+        Files.deleteIfExists(Paths.get("shared.txt"));
+        File backup_file = new File("shared.txt");
+        FileWriter file_w = new FileWriter(backup_file);
+
+        //Convert Vocabulary Models to GSON (via GSON Library)
+        Gson gson = new Gson();
+        JsonArray json_arr = new JsonArray();
+        String jsonString = null;
+
+        for (VocabularyModel vocabM : vocabularies
+        ) {
+            jsonString = gson.toJson(vocabM);
+            json_arr.add(jsonString);
+        }
+        file_w.write(json_arr.toString());
+        file_w.flush();
+        file_w.close();
+
+        return backup_file;
     }
 }

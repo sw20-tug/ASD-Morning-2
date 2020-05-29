@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -230,8 +231,8 @@ public class VocabularyController {
     }
 
     @PostMapping (path = "share")
-    public ResponseEntity shareVocabs(@RequestBody ShareMessageIn msg) throws MessagingException
-    {
+    public ResponseEntity shareVocabs(@RequestBody ShareMessageIn msg) throws MessagingException, IOException {
+        service.createCSSforShare(msg.getData());
         service.shareVocab(msg);
         return ResponseEntity.of(null);
     }
