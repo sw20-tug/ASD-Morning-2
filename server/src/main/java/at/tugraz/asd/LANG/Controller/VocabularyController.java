@@ -198,8 +198,7 @@ public class VocabularyController {
     public ResponseEntity exportBackup(){
         try{
             File backup = service.exportVocabulary();
-
-            Path path = Paths.get(backup.getAbsolutePath());
+            Path path = Paths.get(backup.getPath());
             ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
 
             return ResponseEntity.ok()
@@ -215,10 +214,12 @@ public class VocabularyController {
 
     @PostMapping (path = "Import")
     public ResponseEntity importBackup(@RequestParam("file") MultipartFile Backup_File){
-        System.out.println("Successfull");
         try{
-            service.importVocabulary(Backup_File);
-            return ResponseEntity.ok(null);
+            String content = new String(Backup_File.getBytes());
+            Boolean success = service.importVocabulary(content);
+
+            return ResponseEntity.ok()
+                    .body(success);
         }
         catch (Exception e){
             System.out.println("Error Importing File " + e);

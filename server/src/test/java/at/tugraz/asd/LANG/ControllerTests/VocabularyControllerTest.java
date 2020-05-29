@@ -29,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -270,6 +271,34 @@ public class VocabularyControllerTest {
                 .andExpect((ResultMatcher) jsonPath("$[0].vocabulary", is(randomVocab.getVocabulary())));
     }
 
+    @Test
+    public void testExportFail() throws Exception {
+        mvc.perform(get("/api/vocabulary/Export")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void ImportBackup() throws Exception {
+        String endpoint = "/api/vocabulary/Import";
+        Boolean expectFalse = false;
+        File file = new File("backup.txt");
+        byte[] fileContent = Files.readAllBytes(file.toPath());
+
+        MockMultipartFile multipartFile = new MockMultipartFile("file", fileContent);
+
+        MvcResult result = mvc.perform(fileUpload(endpoint)
+                .file(multipartFile)
+                .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String testFalse = result.getResponse().getContentAsString();
+
+        Assert.assertEquals(expectFalse.toString(), testFalse);
+
+    }
+
    //HELPER
    public static String asJsonString(final Object obj) {
        try {
@@ -278,30 +307,5 @@ public class VocabularyControllerTest {
            throw new RuntimeException(e);
        }
    }
-
-    @Test
-    public void exportBackup() throws Exception {
-
-        File backup = service.exportVocabulary();
-        Path path = Paths.get(backup.getAbsolutePath());
-        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
-
-        mvc.perform(put("/api/vocabulary/Export")
-                .content(asJsonString(resource))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void ImportBackup() throws Exception {
-        MockMultipartFile csvFile = new MockMultipartFile("file", "backup.csv", MediaType.TEXT_PLAIN_VALUE, "backup.csv".getBytes());
-
-        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/import")
-                .file(csvFile)
-                .param("file"))
-                .andExpect(status().is(200))
-                .andExpect(content().string("success"));
-    }
 
 }
