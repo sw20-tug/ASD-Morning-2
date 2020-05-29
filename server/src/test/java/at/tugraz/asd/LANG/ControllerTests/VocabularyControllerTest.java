@@ -248,7 +248,7 @@ public class VocabularyControllerTest {
     @Test
     public void testGetRandomVocabularyNoContentFound() throws Exception {
         when(service.getAllVocabulary()).thenReturn(Collections.EMPTY_LIST);
-        mvc.perform(get("/api/random")
+        mvc.perform(get("/api/vocabulary/random")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
@@ -267,11 +267,39 @@ public class VocabularyControllerTest {
         }
 
         given(service.getAllVocabulary()).willReturn(randomVocabList);
-        mvc.perform(get("/api/random")
+        mvc.perform(get("/api/vocabulary/random")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(10)))
-                .andExpect((ResultMatcher) jsonPath("$[0].vocabulary", is(randomVocab.getVocabulary())));
+                .andExpect(jsonPath("$[0].vocabulary").value(randomVocab.getVocabulary()));
+    }
+
+    @Test
+    public void testExportFail() throws Exception {
+        mvc.perform(get("/api/vocabulary/Export")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void ImportBackup() throws Exception {
+        String endpoint = "/api/vocabulary/Import";
+        Boolean expectFalse = false;
+        File file = new File("backup.txt");
+        byte[] fileContent = Files.readAllBytes(file.toPath());
+
+        MockMultipartFile multipartFile = new MockMultipartFile("file", fileContent);
+
+        MvcResult result = mvc.perform(fileUpload(endpoint)
+                .file(multipartFile)
+                .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String testFalse = result.getResponse().getContentAsString();
+
+        Assert.assertEquals(expectFalse.toString(), testFalse);
+
     }
 
    //HELPER
@@ -282,31 +310,6 @@ public class VocabularyControllerTest {
            throw new RuntimeException(e);
        }
    }
-
-    @Test
-    public void exportBackup() throws Exception {
-
-        File backup = service.exportVocabulary();
-        Path path = Paths.get(backup.getAbsolutePath());
-        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
-
-        mvc.perform(put("/api/vocabulary/Export")
-                .content(asJsonString(resource))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void ImportBackup() throws Exception {
-        MockMultipartFile csvFile = new MockMultipartFile("file", "backup.csv", MediaType.TEXT_PLAIN_VALUE, "backup.csv".getBytes());
-
-        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/import")
-                .file(csvFile)
-                .param("file"))
-                .andExpect(status().is(200))
-                .andExpect(content().string("success"));
-    }
 
     @Test
     public void testFilterUpDownStudyInterfaceDE() throws Exception {

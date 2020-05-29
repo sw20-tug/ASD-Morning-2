@@ -12,6 +12,8 @@ import at.tugraz.asd.LANG.Repo.TranslationRepo;
 import at.tugraz.asd.LANG.Repo.VocabularyRepo;
 import at.tugraz.asd.LANG.Service.VocabularyService;
 import at.tugraz.asd.LANG.Topic;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +24,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -264,6 +272,47 @@ public class VocabularyServiceTest {
         }
     }
 
+    @Test
+    public void testExport() throws IOException {
+        when(vocabularyRepo.findAll()).thenReturn(getAllVocabularyMockData());
+        Files.deleteIfExists(Paths.get("ExportFile.txt"));
+        File BackupFile = new File("backup.txt");
+        BackupFile = service.exportVocabulary();
+        File ExportFile = new File("ExportFile.txt");
+        FileWriter ExportFileWriter = new FileWriter(ExportFile);
+
+        Gson gson = new Gson();
+        JsonArray json_arr = new JsonArray();
+        String jsonString = null;
+
+        for (VocabularyModel vocabM : getAllVocabularyMockData()
+        ) {
+            jsonString = gson.toJson(vocabM);
+            json_arr.add(jsonString);
+        }
+
+        ExportFileWriter.write(json_arr.toString());
+        ExportFileWriter.flush();
+        ExportFileWriter.close();
+
+        String contentBackupFile = Files.readString(BackupFile.toPath(), StandardCharsets.UTF_8);
+        String contentExportFile = Files.readString(ExportFile.toPath(), StandardCharsets.UTF_8);
+
+        Assert.assertEquals(contentBackupFile, contentExportFile);
+    }
+
+    @Test
+    public void testImport() throws Exception {
+        when(vocabularyRepo.saveAll(any())).thenReturn(getAllVocabularyMockData());
+
+        File BackupFile = new File("backup.txt");
+        String contentBackupFile = Files.readString(BackupFile.toPath(), StandardCharsets.UTF_8);
+
+        Boolean expectSuccess = true;
+        Boolean testSuccess = service.importVocabulary(contentBackupFile);
+
+        Assert.assertEquals(expectSuccess, testSuccess);
+    }
 
     //Helper
 
