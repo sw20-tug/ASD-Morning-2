@@ -1,14 +1,16 @@
 name: Java CI with Maven
 on:
   push:
-    branches: [ develop ]
+    branches:
+     - develop
+     - master
   pull_request:
-    branches: [ develop ]
+    branches:
+    - develop
+    - master
  
  
 jobs:
-  
-  
   compile:
     runs-on: ubuntu-latest
     name: Running Java ${{ matrix.java }} compile
