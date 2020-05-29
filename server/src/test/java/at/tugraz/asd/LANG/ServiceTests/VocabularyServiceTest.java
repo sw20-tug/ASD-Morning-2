@@ -1,5 +1,6 @@
 package at.tugraz.asd.LANG.ServiceTests;
 
+import at.tugraz.asd.LANG.Exeptions.CreateVocabularyFail;
 import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
@@ -18,9 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,7 +42,47 @@ public class VocabularyServiceTest {
 
 
     @Test
-    public void createVocabulary(){
+    public void createVocabulary() throws CreateVocabularyFail {
+        VocabularyModel model = getBasicVocabularyModel();
+        when(vocabularyRepo.save(any(VocabularyModel.class))).thenReturn(model);
+
+        VocabularyModel returnValue = service.saveVocabulary(createVocabularyMessageIn());
+        Assert.assertEquals(returnValue.getTopic(),model.getTopic());
+        Assert.assertEquals(returnValue.getVocabulary(),model.getVocabulary());
+
+        returnValue.getTranslationVocabMapping().forEach(el -> {
+            if(el.getLanguage().equals(Languages.EN))
+            {
+                model.getTranslationVocabMapping().forEach(e -> {
+                    if(e.getLanguage().equals(Languages.EN))
+                    {
+                        Assert.assertEquals(el.getVocabulary(), e.getVocabulary());
+                    }
+                });
+            }
+            if(el.getLanguage().equals(Languages.DE))
+            {
+                model.getTranslationVocabMapping().forEach(e -> {
+                    if(e.getLanguage().equals(Languages.DE))
+                    {
+                        Assert.assertEquals(el.getVocabulary(), e.getVocabulary());
+                    }
+                });
+            }
+            if(el.getLanguage().equals(Languages.FR))
+            {
+                model.getTranslationVocabMapping().forEach(e -> {
+                    if(e.getLanguage().equals(Languages.FR))
+                    {
+                        Assert.assertEquals(el.getVocabulary(), e.getVocabulary());
+                    }
+                });
+            }
+        });
+    }
+
+    @Test(expected = CreateVocabularyFail.class)
+    public void createVocabularyFail() throws CreateVocabularyFail {
         when(vocabularyRepo.save(any(VocabularyModel.class))).thenReturn(getBasicVocabularyModel());
         Assert.assertEquals(service.saveVocabulary(new CreateVocabularyMessageIn()),getBasicVocabularyModel());
     }
@@ -92,12 +131,124 @@ public class VocabularyServiceTest {
        service.editVocabulary(msg);
     }
 
+    @Test
+    public void testSortOverviewA() {
+        List<VocabularyModel> data = getAllVocabularyMockData();
+        VocabularyModel tmp = data.get(0);
+        data.set(0, data.get(1));
+        data.set(1, tmp);
+        when(vocabularyRepo.findAll()).thenReturn(data);
+        List<VocabularyModel> newList = service.sortVocabOverview("a");
+        Assert.assertEquals(getAllVocabularyMockData(),newList);
+
+    }
+
+    @Test
+    public void testSortOverviewZ() {
+        List<VocabularyModel> data = getAllVocabularyMockData();
+        VocabularyModel tmp = data.get(0);
+        data.set(0, data.get(1));
+        data.set(1, tmp);
+        when(vocabularyRepo.findAll()).thenReturn(getAllVocabularyMockData());
+        List<VocabularyModel> newList = service.sortVocabOverview("z");
+        Assert.assertEquals(data,newList);
+
+    }
+
+    @Test
+    public void testSortOverviewAFail() {
+        when(vocabularyRepo.findAll()).thenReturn(Collections.emptyList());
+        List<VocabularyModel> newList = service.sortVocabOverview("a");
+        Assert.assertEquals(newList,Collections.EMPTY_LIST);
+    }
+
+    @Test
+    public void testSortOverviewZFail() {
+        when(vocabularyRepo.findAll()).thenReturn(Collections.emptyList());
+        List<VocabularyModel> newList = service.sortVocabOverview("z");
+        Assert.assertEquals(newList,Collections.EMPTY_LIST);
+    }
+
+    @Test
+    public void testSortStudyInterfaceADE() {
+        List<VocabularyModel> data = getAllVocabularyMockData();
+        VocabularyModel tmp = data.get(0);
+        data.set(0, data.get(1));
+        data.set(1, tmp);
+        when(vocabularyRepo.findAll()).thenReturn(data);
+        List<VocabularyModel> newList = service.sortVocabStudyInterface(Languages.DE,"a");
+        Assert.assertEquals(getAllVocabularyMockData(),newList);
+    }
+
+    @Test
+    public void testSortStudyInterfaceAEN() {
+        List<VocabularyModel> data = getAllVocabularyMockData();
+        VocabularyModel tmp = data.get(0);
+        data.set(0, data.get(1));
+        data.set(1, tmp);
+        when(vocabularyRepo.findAll()).thenReturn(data);
+        List<VocabularyModel> newList = service.sortVocabStudyInterface(Languages.EN,"a");
+        Assert.assertEquals(getAllVocabularyMockData(),newList);
+    }
+
+    @Test
+    public void testSortStudyInterfaceAFR() {
+        List<VocabularyModel> data = getAllVocabularyMockData();
+        VocabularyModel tmp = data.get(0);
+        data.set(0, data.get(1));
+        data.set(1, tmp);
+        when(vocabularyRepo.findAll()).thenReturn(getAllVocabularyMockData());
+        List<VocabularyModel> newList = service.sortVocabStudyInterface(Languages.FR,"a");
+        Assert.assertEquals(data,newList);
+    }
+
+    @Test
+    public void testSortStudyInterfaceZDE() {
+        List<VocabularyModel> data = getAllVocabularyMockData();
+        VocabularyModel tmp = data.get(0);
+        data.set(0, data.get(1));
+        data.set(1, tmp);
+        when(vocabularyRepo.findAll()).thenReturn(getAllVocabularyMockData());
+        List<VocabularyModel> newList = service.sortVocabStudyInterface(Languages.DE,"z");
+        Assert.assertEquals(data,newList);
+    }
+
+    @Test
+    public void testSortStudyInterfaceZEN() {
+        List<VocabularyModel> data = getAllVocabularyMockData();
+        VocabularyModel tmp = data.get(0);
+        data.set(0, data.get(1));
+        data.set(1, tmp);
+        when(vocabularyRepo.findAll()).thenReturn(getAllVocabularyMockData());
+        List<VocabularyModel> newList = service.sortVocabStudyInterface(Languages.EN,"z");
+        Assert.assertEquals(data,newList);
+    }
+
+    @Test
+    public void testSortStudyInterfaceZFR() {
+        List<VocabularyModel> data = getAllVocabularyMockData();
+        VocabularyModel tmp = data.get(0);
+        data.set(0, data.get(1));
+        data.set(1, tmp);
+        when(vocabularyRepo.findAll()).thenReturn(data);
+        List<VocabularyModel> newList = service.sortVocabStudyInterface(Languages.FR,"z");
+        Assert.assertEquals(getAllVocabularyMockData(),newList);
+    }
+
+    @Test
+    public void testSortStudyInterfaceFail() {
+        when(vocabularyRepo.findAll()).thenReturn(Collections.emptyList());
+        List<VocabularyModel> newList = service.sortVocabStudyInterface(Languages.DE,"z");
+        Assert.assertEquals(newList,Collections.EMPTY_LIST);
+    }
+
 
     //Helper
 
+    //Beware of changing the return value -> tests for sorting will fail
     private List<VocabularyModel> getAllVocabularyMockData() {
         List<TranslationModel> translations = Stream.of(
-                new TranslationModel(Languages.DE,"bread"),
+                new TranslationModel(Languages.EN,"bread"),
                 new TranslationModel(Languages.FR,"pain"),
                 new TranslationModel(Languages.DE,"brot")
         ).collect(Collectors.toList());
@@ -106,16 +257,16 @@ public class VocabularyServiceTest {
         List<TranslationModel> translations1 = Stream.of(
                 new TranslationModel(Languages.DE,"haus"),
                 new TranslationModel(Languages.FR,"maison"),
-                new TranslationModel(Languages.DE,"house")
+                new TranslationModel(Languages.EN,"house")
         ).collect(Collectors.toList());
-        VocabularyModel vocabularyModel1 = new VocabularyModel(Topic.USER_GENERATED, "haus", translations1, Integer.valueOf(0));
+        VocabularyModel vocabularyModel1 = new VocabularyModel(Topic.DEFAULT, "haus", translations1, Integer.valueOf(0));
         return Stream.of(vocabularyModel,vocabularyModel1).collect(Collectors.toList());
     }
 
     private List<TranslationModel> getEditedTranslationModel()
     {
         return Stream.of(
-                new TranslationModel(Languages.DE,"bread"),
+                new TranslationModel(Languages.EN,"bread"),
                 new TranslationModel(Languages.FR,"pain"),
                 new TranslationModel(Languages.DE,"brot")
         ).collect(Collectors.toList());
@@ -124,7 +275,7 @@ public class VocabularyServiceTest {
     private VocabularyModel getEditedVocabularyModel() {
         //create expected return value
         List<TranslationModel> translations = Stream.of(
-                new TranslationModel(Languages.DE,"bread"),
+                new TranslationModel(Languages.EN,"bread"),
                 new TranslationModel(Languages.FR,"pain"),
                 new TranslationModel(Languages.DE,"brot")
         ).collect(Collectors.toList());
@@ -132,15 +283,29 @@ public class VocabularyServiceTest {
         return vocabularyModel;
     }
 
-    private   VocabularyModel getBasicVocabularyModel(){
+    private VocabularyModel getBasicVocabularyModel(){
         //create expected return value
         List<TranslationModel> translations = Stream.of(
                 new TranslationModel(Languages.DE,"haus"),
                 new TranslationModel(Languages.FR,"maison"),
-                new TranslationModel(Languages.DE,"house")
+                new TranslationModel(Languages.EN,"house")
         ).collect(Collectors.toList());
         VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, "haus", translations, Integer.valueOf(0));
         return vocabularyModel;
+    }
+
+    private CreateVocabularyMessageIn createVocabularyMessageIn(){
+        CreateVocabularyMessageIn ret = new CreateVocabularyMessageIn();
+        HashMap<Languages,String> translations = new HashMap<>();
+        translations.put(Languages.EN,"house");
+        translations.put(Languages.DE,"haus");
+        translations.put(Languages.FR,"maison");
+
+
+        ret.setTopic(Topic.USER_GENERATED);
+        ret.setTranslations(translations);
+        ret.setVocabulary("haus");
+        return ret;
     }
 
 }

@@ -304,4 +304,119 @@ public class VocabularyControllerTest {
                 .andExpect(content().string("success"));
     }
 
+    @Test
+    public void testFilterUpDownStudyInterfaceDE() throws Exception {
+        List<TranslationModel> translations_1 = new ArrayList<>();
+        translations_1.add(new TranslationModel(Languages.DE,"haus"));
+        translations_1.add(new TranslationModel(Languages.FR,"maison"));
+        translations_1.add(new TranslationModel(Languages.DE,"house"));
+
+        when(service.sortVocabStudyInterface(Languages.DE, "a")).thenReturn(
+                Stream.of(
+                        new VocabularyModel(Topic.USER_GENERATED,"haus",translations_1, 0)
+                ).collect(Collectors.toList())
+        );
+        mvc.perform(get("/api/vocabulary/alphabetically/FR/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/vocabulary/alphabetically/EN/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/vocabulary/alphabetically/DE/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/vocabulary/alphabetically/DE/z")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testFilterUpDownStudyInterfaceEN() throws Exception {
+        List<TranslationModel> translations_1 = new ArrayList<>();
+        translations_1.add(new TranslationModel(Languages.DE,"haus"));
+        translations_1.add(new TranslationModel(Languages.FR,"maison"));
+        translations_1.add(new TranslationModel(Languages.DE,"house"));
+
+        when(service.sortVocabStudyInterface(Languages.EN, "a")).thenReturn(
+                Stream.of(
+                        new VocabularyModel(Topic.USER_GENERATED,"haus",translations_1, 0)
+                ).collect(Collectors.toList())
+        );
+        mvc.perform(get("/api/vocabulary/alphabetically/DE/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/vocabulary/alphabetically/FR/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/vocabulary/alphabetically/EN/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/vocabulary/alphabetically/EN/z")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testFilterUpDownStudyInterfaceFR() throws Exception {
+        List<TranslationModel> translations_1 = new ArrayList<>();
+        translations_1.add(new TranslationModel(Languages.DE,"haus"));
+        translations_1.add(new TranslationModel(Languages.FR,"maison"));
+        translations_1.add(new TranslationModel(Languages.DE,"house"));
+
+        when(service.sortVocabStudyInterface(Languages.FR, "a")).thenReturn(
+                Stream.of(
+                        new VocabularyModel(Topic.USER_GENERATED,"haus",translations_1, 0)
+                ).collect(Collectors.toList())
+        );
+        mvc.perform(get("/api/vocabulary/alphabetically/DE/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/vocabulary/alphabetically/FR/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/vocabulary/alphabetically/EN/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/vocabulary/alphabetically/FR/z")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testFilterUpDownOverview() throws Exception {
+        List<TranslationModel> translations_1 = new ArrayList<>();
+        translations_1.add(new TranslationModel(Languages.DE,"haus"));
+        translations_1.add(new TranslationModel(Languages.FR,"maison"));
+        translations_1.add(new TranslationModel(Languages.DE,"house"));
+
+        testFilterHelper1(translations_1);
+        testFilterHelper2(translations_1);
+    }
+    private void testFilterHelper1(List<TranslationModel> translations) throws Exception {
+        when(service.sortVocabOverview("a")).thenReturn(
+                Stream.of(
+                        new VocabularyModel(Topic.USER_GENERATED,"haus",translations, 0)
+                ).collect(Collectors.toList())
+        );
+        mvc.perform(get("/api/vocabulary/alphabetically/z")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/vocabulary/alphabetically/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+    private void testFilterHelper2(List<TranslationModel> translations) throws Exception {
+        when(service.sortVocabOverview("z")).thenReturn(
+                Stream.of(
+                        new VocabularyModel(Topic.USER_GENERATED,"haus",translations, 0)
+                ).collect(Collectors.toList())
+        );
+        when(service.sortVocabOverview("a")).thenReturn(Collections.EMPTY_LIST);
+        mvc.perform(get("/api/vocabulary/alphabetically/z")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/vocabulary/alphabetically/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
 }
