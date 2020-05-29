@@ -1,6 +1,7 @@
 package at.tugraz.asd.LANG.Controller;
 
 
+import at.tugraz.asd.LANG.Exeptions.CreateVocabularyFail;
 import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
@@ -12,6 +13,7 @@ import at.tugraz.asd.LANG.Model.VocabularyModel;
 import at.tugraz.asd.LANG.Service.VocabularyService;
 import org.apache.logging.log4j.util.PropertySource;
 import org.hibernate.usertype.UserVersionType;
+import at.tugraz.asd.LANG.Topic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
@@ -36,8 +38,12 @@ public class VocabularyController {
 
     @PostMapping
     public ResponseEntity addVocabulary(@RequestBody CreateVocabularyMessageIn msg){
-        service.saveVocabulary(msg);
-        return ResponseEntity.ok(null);
+        try{
+            service.saveVocabulary(msg);
+            return ResponseEntity.ok(null);
+        }catch (CreateVocabularyFail e){
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping (path = "/topics")
@@ -69,19 +75,6 @@ public class VocabularyController {
         return ResponseEntity.ok(ret);
     }
 
-    @GetMapping (path = "{Language}")
-    public ResponseEntity getAllVocabularyOfLanguage(@PathVariable("Language") Languages language)
-    {
-        VocabularyLanguageOut ret = new VocabularyLanguageOut(service.getAllVocabularyOfLanguage(language));
-        return ResponseEntity.ok(ret);
-    }
-
-    @GetMapping (path = "{Language}/{word}")
-    public ResponseEntity getTranslation(@PathVariable("Language") Languages language, @PathVariable("word") String word)
-    {
-        TranslationOut ret = new TranslationOut(service.getTranslation(language, word));
-        return ResponseEntity.ok(ret);
-    }
     @PutMapping
     @ResponseBody
     public ResponseEntity editVocabulary(@RequestBody EditVocabularyMessageIn msg){
@@ -180,12 +173,37 @@ public class VocabularyController {
         return ResponseEntity.ok(ret);
     }
 
+    @GetMapping (path = "sort_topics/{Topic}")
+    @ResponseBody
+    public ResponseEntity sortByTopic(@PathVariable("Topic") Topic msg)
+    {
+        ArrayList<VocabularyOut> ret = new ArrayList<>();
+        List<VocabularyModel> vocab = service.sortTopics(msg);
+
+        if(vocab.isEmpty())
+            return ResponseEntity.noContent().build();
+
+        vocab.forEach(el->{
+            HashMap<Languages, String> translation = new HashMap<>();
+            el.getTranslationVocabMapping().forEach(translationModel -> {
+                translation.put(translationModel.getLanguage(), translationModel.getVocabulary());
+            });
+            ret.add(new VocabularyOut(
+                    el.getTopic(),
+                    el.getVocabulary(),
+                    translation,
+                    el.getRating()
+            ));
+        });
+
+        return ResponseEntity.ok(ret);
+    }
+
     @GetMapping  (path = "Export")
     public ResponseEntity exportBackup(){
         try{
             File backup = service.exportVocabulary();
-
-            Path path = Paths.get(backup.getAbsolutePath());
+            Path path = Paths.get(backup.getPath());
             ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
 
             return ResponseEntity.ok()
@@ -201,10 +219,12 @@ public class VocabularyController {
 
     @PostMapping (path = "Import")
     public ResponseEntity importBackup(@RequestParam("file") MultipartFile Backup_File){
-        System.out.println("Successfull");
         try{
-            service.importVocabulary(Backup_File);
-            return ResponseEntity.ok(null);
+            String content = new String(Backup_File.getBytes());
+            Boolean success = service.importVocabulary(content);
+
+            return ResponseEntity.ok()
+                    .body(success);
         }
         catch (Exception e){
             System.out.println("Error Importing File " + e);
