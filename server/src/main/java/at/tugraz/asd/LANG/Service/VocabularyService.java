@@ -1,6 +1,7 @@
 package at.tugraz.asd.LANG.Service;
 
 
+import at.tugraz.asd.LANG.Exeptions.CreateVocabularyFail;
 import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Exeptions.RatingFail;
 import at.tugraz.asd.LANG.Languages;
@@ -35,10 +36,12 @@ public class VocabularyService {
     @Autowired
     TranslationRepo translationRepo;
 
-    public VocabularyModel saveVocabulary(CreateVocabularyMessageIn msg){
+    public VocabularyModel saveVocabulary(CreateVocabularyMessageIn msg) throws CreateVocabularyFail {
         Map<Languages, String> translations = msg.getTranslations();
         String vocabulary = msg.getVocabulary();
         Topic topic = msg.getTopic();
+        if(translations == null || vocabulary == null || topic == null)
+            throw new CreateVocabularyFail();
 
         List<TranslationModel> translationModels = new ArrayList<>();
         translations.forEach((k,v)->{
@@ -129,6 +132,32 @@ public class VocabularyService {
                         }
                     }
                     return compare2.compareTo(compare1);
+                }
+            });
+        }
+        return vocab;
+    }
+
+    public List<VocabularyModel> sortRating(String aOrz) {
+        ArrayList<VocabularyOut> ret = new ArrayList<>();
+        List<VocabularyModel> vocab = getAllVocabulary();
+        if(vocab.isEmpty())
+            return vocab;
+        if(aOrz.equals("c"))
+        {
+            vocab.sort(new Comparator<VocabularyModel>() {
+                @Override
+                public int compare(VocabularyModel vocabularyModel, VocabularyModel t1) {
+                    return vocabularyModel.getRating().compareTo(t1.getRating());
+                }
+            });
+        }
+        if(aOrz.equals("d"))
+        {
+            vocab.sort(new Comparator<VocabularyModel>() {
+                @Override
+                public int compare(VocabularyModel vocabularyModel, VocabularyModel t1) {
+                    return t1.getRating().compareTo(vocabularyModel.getRating());
                 }
             });
         }
