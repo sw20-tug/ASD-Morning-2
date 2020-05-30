@@ -10,14 +10,25 @@ import { Form, FormControl } from 'react-bootstrap';
 class VocabularyOverview extends React.Component {
     constructor() {
         super();
+        this.addSelectedVocabulary = this.addSelectedVocabulary.bind(this);
         this.handleChange_Topic = this.handleChange_Topic.bind(this);
+        this.passValues = this.passValues.bind(this);
+        this.selectAll = this.selectAll.bind(this);
+        this.unselectAll = this.unselectAll.bind(this);
         this.state = {
-            vocabulary: []
+            vocabulary: [],
+            selectedVocabulary: [],
+            email: '',
+            buttonState: false
         };
     }
 
     async componentDidMount(args = "b") {
         document.getElementById("selectbox").value = "Default"
+        this.state.selectedVocabulary.forEach(el => {
+            document.getElementById(el).checked = false
+        })
+        this.state.selectedVocabulary = [];
         if(args == "b")
         {
             const data = await fetch('http://localhost:8080/api/vocabulary')
@@ -43,7 +54,40 @@ class VocabularyOverview extends React.Component {
         }
     }
 
+    addSelectedVocabulary(e) {
+        let index = e.target.id;
+        let isThere = this.state.selectedVocabulary.indexOf(index)
+        console.log(isThere)
+        if (isThere == -1) {
+            let val = this.state.selectedVocabulary;
+            val.push(index)
+            this.setState({ selectedVocabulary: val });
+        }
+        else {
+            this.state.selectedVocabulary.splice(isThere);
+        }
+        console.log(this.state.selectedVocabulary)
+
+    }
+
+    async passValues() {
+        var values = { vocabs: [], email: this.state.email }
+        this.state.selectedVocabulary.forEach(el => {
+            values.vocabs.push(this.state.vocabulary[el].vocabulary)
+        })
+        console.log(values);
+        var result = await fetch('http://localhost:8080/api/vocabulary/share', {
+            method: 'POST',
+            headers: new Headers({'content-type': 'application/json'}),
+            body: values
+        });
+    }
+
     async handleChange_Topic(e) {
+        this.state.selectedVocabulary.forEach(el => {
+            document.getElementById(el).checked = false
+        })
+        this.state.selectedVocabulary = [];
         if(e.target.value == "Default")
         {
             const data = await fetch('http://localhost:8080/api/vocabulary')
@@ -65,22 +109,59 @@ class VocabularyOverview extends React.Component {
 
     }
 
+    selectAll() {
+        let isThere;
+        let val;
+        this.state.selectedVocabulary = [];
+        this.state.vocabulary.map((el, id) => (
+            document.getElementById(id).checked = true,
+            isThere = this.state.selectedVocabulary.indexOf(id),
+            val = this.state.selectedVocabulary,
+            val.push(id),
+            this.setState({ selectedVocabulary: val })
+        ))
+
+    }
+
+    unselectAll() {
+        this.state.selectedVocabulary = [];
+        this.state.vocabulary.map((el, id) => (
+            document.getElementById(id).checked = false
+        ))
+    }
+
+    handleChangeEmail= (e) => {
+        this.setState({email: e.target.value});
+        this.state.buttonState = false;
+        if (/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z][A-Za-z]+$/.test(e.target.value))
+        {
+            this.state.buttonState = true;
+        }
+    }
+
     render() {
         return (
                 <main>
                     <h1 className="title">
-                        Vocabulary Overview
+                        Share
                     </h1>
                     <p className="description">
-                        View and Edit your Vocabulary
+                    Select the words you want to send!
+                    
                     </p>
-
-                    <div style={{ width: "100%", padding: "0.75rem", marginLeft: "2rem" }}>
-                        <Link href="/add_vocabulary">
-                            <Button variant="outline-primary">+</Button>
-                        </Link>
-                    </div>
-
+                    <Container>
+                        <Form>
+                        <Form.Group controlId="formBasicEmail">
+                            <Form.Control type="email" placeholder="Enter email" onChange={ this.handleChangeEmail } />
+                            <Form.Text className="text-muted">
+                            We'll never share your email with anyone else.
+                            </Form.Text>
+                        </Form.Group>
+                        <Button onClick={this.passValues} disabled = {!this.state.buttonState} variant="primary" type="submit">
+                            Send
+                        </Button>
+                        </Form>
+                    </Container>
                     <Container>
                         <table className="table">
                             <thead>
@@ -107,6 +188,14 @@ class VocabularyOverview extends React.Component {
                                     <button type="submit" onClick={() => {this.componentDidMount("c")}} class="btn btn-outline-dark filter_buttons"  >▲</button>
                                     <button type="submit" onClick={() => {this.componentDidMount("d")}} class="btn btn-outline-dark filter_buttons" >▼</button>
                                 </th>
+                                <th>
+                                    <Button onClick={this.selectAll}>
+                                        Select all
+                                    </Button>
+                                    <Button onClick={this.unselectAll} variant = "outline-primary">
+                                        Unselect all
+                                    </Button>
+                                </th>
                                 <th className="test_col" scope="col"></th>
                             </tr>
                             </thead>
@@ -122,19 +211,14 @@ class VocabularyOverview extends React.Component {
                                                 ))}
                                                 </ul>
                                             </td>
-                                            <td>                                                <InputGroup  size="sm" className="mb-3">
-                           <Rating readonly initialRating={element.rating} fractions="1"/>
-                        </InputGroup></td>
-                                            <td>
-                                                {console.log(element.translations)}
-                                                <Link href={{ pathname: 'edit_vocabulary', query: {
-                                                    de: element.translations.DE, 
-                                                    en: element.translations.EN, 
-                                                    fr: element.translations.FR,
-                                                    rating: element.rating}}}>
-                                                    <Button variant="outline-primary">Edit</Button>
-                                                </Link>
+                                            <td>                                                
+                                            <InputGroup  size="sm" className="mb-3">
+                                                <Rating readonly initialRating={element.rating} fractions="1"/>
+                                            </InputGroup>
                                             </td>
+                                            <Form.Group controlId={id}>
+                                                <Form.Check type="checkbox" label="Check me out" onChange={this.addSelectedVocabulary} />
+                                            </Form.Group>
                                         </tr>
                                     )
                                 )

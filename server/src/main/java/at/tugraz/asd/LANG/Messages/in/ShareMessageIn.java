@@ -15,5 +15,5 @@ import java.util.UUID;
 public class ShareMessageIn
 {
     private String email;
-    private List<String> data;
+    private List<String> vocabs;
 }
