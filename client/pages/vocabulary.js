@@ -50,6 +50,13 @@ class VocabularyOverview extends React.Component {
             const json = await data.json()
             this.setState({vocabulary: json})
         }
+        else if(args == "c" || args == "d")
+        {
+            const data = await fetch('http://localhost:8080/api/vocabulary/rating/' + args)
+            console.log(data);
+            const json = await data.json()
+            this.setState({vocabulary: json})
+        }
     }
 
     async handleChange_Topic(e) {
@@ -114,7 +121,10 @@ class VocabularyOverview extends React.Component {
                                     </Form.Group>
                                 </th>
                                 <th scope="col"><Translate content="translation" ></Translate></th>
-                                <th scope="col"><Translate content="rating" ></Translate></th>
+                                <th scope="col"><Translate content="rating" ></Translate>
+                                    <button type="submit" onClick={() => {this.componentDidMount("c")}} className="btn btn-outline-dark filter_buttons"  >▲</button>
+                                    <button type="submit" onClick={() => {this.componentDidMount("d")}} className="btn btn-outline-dark filter_buttons" >▼</button>
+                                </th>
                                 <th className="test_col" scope="col"></th>
                             </tr>
                             </thead>

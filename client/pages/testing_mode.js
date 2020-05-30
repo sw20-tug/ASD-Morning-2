@@ -1,6 +1,16 @@
 import {Button, Row, Col, Dropdown, DropdownButton, Form} from 'react-bootstrap';
 import Link from 'next/link';
 
+import counterpart from 'counterpart'
+import Translate from 'react-translate-component'
+import en from './languages/en'
+import de from './languages/de'
+import fr from './languages/fr'
+
+counterpart.registerTranslations('en', en);
+counterpart.registerTranslations('de', de);
+counterpart.registerTranslations('fr', fr);
+counterpart.setLocale('en');
 
 class TestingMode extends React.Component {
   constructor() {
@@ -15,8 +25,14 @@ class TestingMode extends React.Component {
       random: false,
       dis_given: true,
       dis_tested: true,
-      disabled: true
+      disabled: true,
+      language: 'en'
     };
+  }
+
+  onLangChange = (e) => {
+    this.setState({language: e.target.value});
+    counterpart.setLocale(e.target.value);
   }
 
   handleChange_Given_Language({ target }) {
@@ -60,7 +76,13 @@ class TestingMode extends React.Component {
   render() {
     return (
       <main>
-        <div className="testing_headline">Choose the language you want to test...</div>
+        <select value={this.state.language} onChange={this.onLangChange}>
+          <option value="en" >EN</option>
+          <option value="de" >DE</option>
+          <option value="fr" >FR</option>
+        </select>
+
+        <Translate content="choose_testing_lang" className="testing_headline"></Translate>
         <div className="testing_lang_choice_container">
           <div className="testing_lang_choice_dropdown_item">
             <DropdownButton id="dropdown-basic-button" title={this.state.given_language}>
@@ -81,7 +103,7 @@ class TestingMode extends React.Component {
         <div className="testing_repetitions_choice_container">
           <Form>
             <Form.Group controlId="formBasicEmail">
-              <Form.Label>Enter the number of times you want to repeat your wrong guesses:</Form.Label>
+              <Form.Label><Translate content="enter_number"></Translate></Form.Label>
               <Form.Control type="number" placeholder="1" onChange={ this.handleChange_Repetitions } style={{ maxWidth: "4rem", margin: "0 auto" }}/>
             </Form.Group>
           </Form>
@@ -91,7 +113,7 @@ class TestingMode extends React.Component {
                 tested_language: this.state.tested_language,
                 repetitions: this.state.repetitions, 
                 random: true }}}>
-            <Button variant="outline-primary" disabled={this.state.disabled}>Random</Button>
+            <Button variant="outline-primary" disabled={this.state.disabled}><Translate content="random"></Translate></Button>
           </Link>
           <Row></Row>
           <Link href={{ pathname: '/testing_mode/select_test_vocab',
@@ -100,7 +122,7 @@ class TestingMode extends React.Component {
                 tested_language: this.state.tested_language,
                 repetitions: this.state.repetitions, 
                 random: false }}}>
-            <Button variant="outline-primary" disabled={this.state.disabled}>Select vocabulary</Button>
+            <Button variant="outline-primary" disabled={this.state.disabled}><Translate content="select_vocab"></Translate></Button>
           </Link>
         </div>
         

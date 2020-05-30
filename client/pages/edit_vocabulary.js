@@ -4,6 +4,17 @@ import Rating from 'react-rating';
 import { Form } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
+import counterpart from 'counterpart'
+import Translate from 'react-translate-component'
+import en from './languages/en'
+import de from './languages/de'
+import fr from './languages/fr'
+
+counterpart.registerTranslations('en', en);
+counterpart.registerTranslations('de', de);
+counterpart.registerTranslations('fr', fr);
+counterpart.setLocale('en');
+
 
 class EditVocabulary extends React.Component {
     constructor(props) {
@@ -19,12 +30,17 @@ class EditVocabulary extends React.Component {
             DE: this.props.query.de,
             EN: this.props.query.en,
             FR: this.props.query.fr,
-            initialRating: this.props.query.rating
+            initialRating: this.props.query.rating,
+            language: 'en'
     };
 
-    this.handleChange = this.handleChange.bind(this);
-    this.rate = this.rate.bind(this);
+      this.handleChange = this.handleChange.bind(this);
+      this.rate = this.rate.bind(this);
+    }
 
+    onLangChange = (e) => {
+      this.setState({language: e.target.value});
+      counterpart.setLocale(e.target.value);
     }
 
     static getInitialProps({query}) {
@@ -86,10 +102,14 @@ class EditVocabulary extends React.Component {
     render() {
         return(
             <main className="edit_main">
+              <select value={this.state.language} onChange={this.onLangChange}>
+                <option value="en" >EN</option>
+                <option value="de" >DE</option>
+                <option value="fr" >FR</option>
+              </select>
                 <Form.Group className="edit_container">
-                    <h2>
-                        Edit Vocabulary
-                    </h2>
+                    <Translate content="edit_vocab" component="h2"></Translate>
+
                     <Form.Group className="edit_input_wrapper">
                         <InputGroup size="sm" className="mb-3">
                             <InputGroup.Prepend>
@@ -118,9 +138,9 @@ class EditVocabulary extends React.Component {
                     <hr/>
                     <div className="edit_button_wrap">
                         <Link href="/vocabulary" replace>
-                            <Button variant="outline-primary">Return</Button>
+                            <Button variant="outline-primary"><Translate content="return"></Translate></Button>
                         </Link>
-                        <Button type="button" onClick={ this.saveVocabulary } variant="outline-success">Save Changes</Button>
+                        <Button type="button" onClick={ this.saveVocabulary } variant="outline-success"> <Translate content="save_changes"></Translate> </Button>
                     </div>
                 </Form.Group>
             </main>
