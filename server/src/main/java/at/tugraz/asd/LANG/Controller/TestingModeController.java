@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/testing_mode")
 public class TestingModeController {
-    private TestingModeService service;
+    private final TestingModeService service;
 
     @Autowired
     public TestingModeController(TestingModeService service) { this.service = service; }
