@@ -31,8 +31,6 @@ public class TestModel {
     @UpdateTimestamp
     private Date updatedAt;
 
-    // ...
-
     public TestModel(String userName, Clob testStates) {
         this.userName = userName;
         this.testStates = testStates;
