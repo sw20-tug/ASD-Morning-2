@@ -34,14 +34,14 @@ const Home = () => (
             </Link>
             <Link href="/export">
               <a className="card">
-                <h3>Export</h3>
-                <p>Export/Import your vocabularies</p>
+                <h3>Import/Export</h3>
+                <p>Import/Export your vocabularies</p>
               </a>
             </Link>
-            <Link href="/">
+            <Link href="/share">
               <a className="card">
-                <h3>Next Feature</h3>
-                <p>Work in Progress</p>
+                <h3>Share</h3>
+                <p>Share your library</p>
               </a>
             </Link>
           </div>

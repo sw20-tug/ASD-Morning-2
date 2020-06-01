@@ -15,6 +15,9 @@ class VocabularyOverview extends React.Component {
         this.passValues = this.passValues.bind(this);
         this.selectAll = this.selectAll.bind(this);
         this.unselectAll = this.unselectAll.bind(this);
+        this.handleChangeEmail= this.handleChangeEmail.bind(this);
+        this.prepareData = this.prepareData.bind(this);
+        
         this.state = {
             vocabulary: [],
             selectedVocabulary: [],
@@ -67,20 +70,42 @@ class VocabularyOverview extends React.Component {
             this.state.selectedVocabulary.splice(isThere);
         }
         console.log(this.state.selectedVocabulary)
-
     }
 
-    async passValues() {
-        var values = { vocabs: [], email: this.state.email }
+    prepareData(){
+        let vocabs = [];
         this.state.selectedVocabulary.forEach(el => {
-            values.vocabs.push(this.state.vocabulary[el].vocabulary)
+            vocabs.push(this.state.vocabulary[el].vocabulary)
         })
-        console.log(values);
+        console.log(vocabs);
+        console.log(this.state.email);
+
+        return JSON.stringify({
+            vocabs: vocabs,
+            email: this.state.email
+        })
+        }
+
+    async passValues() {
+        if(this.state.selectedVocabulary.length <= 0)
+        {
+            alert("Please select at least one element!");
+        }
+        var body = this.prepareData();
+        if(body == -1)
+            return;
+        console.log(body);
         var result = await fetch('http://localhost:8080/api/vocabulary/share', {
             method: 'POST',
             headers: new Headers({'content-type': 'application/json'}),
-            body: values
+            body: body
         });
+        if(result.status == 200){
+            alert("Successfully sent!")
+        }
+        else{
+            alert("An error occured!")
+        }
     }
 
     async handleChange_Topic(e) {
@@ -130,11 +155,13 @@ class VocabularyOverview extends React.Component {
         ))
     }
 
-    handleChangeEmail= (e) => {
-        this.setState({email: e.target.value});
+    handleChangeEmail(e){
+        e.preventDefault();
         this.state.buttonState = false;
         if (/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z][A-Za-z]+$/.test(e.target.value))
         {
+            this.setState({email: e.target.value});
+            console.log(this.state.email);
             this.state.buttonState = true;
         }
     }
@@ -167,8 +194,8 @@ class VocabularyOverview extends React.Component {
                             <thead>
                             <tr>
                                 <th scope="col">Vocabulary
-                                    <button type="submit" onClick={() => {this.componentDidMount("a")}} class="btn btn-outline-dark filter_buttons"  >▲</button>
-                                    <button type="submit" onClick={() => {this.componentDidMount("z")}} class="btn btn-outline-dark filter_buttons" >▼</button>
+                                    <button type="submit" onClick={() => {this.componentDidMount("a")}} className="btn btn-outline-dark filter_buttons"  >▲</button>
+                                    <button type="submit" onClick={() => {this.componentDidMount("z")}} className="btn btn-outline-dark filter_buttons" >▼</button>
                                 </th>
                                 <th scope="col">
                                     <Form.Group style={{ width: 220 }} controlId="select_language" onChange={this.handleChange_Topic}>
@@ -185,8 +212,8 @@ class VocabularyOverview extends React.Component {
                                 </th>
                                 <th scope="col">Translations</th>
                                 <th scope="col">Rating
-                                    <button type="submit" onClick={() => {this.componentDidMount("c")}} class="btn btn-outline-dark filter_buttons"  >▲</button>
-                                    <button type="submit" onClick={() => {this.componentDidMount("d")}} class="btn btn-outline-dark filter_buttons" >▼</button>
+                                    <button type="submit" onClick={() => {this.componentDidMount("c")}} className="btn btn-outline-dark filter_buttons"  >▲</button>
+                                    <button type="submit" onClick={() => {this.componentDidMount("d")}} className="btn btn-outline-dark filter_buttons" >▼</button>
                                 </th>
                                 <th>
                                     <Button onClick={this.selectAll}>
