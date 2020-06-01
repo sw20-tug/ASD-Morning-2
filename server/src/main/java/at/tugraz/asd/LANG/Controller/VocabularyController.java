@@ -53,9 +53,8 @@ public class VocabularyController {
     public ResponseEntity shareVocabs(@RequestBody ShareMessageIn msg) throws MessagingException, IOException {
         try
         {
-            service.shareVocab(msg, service.createCSSforShare(msg.getVocabs()));
-            return ResponseEntity.ok()
-                    .body(true);
+            Boolean ret = service.shareVocab(msg, service.createCSSforShare(msg.getVocabs()));
+            return ResponseEntity.ok().body(ret);
         } catch (Exception e)
         {
             return ResponseEntity.badRequest().body(null);

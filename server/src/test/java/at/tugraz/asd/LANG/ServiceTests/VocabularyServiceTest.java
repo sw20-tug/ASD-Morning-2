@@ -352,12 +352,49 @@ public class VocabularyServiceTest {
     }
 
     @Test
-    public void share() throws MessagingException, IOException {
-        ShareMessageIn msg = new ShareMessageIn("aichnerl@yahoo.de", null);
+    public void shareSuccesful() {
+        List<String> vocabs = new ArrayList<>();
+        vocabs.add("haus");
+        ShareMessageIn msg = new ShareMessageIn("xiopengyou420@gmail.com", vocabs);
+        when(vocabularyRepo.findByVocabulary("haus")).thenReturn(getBasicVocabularyModelforShare());
+        try{
+            service.shareVocab(msg, service.createCSSforShare(vocabs));
+            assert(true);
+        } catch (Exception e)
+        {
+            assert(false);
+        }
+        //service.shareVocab(msg);
+    }
+
+    @Test
+    public void shareFail() {
+        List<String> vocabs = new ArrayList<>();
+        vocabs.add("haus");
+        ShareMessageIn msg = new ShareMessageIn("", vocabs);
+        when(vocabularyRepo.findByVocabulary("haus")).thenReturn(getBasicVocabularyModelforShare());
+        try{
+            service.shareVocab(msg, service.createCSSforShare(vocabs));
+            assert(false);
+        } catch (Exception e)
+        {
+            assert(true);
+        }
         //service.shareVocab(msg);
     }
 
     //Helper
+
+    private VocabularyModel getBasicVocabularyModelforShare(){
+        //create expected return value
+        List<TranslationModel> translations = Stream.of(
+                new TranslationModel(Languages.DE,"haus"),
+                new TranslationModel(Languages.FR,"maison"),
+                new TranslationModel(Languages.EN,"house")
+        ).collect(Collectors.toList());
+        VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, "haus", translations, Integer.valueOf(0));
+        return vocabularyModel;
+    }
 
     private List<VocabularyOut> getSpecificTopic(Topic topic, List<VocabularyModel> model)
     {
@@ -444,5 +481,4 @@ public class VocabularyServiceTest {
         ret.setVocabulary("haus");
         return ret;
     }
-
 }

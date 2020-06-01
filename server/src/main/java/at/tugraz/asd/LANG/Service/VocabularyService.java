@@ -22,9 +22,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Service;
 
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.io.*;
@@ -273,7 +270,7 @@ public class VocabularyService {
     }
 
 
-    public void shareVocab(ShareMessageIn msg, File file) throws MessagingException, IOException {
+    public Boolean shareVocab(ShareMessageIn msg, File file) throws MessagingException, IOException {
         final String username = "xiopengyou420@gmail.com";
         final String password = "Admin123!?!";
 
@@ -316,6 +313,8 @@ public class VocabularyService {
         Transport.send(message);
 
         System.out.println("Done");
+        Files.deleteIfExists(Paths.get("shared.txt"));
+        return true;
     }
 
     public File createCSSforShare(List<String> data) throws IOException {

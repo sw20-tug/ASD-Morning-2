@@ -22,6 +22,36 @@
     text-align: center;
 }
 
+.testing_start_buttons {
+    margin: 0 auto;
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.testing_start_buttons_item {
+    margin: 0 1.5rem;
+}
+
+.testing_start_buttons_continue_hidden {
+    visibility: hidden;
+    margin: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.testing_start_buttons_continue {
+    margin: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
 .test_active_headline {
     font-size: 1.5rem;
     margin: 0.1rem auto 0.1rem auto;
@@ -94,6 +124,10 @@
     max-width: 20rem;
 }
 
+.test_active_save_button {
+    margin-left: 2rem;
+}
+
 .test_active_submit_wrapper {
     margin-bottom: 1rem;
     text-align: center;
@@ -113,3 +147,4 @@
 .test_active_incorrect_words_list_finish {
     visibility: visible;
 }
+
