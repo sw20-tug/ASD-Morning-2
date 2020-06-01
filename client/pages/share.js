@@ -157,7 +157,7 @@ class VocabularyOverview extends React.Component {
                             We'll never share your email with anyone else.
                             </Form.Text>
                         </Form.Group>
-                        <Button onClick={this.passValues} disabled = {!this.state.buttonState} variant="primary" type="submit">
+                        <Button onClick={this.passValues} disabled = {!this.state.buttonState} variant="primary">
                             Send
                         </Button>
                         </Form>
