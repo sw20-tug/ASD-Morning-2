@@ -3,9 +3,10 @@ package at.tugraz.asd.LANG.Service;
 
 import at.tugraz.asd.LANG.Exeptions.CreateVocabularyFail;
 import at.tugraz.asd.LANG.Exeptions.EditFail;
-import at.tugraz.asd.LANG.Exeptions.RatingFail;
+
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.in.ShareMessageIn;
 import at.tugraz.asd.LANG.Messages.out.GetAllTopicsOut;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.TranslationModel;
@@ -15,19 +16,20 @@ import at.tugraz.asd.LANG.Repo.TranslationRepo;
 import at.tugraz.asd.LANG.Repo.VocabularyRepo;
 import at.tugraz.asd.LANG.Topic;
 import com.google.gson.*;
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.stereotype.Service;
+
+
+import javax.mail.*;
+import javax.mail.internet.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
+@SpringBootApplication
 @Service
 public class VocabularyService {
 
@@ -265,5 +267,84 @@ public class VocabularyService {
     public List<VocabularyModel> sortTopics(Topic msg)
     {
         return vocabularyRepo.findByTopic(msg);
+    }
+
+
+    public Boolean shareVocab(ShareMessageIn msg, File file) throws MessagingException, IOException {
+        final String username = "xiopengyou420@gmail.com";
+        final String password = "Admin123!?!";
+
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.socketFactory.port", "465");
+        properties.put("mail.smtp.socketFactory.class",
+                "javax.net.ssl.SSLSocketFactory");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.port", "465");
+
+        Session session = Session.getInstance(properties,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
+
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom("xiopengyou420@gmail.com");
+        message.setRecipients(Message.RecipientType.TO,
+                InternetAddress.parse(msg.getEmail()));
+        message.setSubject("Testing Subject");
+        message.setText("PFA");
+
+        MimeBodyPart messageBodyPart = new MimeBodyPart();
+
+        Multipart multipart = new MimeMultipart();
+
+        messageBodyPart = new MimeBodyPart();
+        messageBodyPart.attachFile(file);
+        String fileName = "Shared File my Nigga";
+        messageBodyPart.setFileName(fileName);
+        multipart.addBodyPart(messageBodyPart);
+
+        message.setContent(multipart);
+
+        System.out.println("Sending");
+
+        Transport.send(message);
+
+        System.out.println("Done");
+        Files.deleteIfExists(Paths.get("shared.txt"));
+        return true;
+    }
+
+    public File createCSSforShare(List<String> data) throws IOException {
+        List<VocabularyModel> vocabularies = new ArrayList<>();
+
+        for(int i = 0; i < data.size(); i++)
+        {
+            vocabularies.add(vocabularyRepo.findByVocabulary(data.get(i)));
+        }
+
+        //Get all vocabulary and save in List
+
+        //Create File
+        Files.deleteIfExists(Paths.get("shared.txt"));
+        File backup_file = new File("shared.txt");
+        FileWriter file_w = new FileWriter(backup_file);
+
+        //Convert Vocabulary Models to GSON (via GSON Library)
+        Gson gson = new Gson();
+        JsonArray json_arr = new JsonArray();
+        String jsonString = null;
+
+        for (VocabularyModel vocabM : vocabularies) {
+            jsonString = gson.toJson(vocabM);
+            json_arr.add(jsonString);
+        }
+        file_w.write(json_arr.toString());
+        file_w.flush();
+        file_w.close();
+
+        return backup_file;
     }
 }
