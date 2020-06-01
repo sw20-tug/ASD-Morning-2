@@ -49,6 +49,19 @@ public class VocabularyController {
         }
     }
 
+    @PostMapping (path = "/share")
+    public ResponseEntity shareVocabs(@RequestBody ShareMessageIn msg) throws MessagingException, IOException {
+        try
+        {
+            service.shareVocab(msg, service.createCSSforShare(msg.getVocabs()));
+            return ResponseEntity.ok()
+                    .body(true);
+        } catch (Exception e)
+        {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
     @GetMapping (path = "/topics")
     @ResponseBody
     public ResponseEntity getAllTopics()
@@ -259,16 +272,5 @@ public class VocabularyController {
         }
     }
 
-    @PostMapping (path = "share")
-    public ResponseEntity shareVocabs(@RequestBody ShareMessageIn msg) throws MessagingException, IOException {
-        try
-        {
-            service.shareVocab(msg, service.createCSSforShare(msg.getVocabs()));
-            return ResponseEntity.ok()
-                    .body(true);
-        } catch (Exception e)
-        {
-            return ResponseEntity.badRequest().body(null);
-        }
-    }
+
 }

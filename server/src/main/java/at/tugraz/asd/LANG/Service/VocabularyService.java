@@ -305,7 +305,7 @@ public class VocabularyService {
 
         messageBodyPart = new MimeBodyPart();
         messageBodyPart.attachFile(file);
-        String fileName = "Test";
+        String fileName = "Shared File my Nigga";
         messageBodyPart.setFileName(fileName);
         multipart.addBodyPart(messageBodyPart);
 
@@ -338,8 +338,7 @@ public class VocabularyService {
         JsonArray json_arr = new JsonArray();
         String jsonString = null;
 
-        for (VocabularyModel vocabM : vocabularies
-        ) {
+        for (VocabularyModel vocabM : vocabularies) {
             jsonString = gson.toJson(vocabM);
             json_arr.add(jsonString);
         }
