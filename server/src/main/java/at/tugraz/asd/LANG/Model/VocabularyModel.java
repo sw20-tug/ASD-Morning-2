@@ -30,6 +30,7 @@ public class VocabularyModel {
     @Enumerated(EnumType.STRING)
     private Topic topic;
 
+    @Column(unique=true)
     private String vocabulary;
     private Integer rating;
 

@@ -38,24 +38,40 @@ public class VocabularyService {
     @Autowired
     TranslationRepo translationRepo;
 
-    public VocabularyModel saveVocabulary(CreateVocabularyMessageIn msg) throws CreateVocabularyFail {
-        Map<Languages, String> translations = msg.getTranslations();
-        String vocabulary = msg.getVocabulary();
-        Topic topic = msg.getTopic();
-        if(translations == null || vocabulary == null || topic == null)
-            throw new CreateVocabularyFail();
-
-        List<TranslationModel> translationModels = new ArrayList<>();
-        translations.forEach((k,v)->{
-            TranslationModel translationModel = new TranslationModel(k, v);
-            translationModels.add(translationModel);
-            translationRepo.save(translationModel);
-        });
-
-        VocabularyModel vocabularyModel = new VocabularyModel(topic, vocabulary, translationModels, Integer.valueOf(0));
-        vocabularyRepo.save(vocabularyModel);
-        return vocabularyModel;
+    public boolean checkIfExists(String vocabulary)
+    {
+        if(vocabularyRepo.findByVocabulary(vocabulary) == null)
+        {
+            return true;
+        }
+        return false;
     }
+
+    public VocabularyModel saveVocabulary(CreateVocabularyMessageIn msg) throws CreateVocabularyFail {
+                  Map<Languages, String> translations = msg.getTranslations();
+            String vocabulary = msg.getVocabulary();
+            Topic topic = msg.getTopic();
+            if(translations == null || vocabulary == null || topic == null)
+                throw new CreateVocabularyFail();
+
+            List<TranslationModel> translationModels = new ArrayList<>();
+            translations.forEach((k,v)->{
+                TranslationModel translationModel = new TranslationModel(k, v);
+                translationModels.add(translationModel);
+                translationRepo.save(translationModel);
+            });
+
+            VocabularyModel vocabularyModel = new VocabularyModel(topic, vocabulary, translationModels, Integer.valueOf(0));
+            try {
+                vocabularyRepo.save(vocabularyModel);
+            } catch (Exception e)
+            {
+                throw new CreateVocabularyFail();
+            }
+
+            return vocabularyModel;
+        }
+
     public List<VocabularyModel> getAllVocabulary() {
         return vocabularyRepo.findAll();
     }
@@ -245,9 +261,11 @@ public class VocabularyService {
             int rating = vocabM_des.getRating();
 
             //List of TranslationModels to save each of them
+
             List<TranslationModel> translationModels = new ArrayList<>();
             for (TranslationModel transM : vocabM_des.getTranslationVocabMapping()
             ) {
+
                 Languages lang = transM.getLanguage();
                 String vocabulary_trans = transM.getVocabulary();
                 Map<Languages, String> translations = new HashMap<>();
@@ -255,11 +273,19 @@ public class VocabularyService {
                 translations.forEach((k, v) -> {
                     TranslationModel translationModel = new TranslationModel(k, v);
                     translationModels.add(translationModel);
-                    translationRepo.save(translationModel);
+                    try
+                    {
+                        translationRepo.save(translationModel);
+                    } catch (Exception e)
+                    {}
                 });
             }
             VocabularyModel vocabularyModel = new VocabularyModel(topic, vocabulary, translationModels, rating);
-            vocabularyRepo.save(vocabularyModel);
+            try
+            {
+                vocabularyRepo.save(vocabularyModel);
+            } catch (Exception e)
+            {}
         }
         return true;
     }
@@ -293,8 +319,8 @@ public class VocabularyService {
         message.setFrom("xiopengyou420@gmail.com");
         message.setRecipients(Message.RecipientType.TO,
                 InternetAddress.parse(msg.getEmail()));
-        message.setSubject("Testing Subject");
-        message.setText("PFA");
+        message.setSubject("Sharing Vocabulary");
+        message.setText("");
 
         MimeBodyPart messageBodyPart = new MimeBodyPart();
 
@@ -302,7 +328,7 @@ public class VocabularyService {
 
         messageBodyPart = new MimeBodyPart();
         messageBodyPart.attachFile(file);
-        String fileName = "Shared File my Nigga";
+        String fileName = "Shared File";
         messageBodyPart.setFileName(fileName);
         multipart.addBodyPart(messageBodyPart);
 
