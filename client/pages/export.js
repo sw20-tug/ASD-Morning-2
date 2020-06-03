@@ -24,11 +24,6 @@ class Export extends React.Component {
         this.fileUpload = this.fileUpload.bind(this)
     };
     
-    onLangChange = (e) => {
-      this.setState({language: e.target.value});
-      counterpart.setLocale(e.target.value);
-    }
-    
    onFormSubmit(e){
     e.preventDefault() // Stop form submit
     this.fileUpload(this.state.file).then((response)=>{

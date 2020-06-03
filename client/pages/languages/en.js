@@ -63,6 +63,16 @@ export default {
   send: 'Send',
   select_all: 'Select All',
   unselect_all: 'Unselect All',
-  check_me_out: 'Select'
+  check_me_out: 'Select',
 
+  //selected Test
+  title_test: 'Test your knowledge',
+  select_words_to_test: 'Select the words you want to test!',
+  start_training: 'Start training',
+  
+  //test.js
+  test_knowledge: 'Test your knowledge!',
+  accuracy: 'Accuracy: ',
+  check: 'Check',
+  save_test: 'Save Test'
 }

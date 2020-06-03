@@ -22,11 +22,6 @@ class StudyInterface extends React.Component {
         };
     }
 
-    onLangChange = (e) => {
-      this.setState({language: e.target.value});
-      counterpart.setLocale(e.target.value);
-    }
-
     async componentDidMount(args = "b") {
         if(args == "b")
         {
@@ -46,14 +41,7 @@ class StudyInterface extends React.Component {
         console.log(this.props.vocabs);
 
         return (
-
             <main>
-                <select value={this.state.language} onChange={this.onLangChange}>
-                  <option value="en" >EN</option>
-                  <option value="de" >DE</option>
-                  <option value="fr" >FR</option>
-                </select>
-                
                 <Translate content="title3" component="h1"></Translate>
 
                 <Translate content="title3_discription" component="p"></Translate>

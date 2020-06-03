@@ -4,6 +4,15 @@ import Link from 'next/link'
 import Button from 'react-bootstrap/Button';
 import { Form, FormControl } from 'react-bootstrap';
 import Router from 'next/router'
+import counterpart from 'counterpart'
+import Translate from 'react-translate-component'
+import en from '../languages/en'
+import de from '../languages/de'
+import fr from '../languages/fr'
+
+counterpart.registerTranslations('en', en);
+counterpart.registerTranslations('de', de);
+counterpart.registerTranslations('fr', fr);
 
 class SelectVocabulary extends React.Component {
     constructor(props) {
@@ -19,7 +28,8 @@ class SelectVocabulary extends React.Component {
             given_language: this.props.query.given_language,
             tested_language: this.props.query.tested_language,
             repetitions: this.props.query.repetitions,
-            button_state: false
+            button_state: false,
+            language: 'en'
         };
     }
 
@@ -109,12 +119,9 @@ class SelectVocabulary extends React.Component {
     render() {
         return (
             <main>
-                <h1 className="title">
-                    Test your knowledge
-                    </h1>
-                <p className="description">
-                    Select the words you want to test!
-                    </p>
+                <Translate content="title_test" className="title" component="h1"> </Translate>
+                <Translate content="select_words_to_test" component="p"></Translate>
+                
                 <Container>
                     <div style={{width: "100%", marginBottom: "1em", marginLeft: "1em"}}>
                     <button type="submit" onClick={() => { this.componentDidMount("a") }} class="btn btn-outline-dark filter_buttons"  >▲</button>
@@ -180,7 +187,7 @@ class SelectVocabulary extends React.Component {
                                         <td>
                                             {console.log(element.translations)}
                                             <Form.Group controlId={id}>
-                                                <Form.Check type="checkbox" label="Check me out" onChange={this.addSelectedVocabulary} />
+                                                <Form.Check type="checkbox" label="Select" onChange={this.addSelectedVocabulary} />
                                             </Form.Group>
                                         </td>
                                     </tr>
@@ -194,7 +201,7 @@ class SelectVocabulary extends React.Component {
                 </Container>
                 <div style={{width: "100%",background: "#ffffffab",textAlign: "center",padding: "1em", position: "fixed", bottom: "0"}}>
                         <Button onClick={this.passValues}>
-                            Start training
+                            <Translate content="start_training"></Translate>
                         </Button>
                     </div>
 

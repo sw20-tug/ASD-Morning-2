@@ -5,6 +5,15 @@ import Button from 'react-bootstrap/Button';
 import React, { Component } from 'react';
 import fetch from 'isomorphic-unfetch';
 import Link from 'next/link'
+import counterpart from 'counterpart'
+import Translate from 'react-translate-component'
+import en from '../languages/en'
+import de from '../languages/de'
+import fr from '../languages/fr'
+
+counterpart.registerTranslations('en', en);
+counterpart.registerTranslations('de', de);
+counterpart.registerTranslations('fr', fr);
 
 // render() always renders anew after setState
 
@@ -374,7 +383,7 @@ class RandomTest extends React.Component {
     return(
       <main className="test_main">
         <div className="test_active_headline">
-            Test your knowledge!
+            <Translate content="test_knowledge"></Translate>
         </div>
         <div className={this.state.interface_visibility}>
           <div>
@@ -404,12 +413,12 @@ class RandomTest extends React.Component {
               </InputGroup>
           </Form.Group>
           <div className="test_active_submit_wrapper">
-              <Button variant="outline-primary" onClick={this.updateTest}> Check </Button>
-              <Button variant="outline-primary" className="test_active_save_button" onClick={ this.saveTest }>Save Test</Button>
+              <Button variant="outline-primary" onClick={this.updateTest}> <Translate content="check"></Translate> </Button>
+              <Button variant="outline-primary" className="test_active_save_button" onClick={ this.saveTest }><Translate content="save_test"></Translate> </Button>
           </div>
 
           <div className="test_active_accuracy">
-              Accuracy: { this.state.accuracy }%
+              <Translate content="accuracy"></Translate> { this.state.accuracy }%
           </div>
         </div>
         

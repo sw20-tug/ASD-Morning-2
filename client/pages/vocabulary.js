@@ -22,12 +22,8 @@ class VocabularyOverview extends React.Component {
         this.handleChange_Topic = this.handleChange_Topic.bind(this);
         this.state = {
             vocabulary: [],
-            language: Cookie.get("Lang")
+            language: 'en'
         };
-    }
-    onLangChange = (e) => {
-      this.setState({language: Cookies.get('Lang')});
-      counterpart.setLocale(e.target.value);
     }
 
     async componentDidMount(args = "b") {

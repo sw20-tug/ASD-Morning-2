@@ -18,7 +18,7 @@ class Navigationbar extends React.Component {
     super(props);
 
     this.state = {
-      language: 'en'
+      language: Cookie.get("Lang")
     }
   };
 
@@ -64,7 +64,11 @@ class Navigationbar extends React.Component {
             </Link>
           </div>
           <div className="navbar_link">
-            <Link href="/share"><a>Share</a></Link>
+            <Link href="/share">
+              <a>
+                <Translate content="share" component="p"></Translate>
+              </a>
+            </Link>
           </div>
 
           <select value={ this.state.language } onChange={this.onLangChange}>
