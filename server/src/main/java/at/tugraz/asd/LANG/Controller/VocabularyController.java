@@ -6,6 +6,7 @@ import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.in.ShareMessageIn;
 import at.tugraz.asd.LANG.Messages.out.TranslationOut;
 import at.tugraz.asd.LANG.Messages.out.VocabularyLanguageOut;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
@@ -21,7 +22,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,6 +46,18 @@ public class VocabularyController {
             return ResponseEntity.ok(null);
         }catch (CreateVocabularyFail e){
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping (path = "/share")
+    public ResponseEntity shareVocabs(@RequestBody ShareMessageIn msg) throws MessagingException, IOException {
+        try
+        {
+            Boolean ret = service.shareVocab(msg, service.createCSSforShare(msg.getVocabs()));
+            return ResponseEntity.ok().body(ret);
+        } catch (Exception e)
+        {
+            return ResponseEntity.badRequest().body(null);
         }
     }
 
@@ -85,6 +100,29 @@ public class VocabularyController {
         catch (EditFail e){
             return ResponseEntity.badRequest().body(null);
         }
+    }
+
+    @GetMapping (path = "rating/{aORz}")
+    @ResponseBody
+    public ResponseEntity getSortedRating(@PathVariable("aORz")String aOrz){
+        ArrayList<VocabularyOut> ret = new ArrayList<>();
+        List<VocabularyModel> vocab = service.sortRating(aOrz);
+        if(vocab.isEmpty())
+            return ResponseEntity.noContent().build();
+
+        vocab.forEach(el->{
+            HashMap<Languages, String> translation = new HashMap<>();
+            el.getTranslationVocabMapping().forEach(translationModel -> {
+                translation.put(translationModel.getLanguage(), translationModel.getVocabulary());
+            });
+            ret.add(new VocabularyOut(
+                    el.getTopic(),
+                    el.getVocabulary(),
+                    translation,
+                    el.getRating()
+            ));
+        });
+        return ResponseEntity.ok(ret);
     }
 
     @GetMapping (path = "alphabetically/{aORz}")
@@ -218,6 +256,7 @@ public class VocabularyController {
     }
 
     @PostMapping (path = "Import")
+
     public ResponseEntity importBackup(@RequestParam("file") MultipartFile Backup_File){
         try{
             String content = new String(Backup_File.getBytes());
@@ -231,4 +270,6 @@ public class VocabularyController {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
+
 }
