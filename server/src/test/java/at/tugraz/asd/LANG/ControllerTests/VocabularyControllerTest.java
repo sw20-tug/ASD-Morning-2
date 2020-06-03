@@ -444,35 +444,4 @@ public class VocabularyControllerTest {
         VocabularyModel vocabularyModel1 = new VocabularyModel(Topic.Home, "haus", translations1, Integer.valueOf(0));
         return Stream.of(vocabularyModel1).collect(Collectors.toList());
     }
-/*
-    @Test
-    public void testShareingSuccess()
-    {
-        List<String> vocabs = new ArrayList<>();
-        vocabs.add("TEST1");
-        vocabs.add("TEST2");
-        try {
-            when(service.createCSSforShare(vocabs)).thenReturn(getTestFile());
-            ShareMessageIn msg = new ShareMessageIn("xiopengyou420@gmail.com", vocabs);
-            when(service.shareVocab(msg, service.createCSSforShare(vocabs))).thenReturn(true);
-            mvc.perform(post("/api/vocabulary/sort_topics/share")
-                    .content(asJsonString(""))
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk());
-
-            Files.deleteIfExists(Paths.get("testing.txt"));
-        }catch (Exception e)
-        {
-            assert(false);
-            //Files.deleteIfExists(Paths.get("testing.txt"));
-        }
-    }
-
-    private File getTestFile()
-    {
-        File backup_file = new File("testing.txt");
-        return backup_file;
-    }
-    */
-
 }
