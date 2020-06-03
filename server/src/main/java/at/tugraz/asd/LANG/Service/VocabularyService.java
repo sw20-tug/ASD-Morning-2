@@ -37,15 +37,6 @@ public class VocabularyService {
     @Autowired
     TranslationRepo translationRepo;
 
-    public boolean checkIfExists(String vocabulary)
-    {
-        if(vocabularyRepo.findByVocabulary(vocabulary) == null)
-        {
-            return true;
-        }
-        return false;
-    }
-
     public VocabularyModel saveVocabulary(CreateVocabularyMessageIn msg) throws CreateVocabularyFail {
                   Map<Languages, String> translations = msg.getTranslations();
             String vocabulary = msg.getVocabulary();
