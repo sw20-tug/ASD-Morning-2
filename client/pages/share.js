@@ -5,7 +5,15 @@ import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Rating from 'react-rating';
 import { Form, FormControl } from 'react-bootstrap';
+import counterpart from 'counterpart'
+import Translate from 'react-translate-component'
+import en from './languages/en'
+import de from './languages/de'
+import fr from './languages/fr'
 
+counterpart.registerTranslations('en', en);
+counterpart.registerTranslations('de', de);
+counterpart.registerTranslations('fr', fr);
 
 class VocabularyOverview extends React.Component {
     constructor() {
@@ -22,7 +30,8 @@ class VocabularyOverview extends React.Component {
             vocabulary: [],
             selectedVocabulary: [],
             email: '',
-            buttonState: false
+            buttonState: false,
+            language: 'en'
         };
     }
 
@@ -169,23 +178,19 @@ class VocabularyOverview extends React.Component {
     render() {
         return (
                 <main>
-                    <h1 className="title">
-                        Share
-                    </h1>
-                    <p className="description">
-                    Select the words you want to send!
+                    <Translate content="share" component="h1"></Translate>
+                    <Translate content="select_words" component="p" ></Translate>
                     
-                    </p>
                     <Container>
                         <Form>
                         <Form.Group controlId="formBasicEmail">
-                            <Form.Control type="email" placeholder="Enter email" onChange={ this.handleChangeEmail } />
+                            <Translate component="input" type="email" attributes={{ placeholder: 'enter_email'}} onChange={ this.handleChangeEmail }></Translate>
                             <Form.Text className="text-muted">
-                            We'll never share your email with anyone else.
+                              <Translate content="dont_share_email"> </Translate>
                             </Form.Text>
                         </Form.Group>
                         <Button onClick={this.passValues} disabled = {!this.state.buttonState} variant="primary">
-                            Send
+                          <Translate content="send"></Translate>
                         </Button>
                         </Form>
                     </Container>
@@ -193,7 +198,8 @@ class VocabularyOverview extends React.Component {
                         <table className="table">
                             <thead>
                             <tr>
-                                <th scope="col">Vocabulary
+                                <th scope="col">
+                                    <Translate content="vocabulary" ></Translate>
                                     <button type="submit" onClick={() => {this.componentDidMount("a")}} className="btn btn-outline-dark filter_buttons"  >▲</button>
                                     <button type="submit" onClick={() => {this.componentDidMount("z")}} className="btn btn-outline-dark filter_buttons" >▼</button>
                                 </th>
@@ -210,17 +216,17 @@ class VocabularyOverview extends React.Component {
                                         </select>
                                     </Form.Group>
                                 </th>
-                                <th scope="col">Translations</th>
-                                <th scope="col">Rating
+                                <th scope="col"><Translate content="translation" ></Translate></th>
+                                <th scope="col"><Translate content="rating" ></Translate>
                                     <button type="submit" onClick={() => {this.componentDidMount("c")}} className="btn btn-outline-dark filter_buttons"  >▲</button>
                                     <button type="submit" onClick={() => {this.componentDidMount("d")}} className="btn btn-outline-dark filter_buttons" >▼</button>
                                 </th>
                                 <th>
                                     <Button onClick={this.selectAll}>
-                                        Select all
+                                        <Translate content="select_all"></Translate>
                                     </Button>
                                     <Button onClick={this.unselectAll} variant = "outline-primary">
-                                        Unselect all
+                                      <Translate content="unselect_all"></Translate>
                                     </Button>
                                 </th>
                                 <th className="test_col" scope="col"></th>
@@ -243,9 +249,11 @@ class VocabularyOverview extends React.Component {
                                                 <Rating readonly initialRating={element.rating} fractions="1"/>
                                             </InputGroup>
                                             </td>
-                                            <Form.Group controlId={id}>
-                                                <Form.Check type="checkbox" label="Check me out" onChange={this.addSelectedVocabulary} />
-                                            </Form.Group>
+                                            <td>
+                                              <Form.Group controlId={id}>
+                                                  <Form.Check type="checkbox" label="Select" onChange={this.addSelectedVocabulary} />
+                                              </Form.Group>
+                                            </td>
                                         </tr>
                                     )
                                 )

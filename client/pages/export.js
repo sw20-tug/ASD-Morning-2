@@ -2,20 +2,33 @@ import { Modal, Button, Row, Col, Form, Dropdown, InputGroup } from 'react-boots
 import fetch from 'isomorphic-unfetch';
 import { saveAs } from 'file-saver';
 import axios, { post } from 'axios';
-import { Container } from "next/app";
 import ModalHeader from 'react-bootstrap/ModalHeader';
+import counterpart from 'counterpart'
+import Translate from 'react-translate-component'
+import en from './languages/en'
+import de from './languages/de'
+import fr from './languages/fr'
+
+counterpart.registerTranslations('en', en);
+counterpart.registerTranslations('de', de);
+counterpart.registerTranslations('fr', fr);
 
 class Export extends React.Component {
     constructor() {
         super();
         this.state = {
-            file:null
+            file:null,
         };
         this.onFormSubmit = this.onFormSubmit.bind(this)
         this.onChange = this.onChange.bind(this)
         this.fileUpload = this.fileUpload.bind(this)
     };
-
+    
+    onLangChange = (e) => {
+      this.setState({language: e.target.value});
+      counterpart.setLocale(e.target.value);
+    }
+    
    onFormSubmit(e){
     e.preventDefault() // Stop form submit
     this.fileUpload(this.state.file).then((response)=>{
@@ -48,22 +61,24 @@ class Export extends React.Component {
     render() {
         return (
             <main>
-                <h2 style={{ marginBottom: "3%", marginTop: "10%" }}>Import vocabulary</h2>
+                <h2 style={{ marginBottom: "3%", marginTop: "10%" }}> <Translate content="import_vocab"></Translate> </h2>
                 <Row style={{ marginBottom: "2%" }}>
                     <Col>
                     <form onSubmit={this.onFormSubmit}>
-        <input type="file" onChange={this.onChange} />
-        <button type="submit">Upload</button>
-      </form>
+                      <input type="file" onChange={this.onChange} />
+                      <button type="submit"> <Translate content="upload"></Translate> </button>
+                    </form>
                     </Col>
                 </Row>
 
-                <h2 style={{ marginBottom: "3%", marginTop: "3%" }}>Export vocabulary</h2>
+                <h2 style={{ marginBottom: "3%", marginTop: "3%" }}>  <Translate content="export_vocab">  </Translate> </h2>
                 <Row style={{ marginBottom: "2%" }}>
                     <Col>
                         <React.Fragment>
                         <Button style={{ width: "200px" }} type="button" onClick={this.exportVocab}
-                                >Export to Device</Button>
+                                >
+                                  <Translate content="export_device"></Translate>
+                                </Button>
                         </React.Fragment>
                     </Col>
                 </Row>
