@@ -63,16 +63,14 @@ public class VocabularyService {
             });
 
             VocabularyModel vocabularyModel = new VocabularyModel(topic, vocabulary, translationModels, Integer.valueOf(0));
-           // if (checkIfExists(msg.getVocabulary())){
-           try {
+
+            try
+           {
                vocabularyRepo.save(vocabularyModel);
            } catch (Exception e)
-
-            //} else
-            {
+           {
                 throw new CreateVocabularyFail();
-            }
-
+           }
             return vocabularyModel;
         }
 
