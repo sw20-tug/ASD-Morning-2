@@ -3,8 +3,8 @@ import Link from 'next/link'
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Rating from 'react-rating';
-import { Form, FormControl } from 'react-bootstrap';
-
+import { Form, FormControl, Dropdown } from 'react-bootstrap';
+import Cookie from 'js-cookie'
 import counterpart from 'counterpart'
 import Translate from 'react-translate-component'
 import en from './languages/en'
@@ -19,12 +19,13 @@ counterpart.setLocale('en');
 
 
 class VocabularyOverview extends React.Component {
+
     constructor() {
         super();
         this.handleChange_Topic = this.handleChange_Topic.bind(this);
         this.state = {
             vocabulary: [],
-            language: 'en'
+            language: Cookie.get("Lang")
         };
     }
     onLangChange = (e) => {
@@ -90,6 +91,17 @@ class VocabularyOverview extends React.Component {
                     <option value="fr" >FR</option>
                   </select>
 
+                  <Dropdown>
+                    <Dropdown.Toggle variant="success">
+                      Tests
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.Item>HALLO1</Dropdown.Item>
+                      <Dropdown.Item>HALLO2</Dropdown.Item>
+                      <Dropdown.Item>HALLO3</Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+
                   <Translate content="title2" component="h1"></Translate>
                   <Translate content="title2_discription" component="p"></Translate>
 
@@ -110,13 +122,13 @@ class VocabularyOverview extends React.Component {
                                 <th scope="col">
                                     <Form.Group style={{ width: 220 }} controlId="select_language" onChange={this.handleChange_Topic}>
                                         <select id="selectbox" variant="primary"  name="translation_language">
-                                            <option value="Default" > <Translate content="all_topics" ></Translate> </option>
-                                            <option value="USER_GENERATED"> <Translate content="topic_user_generated" ></Translate></option>
-                                            <option value="Sport"> <Translate content="topic_sport" ></Translate> </option>
-                                            <option value="Home"> <Translate content="topic_home" ></Translate> </option>
-                                            <option value="Food"> <Translate content="topic_food" ></Translate> </option>
-                                            <option value="Human"> <Translate content="topic_human" ></Translate> </option>
-                                            <option value="Electronic"> <Translate content="topic_electronic" ></Translate> </option>
+                                            <option value="Default" > All Topics </option>
+                                            <option value="USER_GENERATED"> USER_GENERATED </option>
+                                            <option value="Sport"> Sport </option>
+                                            <option value="Home"> Home </option>
+                                            <option value="Food"> Food </option>
+                                            <option value="Human"> Human </option>
+                                            <option value="Electronic"> Electronic </option>
                                         </select>
                                     </Form.Group>
                                 </th>
@@ -160,7 +172,6 @@ class VocabularyOverview extends React.Component {
                             </tbody>
                         </table>
                     </div>
-
                 </main>
         );
     }

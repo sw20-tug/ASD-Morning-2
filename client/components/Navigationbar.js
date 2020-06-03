@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Nav, Navbar } from 'react-bootstrap';
+import { Nav, Navbar, FormControl,NavDropdown, Form } from 'react-bootstrap';
 import counterpart from 'counterpart'
 import Translate from 'react-translate-component'
 import en from '../pages/languages/en'
@@ -13,19 +13,25 @@ counterpart.setLocale('en');
 
 
 class Navigationbar extends React.Component {
-  state = {
-    language: 'en'
-  }
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      language: 'en'
+    }
+  };
+
   onLangChange = (e) => {
+    console.log("Navbar Lang Change: ", e);
     this.setState({language: e.target.value});
     counterpart.setLocale(e.target.value);
   }
 
-  render()  {
-    return(
+  render() {
+    return (
       <Navbar bg="primary" variant="dark">
         <Nav className="mr-auto" style={{ margin: "0 auto", color: "#eaeaea" }}>
-          
+
           <div className="navbar_link">
             <Link href="/">
               <a>
@@ -57,9 +63,21 @@ class Navigationbar extends React.Component {
               </a>
             </Link>
           </div>
+          <NavDropdown title="TEST">           
+              <NavDropdown.Item>HALLO1</NavDropdown.Item>
+              <NavDropdown.Item>HALLO2</NavDropdown.Item>
+              <NavDropdown.Item>HALLO3</NavDropdown.Item>
+          </NavDropdown>
 
-          <select value={this.state.language} onChange={this.onLangChange}>
-            <option value="en" >EN</option>
+            <NavDropdown title="Language" variant="primary" name="lang_sel" placeholder="Language">
+              <NavDropdown.Item value="en" >EN</NavDropdown.Item>
+              <NavDropdown.Item value="de" >DE</NavDropdown.Item>
+              <NavDropdown.Item value="fr" >FR</NavDropdown.Item>
+            </NavDropdown>
+         
+
+          <select value={ this.state.language } onChange={this.onLangChange}>
+            <option value="en" href="/testing_mode" >EN</option>
             <option value="de" >DE</option>
             <option value="fr" >FR</option>
           </select>
