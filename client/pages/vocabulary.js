@@ -68,6 +68,7 @@ class VocabularyOverview extends React.Component {
             if(response.status != 200)
             {
                 this.setState({vocabulary: []})
+                return;
             }
             const json = await response.json()
             this.setState({vocabulary: json}) 
