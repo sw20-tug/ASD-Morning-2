@@ -112,11 +112,6 @@ class AddVocabulary extends React.Component {
     render() {
         return(
             <main className="edit_main">
-                <select value={this.state.language} onChange={this.onLangChange}>
-                  <option value="en" >EN</option>
-                  <option value="de" >DE</option>
-                  <option value="fr" >FR</option>
-                </select>
                 <Form.Group className="edit_container">
                     <Translate content="add_vocab" component="h2"></Translate>
                     <Form.Group style={{ width: 220 }} controlId="select_language" onChange={this.handleChange_Language}>

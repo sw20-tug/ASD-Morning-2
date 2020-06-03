@@ -33,11 +33,6 @@ async componentDidMount() {
 render() {
     return (
         <main>
-          <select value={this.state.language} onChange={this.onLangChange}>
-            <option value="en" >EN</option>
-            <option value="de" >DE</option>
-            <option value="fr" >FR</option>
-          </select>
 
           <Translate content="title3" component="h1"></Translate>
             <p>

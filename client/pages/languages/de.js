@@ -22,7 +22,7 @@ export default {
   edit: 'Bearbeiten',
 
   //AddVocab
-  add_vocab: 'Vocabular Hinzufügen',
+  add_vocab: 'Vokabular Hinzufügen',
   select_key_lang: 'Wähle die Sprache für das Vokabel aus',
   default: 'Standard',
   return: 'Zurück',
@@ -46,6 +46,11 @@ export default {
   random: 'Zufällig',
   select_vocab:'Vokabel auswählen',
   
-  title5: 'Auslagern und Einlagern',
-  title5_discription: 'lade Wörterlisten rein oder speichere Wörter in eine Datei'
+  //Export
+  title5: 'Importieren und exportieren',
+  title5_discription: 'Importiere deine Vokabeln und teile sie mit deinen Freunden',
+  upload: 'Hochladen',
+  export_vocab: 'Vokabel exportieren',
+  import_vocab: 'Vokabel Importieren',
+  export_device: 'Gerät Exportieren',
 }

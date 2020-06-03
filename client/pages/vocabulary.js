@@ -29,7 +29,7 @@ class VocabularyOverview extends React.Component {
         };
     }
     onLangChange = (e) => {
-      this.setState({language: e.target.value});
+      this.setState({language: Cookies.get('Lang')});
       counterpart.setLocale(e.target.value);
     }
 
@@ -85,23 +85,6 @@ class VocabularyOverview extends React.Component {
     render() {
         return (
                 <main>
-                  <select value={this.state.language} onChange={this.onLangChange}>
-                    <option value="en" >EN</option>
-                    <option value="de" >DE</option>
-                    <option value="fr" >FR</option>
-                  </select>
-
-                  <Dropdown>
-                    <Dropdown.Toggle variant="success">
-                      Tests
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      <Dropdown.Item>HALLO1</Dropdown.Item>
-                      <Dropdown.Item>HALLO2</Dropdown.Item>
-                      <Dropdown.Item>HALLO3</Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-
                   <Translate content="title2" component="h1"></Translate>
                   <Translate content="title2_discription" component="p"></Translate>
 

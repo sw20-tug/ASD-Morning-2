@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { Nav, Navbar, FormControl,NavDropdown, Form } from 'react-bootstrap';
+import { Nav, Navbar, FormControl, Form } from 'react-bootstrap';
 import counterpart from 'counterpart'
 import Translate from 'react-translate-component'
+import Cookie from 'js-cookie'
 import en from '../pages/languages/en'
 import de from '../pages/languages/de'
 import fr from '../pages/languages/fr'
@@ -22,7 +23,6 @@ class Navigationbar extends React.Component {
   };
 
   onLangChange = (e) => {
-    console.log("Navbar Lang Change: ", e);
     this.setState({language: e.target.value});
     counterpart.setLocale(e.target.value);
   }
@@ -63,18 +63,6 @@ class Navigationbar extends React.Component {
               </a>
             </Link>
           </div>
-          <NavDropdown title="TEST">           
-              <NavDropdown.Item>HALLO1</NavDropdown.Item>
-              <NavDropdown.Item>HALLO2</NavDropdown.Item>
-              <NavDropdown.Item>HALLO3</NavDropdown.Item>
-          </NavDropdown>
-
-            <NavDropdown title="Language" variant="primary" name="lang_sel" placeholder="Language">
-              <NavDropdown.Item value="en" >EN</NavDropdown.Item>
-              <NavDropdown.Item value="de" >DE</NavDropdown.Item>
-              <NavDropdown.Item value="fr" >FR</NavDropdown.Item>
-            </NavDropdown>
-         
 
           <select value={ this.state.language } onChange={this.onLangChange}>
             <option value="en" href="/testing_mode" >EN</option>

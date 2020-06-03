@@ -94,11 +94,6 @@ class TestingMode extends React.Component {
 
     return (
       <main>
-        <select value={this.state.language} onChange={this.onLangChange}>
-          <option value="en" >EN</option>
-          <option value="de" >DE</option>
-          <option value="fr" >FR</option>
-        </select>
 
         <Translate content="choose_testing_lang" className="testing_headline"></Translate>
         <div className="testing_lang_choice_container">

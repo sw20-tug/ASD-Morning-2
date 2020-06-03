@@ -46,6 +46,11 @@ export default {
   random: 'Aléatoire',
   select_vocab:'Sélectionner le vocabulaire',
   
+  //Export
   title5: 'Exportation',
-  title5_discription: 'Exportez / Importez vos vocabulaires'
+  title5_discription: 'Exportez / Importez vos vocabulaires',
+  upload: 'Télécharger',
+  export_vocab: 'Exporter le vocabulaire',
+  import_vocab: 'Importer du Vocabulaire',
+  export_device: 'Exporter vers l´appareil',
 }

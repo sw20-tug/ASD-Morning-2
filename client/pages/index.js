@@ -26,12 +26,6 @@ class Home extends React.Component {
         <div className="container">
           <main>
             
-            <select value={this.state.language} onChange={this.onLangChange}>
-              <option value="en" >EN</option>
-              <option value="de" >DE</option>
-              <option value="fr" >FR</option>
-            </select>
-            
             <h1 className="title">
               Voc-Trainer
             </h1>
