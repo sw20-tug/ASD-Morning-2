@@ -2,7 +2,8 @@ import fetch from 'isomorphic-unfetch';
 import { Container } from "next/app";
 import Link from 'next/link'
 import Button from 'react-bootstrap/Button';
-import { Form, FormControl } from 'react-bootstrap';
+import { Form, FormControl, InputGroup } from 'react-bootstrap';
+import Rating from 'react-rating';
 import Router from 'next/router'
 import counterpart from 'counterpart'
 import Translate from 'react-translate-component'
@@ -52,6 +53,17 @@ class SelectVocabulary extends React.Component {
             const data = await fetch('http://localhost:8080/api/vocabulary/alphabetically/' + args)
             const json = await data.json()
             this.setState({ vocabulary: json })
+        }
+        else if(args == "c" || args == "d")
+        {
+            this.state.selectedVocabulary.forEach(el => {
+                document.getElementById(el).checked = false
+            })
+            this.setState({ selectedVocabulary: [] });
+            const data = await fetch('http://localhost:8080/api/vocabulary/rating/' + args)
+            console.log(data);
+            const json = await data.json()
+            this.setState({vocabulary: json})
         }
     }
     addSelectedVocabulary(e) {
@@ -108,6 +120,7 @@ class SelectVocabulary extends React.Component {
             if(response.status != 200)
             {
                 this.setState({vocabulary: []})
+                return;
             }
             const json = await response.json()
             this.setState({vocabulary: json})
@@ -124,8 +137,8 @@ class SelectVocabulary extends React.Component {
                 
                 <Container>
                     <div style={{width: "100%", marginBottom: "1em", marginLeft: "1em"}}>
-                    <button type="submit" onClick={() => { this.componentDidMount("a") }} class="btn btn-outline-dark filter_buttons"  >▲</button>
-                    <button type="submit" onClick={() => { this.componentDidMount("z") }} class="btn btn-outline-dark filter_buttons" style={{marginLeft: "5px"}} >▼</button>
+                    <button type="submit" onClick={() => { this.componentDidMount("a") }} className="btn btn-outline-dark filter_buttons"  >▲</button>
+                    <button type="submit" onClick={() => { this.componentDidMount("z") }} className="btn btn-outline-dark filter_buttons" style={{marginLeft: "5px"}} >▼</button>
                     </div>
                     <table className="table">
                         <thead>
@@ -148,6 +161,10 @@ class SelectVocabulary extends React.Component {
                                     </Form.Group>
                                 </th>
                                 <th scope="col" style={{fontSize:"25px"}} >{this.state.tested_language}</th>
+                                <th scope="col"><Translate content="rating" ></Translate>
+                                    <button type="submit" onClick={() => {this.componentDidMount("c")}} className="btn btn-outline-dark filter_buttons"  >▲</button>
+                                    <button type="submit" onClick={() => {this.componentDidMount("d")}} className="btn btn-outline-dark filter_buttons" >▼</button>
+                                </th>
                                 <th className="test_col" scope="col"></th>
                             </tr>
                         </thead>
@@ -181,15 +198,19 @@ class SelectVocabulary extends React.Component {
                                           {
                                             this.state.tested_language == "French" &&
                                             <td>{element.translations.FR}</td>
-                                        }
-                                            
-                                        
+                                        }    
+                                        <td>                                                
+                                          <InputGroup  size="sm" className="mb-3">
+                                            <Rating readonly initialRating={element.rating} fractions="1"/>
+                                          </InputGroup>
+                                        </td>
                                         <td>
                                             {console.log(element.translations)}
                                             <Form.Group controlId={id}>
                                                 <Form.Check type="checkbox" label="Select" onChange={this.addSelectedVocabulary} />
                                             </Form.Group>
                                         </td>
+
                                     </tr>
                                 )
                                 )
