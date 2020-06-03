@@ -37,11 +37,6 @@ class EditVocabulary extends React.Component {
       this.rate = this.rate.bind(this);
     }
 
-    onLangChange = (e) => {
-      this.setState({language: e.target.value});
-      counterpart.setLocale(e.target.value);
-    }
-
     static getInitialProps({query}) {
         return {query}
     }

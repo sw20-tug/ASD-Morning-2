@@ -18,10 +18,6 @@ class StudyInterface extends React.Component {
             language: 'en'
         };
     }
-    onLangChange = (e) => {
-      this.setState({language: e.target.value});
-      counterpart.setLocale(e.target.value);
-    }
 
 async componentDidMount() {
     const data = await fetch('http://localhost:8080/api/vocabulary')

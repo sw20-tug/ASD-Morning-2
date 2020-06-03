@@ -63,5 +63,16 @@ export default {
   send: 'Envoyer',
   select_all: 'Tout sélectionner',
   unselect_all: 'Tout Déselectionner',
-  check_me_out: 'Sélectionner'
+  check_me_out: 'Sélectionner',
+
+  //selected Test
+  title_test: 'Testez vos connaissances',
+  select_words_to_test: 'Sélectionnez les mots que vous souhaitez tester!',
+  start_training: 'Commence l´entraînement',
+
+  //test.js
+  test_knowledge: 'Testez vos connaissances!',
+  accuracy: 'Précision: ',
+  check: 'Vérifier',
+  save_test: 'Enregistrer le test'
 }

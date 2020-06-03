@@ -40,11 +40,6 @@ class TestingMode extends React.Component {
       .catch((error) => console.log(error))
   }
 
-  onLangChange = (e) => {
-    this.setState({language: e.target.value});
-    counterpart.setLocale(e.target.value);
-  }
-
   handleChange_Given_Language({ target }) {
       this.setState({
           given_language: target.textContent

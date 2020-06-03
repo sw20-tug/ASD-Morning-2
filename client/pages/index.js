@@ -15,11 +15,7 @@ class Home extends React.Component {
   state = {
     language: 'en'
   }
-  onLangChange = (e) => {
-    this.setState({language: e.target.value});
-    counterpart.setLocale(e.target.value);
-  }
-
+  
   render() {
     return (
         <div className="container">
