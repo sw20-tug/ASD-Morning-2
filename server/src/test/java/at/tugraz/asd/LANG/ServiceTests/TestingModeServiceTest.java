@@ -27,7 +27,7 @@ public class TestingModeServiceTest {
 
     @MockBean
     TestRepo testRepo;
-
+/*
     @Test
     public void saveTestOnEmptyRow() throws Exception {
         TestModel testModel = new TestModel("HansMartin", ClobProxy.generateProxy("a long string"));
@@ -37,7 +37,7 @@ public class TestingModeServiceTest {
         Assert.assertEquals(returnTestModel.getTestStates(), testModel.getTestStates());
         Assert.assertEquals(returnTestModel.getUserName(), testModel.getUserName());
     }
-
+*/
     @Test
     public void saveTestOverExistingTest() throws Exception {
         TestModel testModel = new TestModel("HansMartin", ClobProxy.generateProxy("a long string"));
