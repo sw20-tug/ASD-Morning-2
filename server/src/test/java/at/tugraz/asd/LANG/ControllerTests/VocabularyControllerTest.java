@@ -71,9 +71,6 @@ public class VocabularyControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
     @MockBean
     private VocabularyService service;
 
@@ -120,62 +117,6 @@ public class VocabularyControllerTest {
                 .andExpect(status().isNoContent());
     }
 
-    @Ignore
-    @Test
-    public void testAddManyVocabulary() throws Exception {
-
-        //First
-        HashMap<Languages, String> translation_1 = new HashMap<>();
-        translation_1.put(Languages.DE, "haus");
-        translation_1.put(Languages.FR, "maison");
-        translation_1.put(Languages.EN, "house");
-        CreateVocabularyMessageIn msg_1 = new CreateVocabularyMessageIn("haus", Topic.Home,translation_1);
-
-        //create expected return value
-        List<TranslationModel> translations_1 = new ArrayList<>();
-        translations_1.add(new TranslationModel(Languages.DE,"haus"));
-        translations_1.add(new TranslationModel(Languages.FR,"maison"));
-        translations_1.add(new TranslationModel(Languages.DE,"house"));
-        VocabularyModel vocabularyModel_1 = new VocabularyModel(Topic.Home,"haus",translations_1, 0);
-
-
-        //perform save-call to endpoint
-        mvc.perform(post("/api/vocabulary")
-                .content(asJsonString(msg_1))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-        List<VocabularyModel> ret_1 = new ArrayList<>();
-        ret_1.add(vocabularyModel_1);
-        given(service.getAllVocabulary()).willReturn(ret_1);
-
-
-        //Second
-        HashMap<Languages, String> translation_2 = new HashMap<>();
-        translation_2.put(Languages.DE, "kind");
-        translation_2.put(Languages.FR, "lekind");
-        translation_2.put(Languages.EN, "child");
-        CreateVocabularyMessageIn msg_2 = new CreateVocabularyMessageIn("kind", Topic.Human ,translation_2);
-
-        //create expected return value
-        List<TranslationModel> translations_2 = new ArrayList<>();
-        translations_2.add(new TranslationModel(Languages.DE,"kind"));
-        translations_2.add(new TranslationModel(Languages.FR,"lekind"));
-        translations_2.add(new TranslationModel(Languages.DE,"child"));
-        VocabularyModel vocabularyModel_2 = new VocabularyModel(Topic.Human,"kind",translations_2, 0);
-
-
-        //perform save-call to endpoint
-        mvc.perform(post("/api/vocabulary")
-                .content(asJsonString(msg_2))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-        List<VocabularyModel> ret_2 = new ArrayList<>();
-        ret_2.add(vocabularyModel_2);
-        given(service.getAllVocabulary()).willReturn(ret_2);
-
-    }
 
 
    @Test

@@ -16,13 +16,23 @@ public class TestModelTest {
 
     @Autowired
     TestRepo testRepo;
+    private static final String USER_1 ="User 1";
+
 
     @Test
-    public void testSaveTest() throws Exception {
-        TestModel testModel = new TestModel("HansMartin", ClobProxy.generateProxy("a long string"));
+    public void testFindByUsername_exists(){
+        TestModel model = createTestModel();
+        testRepo.save(model);
+        Assert.assertEquals(testRepo.findByUserName(USER_1),model);
+    }
 
-        TestModel savedModel = testRepo.save(testModel);
-        Assert.assertEquals(testModel.getUserName(), savedModel.getUserName());
-        Assert.assertEquals("a long string", savedModel.getTestStates().getSubString(1, (int) testModel.getTestStates().length()));
+    @Test
+    public void testFindByUsername_doesNotExist(){
+        Assert.assertNull(testRepo.findByUserName(USER_1));
+    }
+
+    //helper
+    public TestModel createTestModel(){
+        return new TestModel(USER_1, ClobProxy.generateProxy("a long string"));
     }
 }
