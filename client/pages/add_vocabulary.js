@@ -4,6 +4,15 @@ import Rating from 'react-rating';
 import { Form, Dropdown } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
+import counterpart from 'counterpart'
+import Translate from 'react-translate-component'
+import en from './languages/en'
+import de from './languages/de'
+import fr from './languages/fr'
+
+counterpart.registerTranslations('en', en);
+counterpart.registerTranslations('de', de);
+counterpart.registerTranslations('fr', fr);
 
 
 class AddVocabulary extends React.Component {
@@ -17,7 +26,8 @@ class AddVocabulary extends React.Component {
             translationsFR: '',
             tmpLanguage: '',
             topic_array: [],
-            Topic: ''
+            Topic: '',
+            language: 'en'
         };
     };
 
@@ -97,12 +107,10 @@ class AddVocabulary extends React.Component {
         return(
             <main className="edit_main">
                 <Form.Group className="edit_container">
-                    <h2>
-                        Add Vocabulary
-                    </h2>
+                    <Translate content="add_vocab" component="h2"></Translate>
                     <Form.Group style={{ width: 220 }} controlId="select_language" onChange={this.handleChange_Language}>
                         <select variant="primary"  name="translation_language">
-                            <option value="sel_lang">Select language of key vocabulary</option>
+                            <option value="sel_lang"><Translate content="select_key_lang"></Translate> </option>
                             <option value="DE">German</option>
                             <option value="EN">English</option>
                             <option value="FR">French</option>
@@ -145,10 +153,10 @@ class AddVocabulary extends React.Component {
                     <hr/>
                     <div className="edit_button_wrap">
                         <Link href="/vocabulary" replace>
-                            <Button variant="primary">Return</Button>
+                            <Button variant="primary"><Translate content="return"></Translate> </Button>
                         </Link>
                         <Button type="button" onClick={ this.sendData } variant="primary" disabled = {!this.state.translationsDE || 
-                            !this.state.translationsEN ||!this.state.translationsFR || !this.state.tmpLanguage || !this.state.Topic}>Add new Vocabulary</Button>
+                            !this.state.translationsEN ||!this.state.translationsFR || !this.state.tmpLanguage || !this.state.Topic}><Translate content="add_new_vocab"></Translate> </Button>
                     </div>
                 </Form.Group>
             </main>

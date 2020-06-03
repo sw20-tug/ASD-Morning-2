@@ -6,6 +6,7 @@ import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.in.ShareMessageIn;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.TranslationModel;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
@@ -23,11 +24,22 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
+import javax.mail.MessagingException;
+
+import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -37,6 +49,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -45,7 +61,8 @@ import java.util.stream.Stream;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(VocabularyController.class)
@@ -56,6 +73,9 @@ public class VocabularyControllerTest {
 
     @MockBean
     private VocabularyService service;
+
+    @Autowired
+    private VocabularyController controller;
 
 
 
@@ -86,8 +106,6 @@ public class VocabularyControllerTest {
                 .content(asJsonString(msg))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-
-        //TODO @Lorenz assertions
     }
 
 
@@ -99,62 +117,6 @@ public class VocabularyControllerTest {
                 .andExpect(status().isNoContent());
     }
 
-    @Ignore
-    @Test
-    public void testAddManyVocabulary() throws Exception {
-
-        //First
-        HashMap<Languages, String> translation_1 = new HashMap<>();
-        translation_1.put(Languages.DE, "haus");
-        translation_1.put(Languages.FR, "maison");
-        translation_1.put(Languages.EN, "house");
-        CreateVocabularyMessageIn msg_1 = new CreateVocabularyMessageIn("haus", Topic.Home,translation_1);
-
-        //create expected return value
-        List<TranslationModel> translations_1 = new ArrayList<>();
-        translations_1.add(new TranslationModel(Languages.DE,"haus"));
-        translations_1.add(new TranslationModel(Languages.FR,"maison"));
-        translations_1.add(new TranslationModel(Languages.DE,"house"));
-        VocabularyModel vocabularyModel_1 = new VocabularyModel(Topic.Home,"haus",translations_1, 0);
-
-
-        //perform save-call to endpoint
-        mvc.perform(post("/api/vocabulary")
-                .content(asJsonString(msg_1))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-        List<VocabularyModel> ret_1 = new ArrayList<>();
-        ret_1.add(vocabularyModel_1);
-        given(service.getAllVocabulary()).willReturn(ret_1);
-
-
-        //Second
-        HashMap<Languages, String> translation_2 = new HashMap<>();
-        translation_2.put(Languages.DE, "kind");
-        translation_2.put(Languages.FR, "lekind");
-        translation_2.put(Languages.EN, "child");
-        CreateVocabularyMessageIn msg_2 = new CreateVocabularyMessageIn("kind", Topic.Human ,translation_2);
-
-        //create expected return value
-        List<TranslationModel> translations_2 = new ArrayList<>();
-        translations_2.add(new TranslationModel(Languages.DE,"kind"));
-        translations_2.add(new TranslationModel(Languages.FR,"lekind"));
-        translations_2.add(new TranslationModel(Languages.DE,"child"));
-        VocabularyModel vocabularyModel_2 = new VocabularyModel(Topic.Human,"kind",translations_2, 0);
-
-
-        //perform save-call to endpoint
-        mvc.perform(post("/api/vocabulary")
-                .content(asJsonString(msg_2))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-        List<VocabularyModel> ret_2 = new ArrayList<>();
-        ret_2.add(vocabularyModel_2);
-        given(service.getAllVocabulary()).willReturn(ret_2);
-
-    }
 
 
    @Test
@@ -226,6 +188,63 @@ public class VocabularyControllerTest {
 
    }
 
+    @Test
+    public void testGetRandomVocabularyNoContentFound() throws Exception {
+        when(service.getAllVocabulary()).thenReturn(Collections.EMPTY_LIST);
+        mvc.perform(get("/api/vocabulary/random")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testGetRandomVocabulary() throws Exception {
+        List<TranslationModel> translations = new ArrayList<>();
+        List<VocabularyModel> randomVocabList = new ArrayList<>();
+        translations.add(new TranslationModel(Languages.DE, "Brot"));
+        translations.add(new TranslationModel(Languages.FR, "baguette"));
+        translations.add(new TranslationModel(Languages.EN, "bread"));
+
+        VocabularyModel randomVocab = new VocabularyModel(Topic.Food, "Brot", translations, Integer.valueOf(0));
+        for (int i = 0; i < 10; i++) {
+            randomVocabList.add(randomVocab);
+        }
+
+        given(service.getAllVocabulary()).willReturn(randomVocabList);
+        mvc.perform(get("/api/vocabulary/random")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(10)))
+                .andExpect(jsonPath("$[0].vocabulary").value(randomVocab.getVocabulary()));
+    }
+
+    @Test
+    public void testExportFail() throws Exception {
+        mvc.perform(get("/api/vocabulary/Export")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void ImportBackup() throws Exception {
+        String endpoint = "/api/vocabulary/Import";
+        Boolean expectFalse = false;
+        File file = new File("backup.txt");
+        byte[] fileContent = Files.readAllBytes(file.toPath());
+
+        MockMultipartFile multipartFile = new MockMultipartFile("file", fileContent);
+
+        MvcResult result = mvc.perform(fileUpload(endpoint)
+                .file(multipartFile)
+                .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String testFalse = result.getResponse().getContentAsString();
+
+        Assert.assertEquals(expectFalse.toString(), testFalse);
+
+    }
+
    //HELPER
    public static String asJsonString(final Object obj) {
        try {
@@ -235,4 +254,194 @@ public class VocabularyControllerTest {
        }
    }
 
+    @Test
+    public void testFilterUpDownStudyInterfaceDE() throws Exception {
+        List<TranslationModel> translations_1 = new ArrayList<>();
+        translations_1.add(new TranslationModel(Languages.DE,"haus"));
+        translations_1.add(new TranslationModel(Languages.FR,"maison"));
+        translations_1.add(new TranslationModel(Languages.DE,"house"));
+
+        when(service.sortVocabStudyInterface(Languages.DE, "a")).thenReturn(
+                Stream.of(
+                        new VocabularyModel(Topic.USER_GENERATED,"haus",translations_1, 0)
+                ).collect(Collectors.toList())
+        );
+        mvc.perform(get("/api/vocabulary/alphabetically/FR/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/vocabulary/alphabetically/EN/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/vocabulary/alphabetically/DE/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/vocabulary/alphabetically/DE/z")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testFilterUpDownStudyInterfaceEN() throws Exception {
+        List<TranslationModel> translations_1 = new ArrayList<>();
+        translations_1.add(new TranslationModel(Languages.DE,"haus"));
+        translations_1.add(new TranslationModel(Languages.FR,"maison"));
+        translations_1.add(new TranslationModel(Languages.DE,"house"));
+
+        when(service.sortVocabStudyInterface(Languages.EN, "a")).thenReturn(
+                Stream.of(
+                        new VocabularyModel(Topic.USER_GENERATED,"haus",translations_1, 0)
+                ).collect(Collectors.toList())
+        );
+        mvc.perform(get("/api/vocabulary/alphabetically/DE/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/vocabulary/alphabetically/FR/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/vocabulary/alphabetically/EN/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/vocabulary/alphabetically/EN/z")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testFilterUpDownStudyInterfaceFR() throws Exception {
+        List<TranslationModel> translations_1 = new ArrayList<>();
+        translations_1.add(new TranslationModel(Languages.DE,"haus"));
+        translations_1.add(new TranslationModel(Languages.FR,"maison"));
+        translations_1.add(new TranslationModel(Languages.DE,"house"));
+
+        when(service.sortVocabStudyInterface(Languages.FR, "a")).thenReturn(
+                Stream.of(
+                        new VocabularyModel(Topic.USER_GENERATED,"haus",translations_1, 0)
+                ).collect(Collectors.toList())
+        );
+        mvc.perform(get("/api/vocabulary/alphabetically/DE/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/vocabulary/alphabetically/FR/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/vocabulary/alphabetically/EN/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/vocabulary/alphabetically/FR/z")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testFilterUpDownOverview() throws Exception {
+        List<TranslationModel> translations_1 = new ArrayList<>();
+        translations_1.add(new TranslationModel(Languages.DE,"haus"));
+        translations_1.add(new TranslationModel(Languages.FR,"maison"));
+        translations_1.add(new TranslationModel(Languages.EN,"house"));
+
+        testFilterHelper1(translations_1);
+        testFilterHelper2(translations_1);
+    }
+    private void testFilterHelper1(List<TranslationModel> translations) throws Exception {
+        when(service.sortVocabOverview("a")).thenReturn(
+                Stream.of(
+                        new VocabularyModel(Topic.USER_GENERATED,"haus",translations, 0)
+                ).collect(Collectors.toList())
+        );
+        mvc.perform(get("/api/vocabulary/alphabetically/z")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/vocabulary/alphabetically/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+    private void testFilterHelper2(List<TranslationModel> translations) throws Exception {
+        when(service.sortVocabOverview("z")).thenReturn(
+                Stream.of(
+                        new VocabularyModel(Topic.USER_GENERATED,"haus",translations, 0)
+                ).collect(Collectors.toList())
+        );
+        when(service.sortVocabOverview("a")).thenReturn(Collections.EMPTY_LIST);
+        mvc.perform(get("/api/vocabulary/alphabetically/z")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/vocabulary/alphabetically/a")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testFilterUpDownOverviewRating() throws Exception {
+        List<TranslationModel> translations_1 = new ArrayList<>();
+        translations_1.add(new TranslationModel(Languages.DE,"haus"));
+        translations_1.add(new TranslationModel(Languages.FR,"maison"));
+        translations_1.add(new TranslationModel(Languages.EN,"house"));
+
+        testFilterHelperRating1(translations_1);
+        testFilterHelperRating2(translations_1);
+    }
+    private void testFilterHelperRating1(List<TranslationModel> translations) throws Exception {
+        when(service.sortRating("c")).thenReturn(
+                Stream.of(
+                        new VocabularyModel(Topic.USER_GENERATED,"haus",translations, 1)
+                ).collect(Collectors.toList())
+        );
+        mvc.perform(get("/api/vocabulary/rating/d")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        mvc.perform(get("/api/vocabulary/rating/c")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+    private void testFilterHelperRating2(List<TranslationModel> translations) throws Exception {
+        when(service.sortRating("d")).thenReturn(
+                Stream.of(
+                        new VocabularyModel(Topic.USER_GENERATED,"haus",translations, 2)
+                ).collect(Collectors.toList())
+        );
+        when(service.sortRating("c")).thenReturn(Collections.EMPTY_LIST);
+        mvc.perform(get("/api/vocabulary/rating/d")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/vocabulary/rating/c")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void FilterTopics() throws Exception
+    {
+        when(service.sortTopics(Topic.Home)).thenReturn(getAllVocabTopicHome());
+
+       MvcResult result =  mvc.perform(get("/api/vocabulary/sort_topics/Home")
+                .content(asJsonString(""))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        ObjectMapper mapper = new ObjectMapper();
+        Integer rating = new Integer(0);
+
+        List<VocabularyOut> sortedTopic_retval = mapper.readValue(result.getResponse().getContentAsString(), mapper.getTypeFactory().constructCollectionType(List.class, VocabularyOut.class));
+        Assert.assertEquals(sortedTopic_retval.get(0).getTopic(), Topic.Home);
+        Assert.assertEquals(sortedTopic_retval.get(0).getVocabulary(), "haus");
+        Assert.assertEquals(sortedTopic_retval.get(0).getRating(), rating);
+        Map<Languages, String> expected_translations = new HashMap<Languages, String>();
+        expected_translations.put(Languages.DE,"haus");
+        expected_translations.put(Languages.FR,"maison");
+        expected_translations.put(Languages.EN,"house");
+        Assert.assertEquals(sortedTopic_retval.get(0).getTranslations(),expected_translations);
+    }
+
+
+
+    private List<VocabularyModel> getAllVocabTopicHome() {
+
+        List<TranslationModel> translations1 = Stream.of(
+                new TranslationModel(Languages.DE,"haus"),
+                new TranslationModel(Languages.FR,"maison"),
+                new TranslationModel(Languages.EN,"house")
+        ).collect(Collectors.toList());
+        VocabularyModel vocabularyModel1 = new VocabularyModel(Topic.Home, "haus", translations1, Integer.valueOf(0));
+        return Stream.of(vocabularyModel1).collect(Collectors.toList());
+    }
 }

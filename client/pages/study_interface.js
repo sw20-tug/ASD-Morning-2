@@ -1,13 +1,21 @@
 import fetch from 'isomorphic-unfetch';
-import { Container, Button, useRouter, Link} from "next/app";
 import { DropdownButton, Dropdown } from "react-bootstrap";
+import counterpart from 'counterpart'
+import Translate from 'react-translate-component'
+import en from './languages/en'
+import de from './languages/de'
+import fr from './languages/fr'
 
+counterpart.registerTranslations('en', en);
+counterpart.registerTranslations('de', de);
+counterpart.registerTranslations('fr', fr);
 
 class StudyInterface extends React.Component {
     constructor() {
         super();
         this.state = {
-            vocabulary: []
+            vocabulary: [],
+            language: 'en'
         };
     }
 
@@ -20,18 +28,17 @@ async componentDidMount() {
 render() {
     return (
         <main>
-            <h1 className="title">
-                Study Interface
-                </h1>
+
+          <Translate content="title3" component="h1"></Translate>
             <p>
             </p>
-            <Container>
-                <DropdownButton id="dropdown-basic-button" title="Select your Language">
+            <div>
+                <DropdownButton id="dropdown-basic-button" title={<Translate content="select_lang"></Translate>}>
                     <Dropdown.Item href="/study_interface/DE" >German</Dropdown.Item>
                     <Dropdown.Item href="/study_interface/EN">English</Dropdown.Item>
                     <Dropdown.Item href="/study_interface/FR" >French</Dropdown.Item>
                 </DropdownButton>
-            </Container>
+            </div>
         </main>
     );
 }

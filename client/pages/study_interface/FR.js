@@ -1,7 +1,17 @@
 import fetch from 'isomorphic-unfetch';
 
 import { Container, Button, useRouter, Link, List } from "next/app";
-import { DropdownButton, Dropdown } from "react-bootstrap";
+
+import counterpart from 'counterpart'
+import Translate from 'react-translate-component'
+import en from '../study_interface/EN'
+import de from '../study_interface/DE'
+import fr from '../study_interface/FR'
+
+counterpart.registerTranslations('en', en);
+counterpart.registerTranslations('de', de);
+counterpart.registerTranslations('fr', fr);
+counterpart.setLocale('en');
 
 class StudyInterface extends React.Component {
     /* constructor(props) {
@@ -11,7 +21,8 @@ class StudyInterface extends React.Component {
     constructor() {
         super();
         this.state = {
-            vocabulary: []
+            vocabulary: [],
+            language: 'en'
         };
     }
 
@@ -34,27 +45,22 @@ class StudyInterface extends React.Component {
         console.log(this.props.vocabs);
 
         return (
+            <main>                
+                <Translate content="title3" component="h1"></Translate>
 
-            <main>
-                <h1 className="title">
-                    Study Interface
-                </h1>
+                <Translate content="title3_discription" component="p"></Translate>
+
+                <Translate content="current_language" component="p"></Translate>
                 
-                <p className="description">
-                    Test your knowlegde about the French language!
-                </p>
-                <p className="description">
-                    Current Language: French
-                </p>
                 <Container>
                     <table className="table">
                         <thead>
                             <tr>
-                                <th scope="col">Vocabulary
-                                    <button type="submit" onClick={() => {this.componentDidMount("a")}} class="btn btn-outline-dark filter_buttons"  >Up</button>
-                                    <button type="submit" onClick={() => {this.componentDidMount("z")}} class="btn btn-outline-dark filter_buttons" >Down</button>
+                                <th scope="col"> <Translate content="vocabulary"></Translate>
+                                    <button type="submit" onClick={() => {this.componentDidMount("a")}} className="btn btn-outline-dark filter_buttons" style={{marginLeft: "0.5rem"}} >▲</button>
+                                    <button type="submit" onClick={() => {this.componentDidMount("z")}} className="btn btn-outline-dark filter_buttons" >▼</button>
                                 </th>
-                                <th scope="col">Translations</th>
+                                <th scope="col"><Translate content="translation"></Translate></th>
                             </tr>
                         </thead>
                         <tbody>

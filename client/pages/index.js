@@ -1,47 +1,68 @@
 import Link from 'next/link'
+import counterpart from 'counterpart'
+import Translate from 'react-translate-component'
+import en from './languages/en'
+import de from './languages/de'
+import fr from './languages/fr'
 
-const Home = () => (
-      <div className="container">
-        <main>
-          <h1 className="title">
-            Voc-Trainer
-          </h1>
+counterpart.registerTranslations('en', en);
+counterpart.registerTranslations('de', de);
+counterpart.registerTranslations('fr', fr);
 
-          <p className="description">
-            Train your language skills
-          </p>
 
-          <div className="grid">
-            <Link href="/vocabulary">
+
+class Home extends React.Component {
+  state = {
+    language: 'en'
+  }
+  
+  render() {
+    return (
+        <div className="container">
+          <main>
+            
+            <h1 className="title">
+              Voc-Trainer
+            </h1>
+            <Translate content="title_discription" component="p" className="description" ></Translate>
+
+            <div className="grid">
+              <Link href="/vocabulary">
+                <a className="card">
+                  <Translate content="title2" component="h3"></Translate>
+                  <Translate content="title2_discription" component="p"></Translate>
+                </a>
+              </Link>
+
+              <Link href="/study_interface">
+                <a className="card">
+                  <Translate content="title3" component="h3"></Translate>
+                  <Translate content="title3_discription" component="p"></Translate>
+                </a>
+              </Link>
+
+              <Link href="/testing_mode">
+                <a className="card">
+                  <Translate content="title4" component="h3"></Translate>
+                  <Translate content="title4_discription" component="p"></Translate>
+                </a>
+              </Link>
+              <Link href="/export">
+                <a className="card">
+                  <Translate content="title5" component="h3"></Translate>
+                  <Translate content="title5_discription" component="p"></Translate>
+                </a>
+              </Link>
+              <Link href="/share">
               <a className="card">
-                <h3>Vocabulary Overview</h3>
-                <p>View, edit, and add to your vocabulary!</p>
+                <Translate content="share" component="h3"></Translate>
+                <Translate content="share_lib" component="p"></Translate>
               </a>
             </Link>
-
-            <Link href="/study_interface">
-              <a className="card">
-                <h3> Study Interface </h3>
-                <p>Start learning all the vocabulary!</p>
-              </a>
-            </Link>
-
-            <Link href="/testing_mode">
-              <a className="card">
-      	        <h3>Testing Mode</h3>
-                <p>Test your current skills! </p>
-              </a>
-            </Link>
-
-            <Link href="/">
-              <a className="card">
-                <h3>Next Feature</h3>
-                <p>Work in Progress</p>
-              </a>
-            </Link>
-          </div>
-        </main>
-      </div>
-);
-
+            </div>
+          </main>
+        </div>
+    );
+  }
+}
 export default Home;
