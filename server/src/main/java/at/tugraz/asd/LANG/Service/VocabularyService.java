@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
+@SpringBootApplication
 @Service
 public class VocabularyService {
 
@@ -36,6 +37,16 @@ public class VocabularyService {
     VocabularyRepo vocabularyRepo;
     @Autowired
     TranslationRepo translationRepo;
+
+    public boolean checkIfExists(String vocabulary)
+    {
+        VocabularyModel buff = vocabularyRepo.findByVocabulary(vocabulary);
+        if(buff == null)
+        {
+            return true;
+        }
+        return false;
+    }
 
     public VocabularyModel saveVocabulary(CreateVocabularyMessageIn msg) throws CreateVocabularyFail {
                   Map<Languages, String> translations = msg.getTranslations();
@@ -52,9 +63,12 @@ public class VocabularyService {
             });
 
             VocabularyModel vocabularyModel = new VocabularyModel(topic, vocabulary, translationModels, Integer.valueOf(0));
-            try {
-                vocabularyRepo.save(vocabularyModel);
-            } catch (Exception e)
+           // if (checkIfExists(msg.getVocabulary())){
+           try {
+               vocabularyRepo.save(vocabularyModel);
+           } catch (Exception e)
+
+            //} else
             {
                 throw new CreateVocabularyFail();
             }
@@ -267,7 +281,8 @@ public class VocabularyService {
                     {
                         translationRepo.save(translationModel);
                     } catch (Exception e)
-                    {}
+                    {
+                    }
                 });
             }
             VocabularyModel vocabularyModel = new VocabularyModel(topic, vocabulary, translationModels, rating);
