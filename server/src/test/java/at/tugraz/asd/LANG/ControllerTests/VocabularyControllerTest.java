@@ -6,6 +6,7 @@ import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.in.ShareMessageIn;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.TranslationModel;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
@@ -30,10 +31,13 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import javax.mail.MessagingException;
 
 import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -66,9 +70,6 @@ public class VocabularyControllerTest {
 
     @Autowired
     private MockMvc mvc;
-
-    @Autowired
-    private WebApplicationContext webApplicationContext;
 
     @MockBean
     private VocabularyService service;
@@ -105,8 +106,6 @@ public class VocabularyControllerTest {
                 .content(asJsonString(msg))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-
-        //TODO @Lorenz assertions
     }
 
 
@@ -118,62 +117,6 @@ public class VocabularyControllerTest {
                 .andExpect(status().isNoContent());
     }
 
-    @Ignore
-    @Test
-    public void testAddManyVocabulary() throws Exception {
-
-        //First
-        HashMap<Languages, String> translation_1 = new HashMap<>();
-        translation_1.put(Languages.DE, "haus");
-        translation_1.put(Languages.FR, "maison");
-        translation_1.put(Languages.EN, "house");
-        CreateVocabularyMessageIn msg_1 = new CreateVocabularyMessageIn("haus", Topic.Home,translation_1);
-
-        //create expected return value
-        List<TranslationModel> translations_1 = new ArrayList<>();
-        translations_1.add(new TranslationModel(Languages.DE,"haus"));
-        translations_1.add(new TranslationModel(Languages.FR,"maison"));
-        translations_1.add(new TranslationModel(Languages.DE,"house"));
-        VocabularyModel vocabularyModel_1 = new VocabularyModel(Topic.Home,"haus",translations_1, 0);
-
-
-        //perform save-call to endpoint
-        mvc.perform(post("/api/vocabulary")
-                .content(asJsonString(msg_1))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-        List<VocabularyModel> ret_1 = new ArrayList<>();
-        ret_1.add(vocabularyModel_1);
-        given(service.getAllVocabulary()).willReturn(ret_1);
-
-
-        //Second
-        HashMap<Languages, String> translation_2 = new HashMap<>();
-        translation_2.put(Languages.DE, "kind");
-        translation_2.put(Languages.FR, "lekind");
-        translation_2.put(Languages.EN, "child");
-        CreateVocabularyMessageIn msg_2 = new CreateVocabularyMessageIn("kind", Topic.Human ,translation_2);
-
-        //create expected return value
-        List<TranslationModel> translations_2 = new ArrayList<>();
-        translations_2.add(new TranslationModel(Languages.DE,"kind"));
-        translations_2.add(new TranslationModel(Languages.FR,"lekind"));
-        translations_2.add(new TranslationModel(Languages.DE,"child"));
-        VocabularyModel vocabularyModel_2 = new VocabularyModel(Topic.Human,"kind",translations_2, 0);
-
-
-        //perform save-call to endpoint
-        mvc.perform(post("/api/vocabulary")
-                .content(asJsonString(msg_2))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-        List<VocabularyModel> ret_2 = new ArrayList<>();
-        ret_2.add(vocabularyModel_2);
-        given(service.getAllVocabulary()).willReturn(ret_2);
-
-    }
 
 
    @Test
@@ -489,6 +432,8 @@ public class VocabularyControllerTest {
         Assert.assertEquals(sortedTopic_retval.get(0).getTranslations(),expected_translations);
     }
 
+
+
     private List<VocabularyModel> getAllVocabTopicHome() {
 
         List<TranslationModel> translations1 = Stream.of(
@@ -499,5 +444,35 @@ public class VocabularyControllerTest {
         VocabularyModel vocabularyModel1 = new VocabularyModel(Topic.Home, "haus", translations1, Integer.valueOf(0));
         return Stream.of(vocabularyModel1).collect(Collectors.toList());
     }
+/*
+    @Test
+    public void testShareingSuccess()
+    {
+        List<String> vocabs = new ArrayList<>();
+        vocabs.add("TEST1");
+        vocabs.add("TEST2");
+        try {
+            when(service.createCSSforShare(vocabs)).thenReturn(getTestFile());
+            ShareMessageIn msg = new ShareMessageIn("xiopengyou420@gmail.com", vocabs);
+            when(service.shareVocab(msg, service.createCSSforShare(vocabs))).thenReturn(true);
+            mvc.perform(post("/api/vocabulary/sort_topics/share")
+                    .content(asJsonString(""))
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+
+            Files.deleteIfExists(Paths.get("testing.txt"));
+        }catch (Exception e)
+        {
+            assert(false);
+            //Files.deleteIfExists(Paths.get("testing.txt"));
+        }
+    }
+
+    private File getTestFile()
+    {
+        File backup_file = new File("testing.txt");
+        return backup_file;
+    }
+    */
 
 }

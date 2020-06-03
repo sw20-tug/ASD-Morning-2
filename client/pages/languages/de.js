@@ -53,4 +53,15 @@ export default {
   export_vocab: 'Vokabel exportieren',
   import_vocab: 'Vokabel Importieren',
   export_device: 'Gerät Exportieren',
+
+  //Share
+  share: 'Teilen',
+  share_lib: 'Teile deine Sammlung',
+  select_words: 'Wähle die Wörter aus die du teilen möchtest!',
+  enter_email: 'Gib deine Email an',
+  dont_share_email: 'Wir werden deine Email niemals weitergeben',
+  send: 'Senden',
+  select_all: 'Alle auswählen',
+  unselect_all: 'Alle deselektieren',
+  check_me_out: 'Auswählen'
 }

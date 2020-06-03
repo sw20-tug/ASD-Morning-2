@@ -54,4 +54,15 @@ export default {
   import_vocab: 'Import vocabulary',
   export_device: 'Export to Device',
 
+  //Share
+  share: 'Share',
+  share_lib: 'Share your library',
+  select_words: 'Select the words you want to send!',
+  enter_email: 'Enter Email',
+  dont_share_email: 'We´ll never share your email with anyone else.',
+  send: 'Send',
+  select_all: 'Select All',
+  unselect_all: 'Unselect All',
+  check_me_out: 'Select'
+
 }

@@ -132,9 +132,10 @@ class VocabularyOverview extends React.Component {
                                                 ))}
                                                 </ul>
                                             </td>
-                                            <td>                                                <InputGroup  size="sm" className="mb-3">
-                           <Rating readonly initialRating={element.rating} fractions="1"/>
-                        </InputGroup></td>
+                                            <td>                                                
+                                          <InputGroup  size="sm" className="mb-3">
+                                            <Rating readonly initialRating={element.rating} fractions="1"/>
+                                          </InputGroup></td>
                                             <td>
                                                 {console.log(element.translations)}
                                                 <Link href={{ pathname: 'edit_vocabulary', query: {

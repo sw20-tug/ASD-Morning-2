@@ -63,6 +63,9 @@ class Navigationbar extends React.Component {
               </a>
             </Link>
           </div>
+          <div className="navbar_link">
+            <Link href="/share"><a>Share</a></Link>
+          </div>
 
           <select value={ this.state.language } onChange={this.onLangChange}>
             <option value="en" href="/testing_mode" >EN</option>

@@ -5,6 +5,7 @@ import at.tugraz.asd.LANG.Exeptions.EditFail;
 import at.tugraz.asd.LANG.Languages;
 import at.tugraz.asd.LANG.Messages.in.CreateVocabularyMessageIn;
 import at.tugraz.asd.LANG.Messages.in.EditVocabularyMessageIn;
+import at.tugraz.asd.LANG.Messages.in.ShareMessageIn;
 import at.tugraz.asd.LANG.Messages.out.VocabularyOut;
 import at.tugraz.asd.LANG.Model.TranslationModel;
 import at.tugraz.asd.LANG.Model.VocabularyModel;
@@ -23,6 +24,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.mail.MessagingException;
 import java.util.ArrayList;
 import java.io.File;
 import java.io.FileWriter;
@@ -30,6 +32,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -348,7 +351,50 @@ public class VocabularyServiceTest {
         Assert.assertEquals(expectSuccess, testSuccess);
     }
 
+    @Test
+    public void shareSuccesful() {
+        List<String> vocabs = new ArrayList<>();
+        vocabs.add("haus");
+        ShareMessageIn msg = new ShareMessageIn("xiopengyou420@gmail.com", vocabs);
+        when(vocabularyRepo.findByVocabulary("haus")).thenReturn(getBasicVocabularyModelforShare());
+        try{
+            service.shareVocab(msg, service.createCSSforShare(vocabs));
+            assert(true);
+        } catch (Exception e)
+        {
+            assert(false);
+        }
+        //service.shareVocab(msg);
+    }
+
+    @Test
+    public void shareFail() {
+        List<String> vocabs = new ArrayList<>();
+        vocabs.add("haus");
+        ShareMessageIn msg = new ShareMessageIn("", vocabs);
+        when(vocabularyRepo.findByVocabulary("haus")).thenReturn(getBasicVocabularyModelforShare());
+        try{
+            service.shareVocab(msg, service.createCSSforShare(vocabs));
+            assert(false);
+        } catch (Exception e)
+        {
+            assert(true);
+        }
+        //service.shareVocab(msg);
+    }
+
     //Helper
+
+    private VocabularyModel getBasicVocabularyModelforShare(){
+        //create expected return value
+        List<TranslationModel> translations = Stream.of(
+                new TranslationModel(Languages.DE,"haus"),
+                new TranslationModel(Languages.FR,"maison"),
+                new TranslationModel(Languages.EN,"house")
+        ).collect(Collectors.toList());
+        VocabularyModel vocabularyModel = new VocabularyModel(Topic.USER_GENERATED, "haus", translations, Integer.valueOf(0));
+        return vocabularyModel;
+    }
 
     private List<VocabularyOut> getSpecificTopic(Topic topic, List<VocabularyModel> model)
     {
@@ -435,5 +481,4 @@ public class VocabularyServiceTest {
         ret.setVocabulary("haus");
         return ret;
     }
-
 }

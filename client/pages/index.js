@@ -57,11 +57,16 @@ class Home extends React.Component {
                   <Translate content="title5_discription" component="p"></Translate>
                 </a>
               </Link>
+              <Link href="/share">
+              <a className="card">
+                <Translate content="share" component="h3"></Translate>
+                <Translate content="share_lib" component="p"></Translate>
+              </a>
+            </Link>
             </div>
           </main>
         </div>
     );
   }
 }
-
 export default Home;
