@@ -9,7 +9,6 @@ import fr from './languages/fr'
 counterpart.registerTranslations('en', en);
 counterpart.registerTranslations('de', de);
 counterpart.registerTranslations('fr', fr);
-counterpart.setLocale('en');
 
 class StudyInterface extends React.Component {
     constructor() {
